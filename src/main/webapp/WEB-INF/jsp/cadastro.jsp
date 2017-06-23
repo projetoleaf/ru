@@ -171,7 +171,7 @@ section {
 		</div>
 		<div class="col-sm-9">
 			<div class="panel panel-primary">
-				<div class="panel-heading">Insira seus dados para cadastro</div>
+				<div class="panel-heading">Insira seus dado para cadastro</div>
 				<div class="panel-body">
 					<form class="form-horizontal" method="post" th:action="@{/salvar}" th:object="${usuario}">
 						<input type="hidden" th:field="*{id}" />
