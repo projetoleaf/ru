@@ -3,7 +3,6 @@ package com.github.projetoleaf.dto;
 import java.util.Date;
 import java.util.Objects;
 
-
 public class UsuarioDTO {
 
     private Integer id;

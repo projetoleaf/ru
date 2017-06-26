@@ -17,7 +17,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario buscar(Integer id) {
         return usuarioRepository.findOne(id);
     }
-
     
     @Override
     @Transactional

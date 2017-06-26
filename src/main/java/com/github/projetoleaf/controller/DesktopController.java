@@ -2,11 +2,12 @@ package com.github.projetoleaf.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import com.github.projetoleaf.data.Usuario;
 import com.github.projetoleaf.dto.UsuarioDTO;
 import com.github.projetoleaf.service.UsuarioService;
@@ -106,8 +107,8 @@ public class DesktopController {
 	}
 	
 	@GetMapping("/cadastro")
-	public String cadastro(ModelAndView model) {
-		model.addObject("usuario", new UsuarioDTO());
+	public String cadastro(Model model) {
+		model.addAttribute("usuario", new UsuarioDTO());
 		return "cadastro";
 	}
 	
@@ -115,7 +116,7 @@ public class DesktopController {
 	private UsuarioService usuarioService;
 	 
 	@PostMapping(value="/salvar")
-    public String salvar(@ModelAttribute UsuarioDTO usuarioDTO) {
+    public String salvar(@ModelAttribute("usuario") UsuarioDTO usuarioDTO, BindingResult result) {
         Usuario usuario;
 
         if (usuarioDTO.getId() != null) {
@@ -123,13 +124,14 @@ public class DesktopController {
         } else {
             usuario = new Usuario();
         }
+        
         usuario.setCpf(usuarioDTO.getCpf());
         usuario.setEmail(usuarioDTO.getEmail());
         usuario.setSenha(usuarioDTO.getSenha());
         usuario.setNome(usuarioDTO.getNome());
         usuario.setMatricula(usuarioDTO.getMatricula());
-        usuario.setId_tipo(1);
-        usuario.setId_curso(1);
+        usuario.setId_tipo(usuarioDTO.getId_tipo());
+        usuario.setId_curso(usuarioDTO.getId_curso());
         usuario.setData_nascimento(usuarioDTO.getData_nascimento());
         usuario.setExcluido("n");
         
@@ -138,10 +140,9 @@ public class DesktopController {
         System.out.println(usuarioDTO.getSenha());
         System.out.println(usuarioDTO.getNome());
         System.out.println(usuarioDTO.getMatricula());
-        System.out.println(1);
-        System.out.println(1);
+        System.out.println(usuarioDTO.getId_tipo());
+        System.out.println(usuarioDTO.getId_curso());
         System.out.println(usuarioDTO.getData_nascimento());
-        System.out.println("n");
 
         usuarioService.salvar(usuario);
         

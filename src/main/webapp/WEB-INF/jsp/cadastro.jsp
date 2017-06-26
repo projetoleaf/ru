@@ -1,6 +1,11 @@
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
-<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta charset="UTF-8" />
 <title>Cadastro</title>
@@ -138,10 +143,11 @@ section {
 								Vendas</a></li>
 						<li><a href="#"><span style="font-size: 16px;"
 								class="hidden-xs showopacity glyphicon glyphicon-user"></span>
-								Usu·rios</a></li>
+								Usu√°rios</a></li>
 						<li class="dropdown active"><a href="#"
-							class="dropdown-toggle" data-toggle="dropdown"><span style="font-size: 16px;" class="glyphicon glyphicon-wrench"></span>
-								ManutenÁ„o</a>
+							class="dropdown-toggle" data-toggle="dropdown"><span
+								style="font-size: 16px;" class="glyphicon glyphicon-wrench"></span>
+								Manuten√ß√£o</a>
 							<ul class="dropdown-menu forAnimate" role="menu">
 								<li><a href="#"><span style="font-size: 16px;"
 										class="glyphicon glyphicon-edit"></span> Categorias</a></li>
@@ -157,7 +163,7 @@ section {
 							</ul></li>
 						<li class="dropdown"><a href="#" class="dropdown-toggle"
 							data-toggle="dropdown"><span style="font-size: 16px;"
-								class="glyphicon glyphicon-stats"></span> Relat·rios</a>
+								class="glyphicon glyphicon-stats"></span> Relat√°rios</a>
 							<ul class="dropdown-menu forAnimate" role="menu">
 								<li><a href="#"><span style="font-size: 16px;"
 										class="glyphicon glyphicon-list-alt"></span> Planilhas</a></li>
@@ -173,87 +179,86 @@ section {
 			<div class="panel panel-primary">
 				<div class="panel-heading">Insira seus dado para cadastro</div>
 				<div class="panel-body">
-					<form class="form-horizontal" method="post" th:action="@{/salvar}" th:object="${usuario}">
-						<input type="hidden" th:field="*{id}" />
+					<form:form method="POST" action="salvar" class="form-horizontal"
+						modelAttribute="usuario">
 						<div class="row">
 							<div class="col-xs-offset-3 col-sm-offset-3">
 								<div class="row">
 									<div class="col-xs-10 col-sm-6">
 										<div class="form-group">
-											<label for="cpf">CPF:</label> <input type="text"
-												class="form-control" id="cpf" placeholder="Apenas n˙meros"
-												th:field="*{cpf}" />
+											<label for="cpf">CPF:</label>
+											<form:input type="text" class="form-control" path="cpf"
+												placeholder="Digite seu cpf" />
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-xs-10 col-sm-6">
 										<div class="form-group">
-											<label for="email">Email:</label> <input type="text"
-												class="form-control" id="email"
-												placeholder="Digite seu email" th:field="*{email}" />
+											<label for="email">Email:</label>
+											<form:input type="text" class="form-control" path="email"
+												placeholder="Digite seu email" />
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-xs-10 col-sm-6">
 										<div class="form-group">
-											<label for="senha">Senha:</label> <input type="password"
-												class="form-control" id="senha"
-												placeholder="Digite sua senha" th:field="*{senha}" />
+											<label for="senha">Senha:</label>
+											<form:input type="password" class="form-control" path="senha"
+												placeholder="Digite sua senha" />
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-xs-10 col-sm-6">
 										<div class="form-group">
-											<label for="email">Nome:</label> <input type="text"
-												class="form-control" id="nome"
-												placeholder="Digite seu nome completo" th:field="*{nome}" />
+											<label for="nome">Nome:</label>
+											<form:input type="text" class="form-control" path="nome"
+												placeholder="Digite seu nome completo" />
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-xs-10 col-sm-6">
 										<div class="form-group">
-											<label for="email">Matricula:</label> <input type="text"
-												class="form-control" id="nome"
-												placeholder="Digite seu nome completo"
-												th:field="*{matricula}" />
+											<label for="matricula">Matricula:</label>
+											<form:input type="text" class="form-control" path="matricula"
+												placeholder="Digite sua matricula" />
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-xs-10 col-sm-6">
 										<div class="form-group">
-											<select id="tipo">
-												<option value="1">Discentes</option>
-											</select>
+											<form:select path="id_tipo">
+												<option value="2">Discentes</option>
+											</form:select>
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-xs-10 col-sm-6">
 										<div class="form-group">
-											<select id="curso">
+											<form:select path="id_curso">
 												<option value="1">Teste</option>
-											</select>
+											</form:select>
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-xs-10 col-sm-6">
 										<div class="form-group">
-											<label for="email">Data nascimento:</label> <input
-												type="date" class="form-control" id="data-nasc"
-												th:field="*{data-nasc}" />
+											<label for="data_nascimento">Data nascimento:</label>
+											<form:input type="date" class="form-control"
+												path="data_nascimento" />
 										</div>
 									</div>
 								</div>
 								<button type="submit" class="btn btn-primary">Enviar</button>
 							</div>
 						</div>
-					</form>
+					</form:form>
 				</div>
 			</div>
 		</div>
