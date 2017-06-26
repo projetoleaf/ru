@@ -116,7 +116,7 @@ public class DesktopController {
 	private UsuarioService usuarioService;
 	 
 	@PostMapping(value="/salvar")
-    public String salvar(@ModelAttribute("usuario") UsuarioDTO usuarioDTO, BindingResult result) {
+    public String salvar(@ModelAttribute UsuarioDTO usuarioDTO, BindingResult result) {
         Usuario usuario;
 
         if (usuarioDTO.getId() != null) {
