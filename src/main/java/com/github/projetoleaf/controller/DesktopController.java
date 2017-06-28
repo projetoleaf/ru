@@ -142,7 +142,7 @@ public class DesktopController {
         System.out.println(usuarioDTO.getMatricula());
         System.out.println(usuarioDTO.getId_tipo());
         System.out.println(usuarioDTO.getId_curso());
-        System.out.println(usuarioDTO.getData_nascimento());
+        System.out.println(usuarioDTO.getData_nascimento()+"\n");
 
         usuarioService.salvar(usuario);
         

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "usuario")
@@ -16,7 +17,7 @@ public class Usuario implements Serializable{
 	private Integer id;
 
 	@Column
-	private Integer cpf;
+	private String cpf;
 
 	@Column
 	private String email;
@@ -36,8 +37,9 @@ public class Usuario implements Serializable{
 	@Column
 	private Integer id_tipo;
 	
-	@Column
 	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern="dd-MM-yyyy")
+	@Column
 	private Date data_nascimento;
 
 	@Column
@@ -59,11 +61,11 @@ public class Usuario implements Serializable{
 		this.id = id;
 	}
 
-	public Integer getCpf() {
+	public String getCpf() {
 		return cpf;
 	}
 
-	public void setCpf(Integer cpf) {
+	public void setCpf(String cpf) {
 		this.cpf = cpf;
 	}
 

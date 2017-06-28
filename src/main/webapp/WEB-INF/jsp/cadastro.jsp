@@ -118,6 +118,12 @@ section {
 	padding-left: 15px;
 }
 </style>
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/css/bootstrap-datepicker.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/css/bootstrap-datepicker3.min.css" />
+
 </head>
 <body>
 	<div class="row">
@@ -232,7 +238,7 @@ section {
 									<div class="col-xs-10 col-sm-6">
 										<div class="form-group">
 											<form:select path="id_tipo">
-												<option value="2">Discentes</option>
+												<option value="1">Discentes</option>
 											</form:select>
 										</div>
 									</div>
@@ -250,7 +256,7 @@ section {
 									<div class="col-xs-10 col-sm-6">
 										<div class="form-group">
 											<label for="data_nascimento">Data nascimento:</label>
-											<form:input type="date" class="form-control"
+											<form:input type="text" class="form-control"
 												path="data_nascimento" />
 										</div>
 									</div>
@@ -263,5 +269,21 @@ section {
 			</div>
 		</div>
 	</div>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/js/bootstrap-datepicker.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+	<script type="text/javascript">
+		$('#data_nascimento').datepicker({
+			format : "dd/MM/yyyy",
+			maxViewMode : 0,
+			language : "pt-BR",
+			orientation : "top auto",
+			autoclose : true,
+			todayHighlight : true
+		});
+	</script>
 </body>
 </html>

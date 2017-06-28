@@ -7,7 +7,7 @@ public class UsuarioDTO {
 
     private Integer id;
 
-	private Integer cpf;
+	private String cpf;
 
 	private String email;
 
@@ -33,11 +33,11 @@ public class UsuarioDTO {
 		this.id = id;
 	}
 
-	public Integer getCpf() {
+	public String getCpf() {
 		return cpf;
 	}
 
-	public void setCpf(Integer cpf) {
+	public void setCpf(String cpf) {
 		this.cpf = cpf;
 	}
 
