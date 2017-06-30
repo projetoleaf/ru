@@ -1,50 +1,97 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="true"%>
-<%@taglib uri="http://github.com/dandelion" prefix="dandelion"%>
-
-<dandelion:bundle includes="font-awesome"/>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
-	<head>
-	<title>Login</title>
-	</head>
-	
-	
-	<body>
-	<div class="container">
+<head>
+<meta name="header" content="Login" />
+<title>Login</title>
+<link href="<c:url value="/resources/css/ru.css"/>" rel="stylesheet" />
+</head>
+<body>
 	<div class="row">
+		<div class="col-sm-4 col-sm-offset-4">
 			<div class="panel panel-primary">
-				<div class="panel-heading">Login</div>
-					<div class="panel-body">
-				 	<div class="form-horizontal col-lg-12 col-lg-offset-3">
+				<div class="panel-heading text-center subtitulo">Login</div>
+				<div class="panel-body">
+					<form method="post">
 						<div class="form-group">
-							<label class="control-label col-lg-2" for="Login"><i>*</i> Login:</label>
-							<div class="col-lg-2">
-							<input type="text" class="form-control"  id="login" placeholder="Email / RA" required>
-							</div>
+							<label for="login">Email/CPF</label> <input type="text"
+								class="form-control" id="login" placeholder="Email/CPF"
+								required>
 						</div>
 						<div class="form-group">
-							<label class="control-label col-lg-2" for="Login"><i>*</i> Senha:</label>
-							<div class="col-sm-2">
-							<input type="password" class="form-control"  id="senha" placeholder="Digite sua senha" required>
+							<label for="senha">Senha</label> <input type="password"
+								class="form-control" id="senha" placeholder="Senha" required>
+						</div>
+						<div class="form-group text-right">
+							<a href="#myModal" data-toggle="modal" data-target="#myModal">Esqueceu
+								sua senha?</a>
+						</div>
+						<div class="modal fade" id="myModal" role="dialog">
+							<div class="modal-dialog modal-md">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h4 class="modal-title text-center">Redefinir Senha</h4>
+									</div>
+									<div class="modal-body">
+										<p>Digite seu e-mail e data de nascimento para recuperar
+											sua senha</p>
+										<div class="row">
+											<div class="col-sm-8 col-sm-offset-2">
+												<form>
+													<div class="form-group">
+														<input type="email" class="form-control" id="email"
+															placeholder="Digite seu email" name="email">
+													</div>
+													<div class="form-group">
+														<input type="date" class="form-control" id="datanasc"
+															name="datanasc">
+													</div>
+													<div class="text-center">
+														<button type="button" class="btn btn-primary"
+															data-toggle="modal" data-target="#myModal2">
+															<span class="glyphicon glyphicon-send"></span> Enviar
+														</button>
+													</div>
+													<div class="modal fade" id="myModal2" role="dialog">
+														<div class="modal-dialog modal-sm">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<h4 class="modal-title text-center">E-mail enviado
+																		com sucesso!</h4>
+																</div>
+																<div class="modal-body">
+																	<p>Verifique sua caixa de entrada ou lixo
+																		eletrônico para alterar sua senha.</p>
+																</div>
+																<div class="modal-footer">
+																	<button type="button" class="btn btn-primary"
+																		data-dismiss="modal">
+																		<span class="glyphicon glyphicon-remove"></span>
+																		Fechar
+																	</button>
+																</div>
+															</div>
+														</div>
+													</div>
+											</div>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-primary"
+											data-dismiss="modal">
+											<span class="glyphicon glyphicon-remove"></span> Fechar
+										</button>
+									</div>
+								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-lg-12 col-lg-offset-2">
-								<button type="submit" class="btn btn-primary" >Enviar</button>
-								<button type="reset" class="btn btn-primary" >Limpar</button>
-								<span id="helpBlock1" class="help-block">* campos obrigatórios</span>
-								
-							</div>
-									
+						<div class="text-center">
+							<button type="submit" class="btn btn-primary">Entrar</button>
 						</div>
-						
-					
-						
-					</div>
+					</form>
 				</div>
 			</div>
 		</div>
 	</div>
-	</body>
-	
+</body>
 </html>

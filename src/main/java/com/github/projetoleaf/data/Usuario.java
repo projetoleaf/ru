@@ -35,11 +35,11 @@ public class Usuario implements Serializable{
 	private Integer id_curso;
 
 	@Column
-	private Integer id_tipo;
+	private Integer id_tipo;	
 	
 	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern="dd-MM-yyyy")
-	@Column
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@Column	
 	private Date data_nascimento;
 
 	@Column

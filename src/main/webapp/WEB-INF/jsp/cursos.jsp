@@ -1,231 +1,119 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<title>Reservar refeições</title>
-		<style>			
-			.modal-header, .close {
-			      background-color: #337ab7;
-			      color:white !important;
-			      text-align: center;
-			      border-radius: 5px 5px 0px 0;
-			  }
-			  
-			nav.sidebar, .main{
-			    -webkit-transition: margin 200ms ease-out;
-			      -moz-transition: margin 200ms ease-out;
-			      -o-transition: margin 200ms ease-out;
-			      transition: margin 200ms ease-out;
-			  }
-			
-			  .main{
-			    padding: 10px 10px 0 10px;
-			  }
-			  
-			  nav.sidebar li {
-			  	border-radius: 1px;
-			  }
-			  
-			  .navbar .navbar-nav > .active > a,
-				.navbar .navbar-nav > .active > a:hover,
-				.navbar .navbar-nav > .active > a:focus {
-				    color: white !important;
-				    background-color: #337ab7 !important;
-			  }
-			
-			 @media (min-width: 765px) {
-			
-			    .main{
-			      position: absolute;
-			      width: calc(100% - 40px); 
-			      margin-left: 40px;
-			      float: right;
-			    }
-			
-			    nav.sidebar:hover + .main{
-			      margin-left: 200px;
-			    }
-			
-			    nav.sidebar.navbar.sidebar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
-			      margin-left: 0px;
-			    }
-			
-			    nav.sidebar .navbar-brand, nav.sidebar .navbar-header{
-			      text-align: center;
-			      width: 100%;
-			      margin-left: 0px;
-			    }
-			    
-			    nav.sidebar a{
-			      padding-right: 13px;
-			    }
-	
-			    nav.sidebar .navbar-nav > li{
-			      border-bottom: 1px #e5e5e5 solid;
-			    }
-			
-			
-			    nav.sidebar .navbar-nav .open .dropdown-menu {
-			      position: static;
-			      float: none;
-			      width: auto;
-			      margin-top: 0;
-			      background-color: transparent;
-			      border: 0;
-			      -webkit-box-shadow: none;
-			      box-shadow: none;
-			    }
-			
-			    nav.sidebar .navbar-collapse, nav.sidebar .container-fluid{
-			      padding: 0 0px 0 0px;
-			    }
-			
-			    .navbar-inverse .navbar-nav .open .dropdown-menu>li>a {
-			      color: #777;
-			    }
-			
-			    nav.sidebar{
-			      width: auto;
-			      height: 100%;
-			      margin-left: -160px;
-			      float: left;
-			      margin-bottom: 0px;
-			    }
-			
-			    nav.sidebar li {
-			      width: 100%;
-			    }
-			
-			    nav.sidebar:hover{
-			      margin-left: 0px;
-			    }
-			
-			    .forAnimate{
-			      opacity: 0;
-			    }
-			  }
-			   
-			  @media (min-width: 1330px) {
-			
-			    .main{
-			      width: calc(100% - 200px);
-			      margin-left: 200px;
-			    }
-			
-			    nav.sidebar{
-			      margin-left: 0px;
-			      float: left;
-			    }
-			
-			    nav.sidebar .forAnimate{
-			      opacity: 1;
-			    }
-			  }
-			
-			  nav.sidebar .navbar-nav .open .dropdown-menu>li>a:hover, nav.sidebar .navbar-nav .open .dropdown-menu>li>a:focus {
-			    color: #CCC;
-			    background-color: transparent;
-			  }
-			
-			  nav:hover .forAnimate{
-			    opacity: 1;
-			  }
-			  section{
-			    padding-left: 15px;
-			  }
-		  </style>
-	</head>
-	<body>
+<head>
+<meta name="header" content="Cursos" />
+<title>Cursos</title>
+<link href="<c:url value="/resources/css/ru.css"/>" rel="stylesheet" />
+</head>
+<body>
 	<div class="row">
 		<div class="col-sm-3">
-			<nav class="navbar navbar-default sidebar panel panel-primary" role="navigation">
-			    <div class="navbar-header">
-			      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
-			        <span class="sr-only">Toggle navigation</span>
-			        <span class="icon-bar"></span>
-			        <span class="icon-bar"></span>
-			        <span class="icon-bar"></span>
-			      </button>      
-			    </div>
-			    <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
-			      <ul class="nav navbar-nav">
-			        <li ><a href="#"><span style="font-size:16px;" class="hidden-xs showopacity glyphicon glyphicon-calendar"></span> Reservas</a></li>
-			        <li ><a href="#"><span style="font-size:16px;" class="hidden-xs showopacity glyphicon glyphicon-usd"></span> Vendas</a></li>			          
-			        <li ><a href="#"><span style="font-size:16px;" class="hidden-xs showopacity glyphicon glyphicon-user"></span> Usuários</a></li>        
-			        <li class="dropdown active">
-			         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span style="font-size:16px;" class="glyphicon glyphicon-wrench"></span> Manutenção</span></a>
-			         <ul class="dropdown-menu forAnimate" role="menu">
-			           <li ><a href="#"><span style="font-size:16px;" class="glyphicon glyphicon-edit"></span> Categorias</a></li>
-			           <li class="divider"></li>
-			           <li><a href="#"><span style="font-size:16px;" class="glyphicon glyphicon-edit"></span> Cursos</a></li>
-			           <li class="divider"></li>
-			           <li><a href="#"><span style="font-size:16px;" class="glyphicon glyphicon-edit"></span> Feriados</a></li>
-			           <li class="divider"></li>
-			           <li><a href="#"><span style="font-size:16px;" class="glyphicon glyphicon-edit"></span> Tipos</a></li>
-			         </ul>
-			       </li>
-			       <li class="dropdown">
-			         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span style="font-size:16px;" class="glyphicon glyphicon-stats"></span> Relatórios</span></a>
-			         <ul class="dropdown-menu forAnimate" role="menu">
-			           <li ><a href="#"><span style="font-size:16px;" class="glyphicon glyphicon-list-alt"></span> Planilhas</a></li>
-			           <li class="divider"></li>
-			           <li><a href="#"><span style="font-size:16px;" class="glyphicon glyphicon-picture"></span> Gráficos</a></li>
-			         </ul>
-			       </li>
-			      </ul>
-			    </div>
+			<nav class="navbar navbar-default sidebar panel panel-primary"
+				role="navigation">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse"
+						data-target="#bs-sidebar-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+				</div>
+				<div class="collapse navbar-collapse"
+					id="bs-sidebar-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li><a href="#"><span
+								class="hidden-xs showopacity glyphicon glyphicon-calendar icones"></span>
+								Reservas</a></li>
+						<li><a href="#"><span
+								class="hidden-xs showopacity glyphicon glyphicon-usd icones"></span>
+								Vendas</a></li>
+						<li><a href="usuarios"><span
+								class="hidden-xs showopacity glyphicon glyphicon-user icones"></span>
+								UsuÃ¡rios</a></li>
+						<li class="dropdown active"><a href="#"
+							class="dropdown-toggle" data-toggle="dropdown"><span
+								class="glyphicon glyphicon-wrench icones"></span> ManutenÃ§Ã£o</span></a>
+							<ul class="dropdown-menu forAnimate" role="menu">
+								<li><a href="categorias"><span
+										class="glyphicon glyphicon-edit icones"></span> Categorias</a></li>
+								<li class="divider"></li>
+								<li><a href="cursos"><span
+										class="glyphicon glyphicon-edit icones"></span> Cursos</a></li>
+								<li class="divider"></li>
+								<li><a href="feriados"><span
+										class="glyphicon glyphicon-edit icones"></span> Feriados</a></li>
+								<li class="divider"></li>
+								<li><a href="tipos"><span
+										class="glyphicon glyphicon-edit icones"></span> Tipos</a></li>
+							</ul></li>
+						<li class="dropdown bb"><a href="#" class="dropdown-toggle"
+							data-toggle="dropdown"><span
+								class="glyphicon glyphicon-stats icones"></span> RelatÃ³rios</span></a>
+							<ul class="dropdown-menu forAnimate" role="menu">
+								<li><a href="#"><span
+										class="glyphicon glyphicon-list-alt icones"></span> Planilhas</a></li>
+								<li class="divider"></li>
+								<li><a href="#"><span
+										class="glyphicon glyphicon-picture icones"></span> GrÃ¡ficos</a></li>
+							</ul></li>
+					</ul>
+				</div>
 			</nav>
 		</div>
 		<div class="col-sm-9">
-			<div class="panel panel-primary">			
+			<div class="panel panel-primary">
 				<div class="panel-body">
-					<table class="table table-hover table-bordered table-condensed" style="font-family:verdana; font-size: 12px;">
+					<table class="table table-bordered table-condensed texto">
 						<thead>
 							<tr>
-								<th style="width: 130px;">ID</th>
-								<th>Descrição</th>
-								<th>Período</th>
+								<th class="col-1">ID</th>
+								<th>DescriÃ§Ã£o</th>
+								<th>PerÃ­odo</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>1</td>
-								<td>Ciências da Computação</td>
+								<td>CiÃªncias da ComputaÃ§Ã£o</td>
 								<td>Integral</td>
 							</tr>
-							<tr>								
+							<tr>
 								<td>2</td>
-								<td>Sistemas de Informação</td>
+								<td>Sistemas de InformaÃ§Ã£o</td>
 								<td>Noturno</td>
 							</tr>
 						</tbody>
 					</table>
 					<form>
-					<div class="row">
-						<div class="col-xs-12 col-sm-6">
-							<div class="form-group">
-							    <label for="descricao">Descrição</label>
-							    <input type="text" class="form-control" id="descricao" placeholder="Descrição">							    
+						<div class="row">
+							<div class="col-xs-12 col-sm-6">
+								<div class="form-group">
+									<label for="descricao">DescriÃ§Ã£o</label> <input type="text"
+										class="form-control" id="descricao" placeholder="DescriÃ§Ã£o">
+								</div>
+							</div>
+							<div class="col-xs-10 col-sm-4">
+								<div class="form-group">
+									<label for="perÃ­odo">PerÃ­odo</label> <select id="periodo"
+										name="periodo" class="btn btn-default form-control">
+										<option label="Diurno" value="diurno"></option>
+										<option label="Noturno" value="noturno"></option>
+										<option label="Integral" value="integral"></option>
+									</select>
+								</div>
+							</div>
+							<div class="col-xs-2 col-sm-2 pd">
+								<button type="submit" class="btn btn-default mg-tp">Salvar</button>
 							</div>
 						</div>
-						<div class="col-xs-8 col-sm-4" style="padding: 0">
-							<div class="form-group">
-							    <label for="periodo">Período</label>
-							    <input type="text" class="form-control" id="periodo" placeholder="Período">							    
-							</div>
-						</div>
-						<div class="col-xs-2 col-sm-2" style="padding-right: 0">
-							<div style="margin-top: 25px;"></div>
-							<button type="submit" class="btn btn-primary">Salvar</button>
-						</div>
-					</div>					  
-					  <button type="submit" class="btn btn-primary">Incluir</button>
-					  <button type="submit" class="btn btn-warning">Alterar</button>
-					  <button type="submit" class="btn btn-danger">Excluir</button>
+						<button type="submit" class="btn btn-primary">Incluir</button>
+						<button type="submit" class="btn btn-warning">Alterar</button>
+						<button type="submit" class="btn btn-danger">Excluir</button>
 					</form>
 				</div>
 			</div>
 		</div>
-	</div>		
-	</body>
+	</div>
+</body>
 </html>
