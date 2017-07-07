@@ -40,8 +40,12 @@
 	font-size: 16px;
 }
 
-.col-1{
-	width: 130px;
+.col-id{
+	width: 30px;
+}
+
+.col-btn{
+	width: 100px;
 }
 
 .mg-tp{

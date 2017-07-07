@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.github.projetoleaf.data.Usuario;
 import com.github.projetoleaf.dto.UsuarioDTO;
 import com.github.projetoleaf.service.UsuarioService;
@@ -53,8 +52,8 @@ public class CadastroController {
         usuario.setSenha(usuarioDTO.getSenha());
         usuario.setNome(usuarioDTO.getNome());
         usuario.setMatricula(usuarioDTO.getMatricula());
-        usuario.setId_tipo(usuarioDTO.getId_tipo());
-        usuario.setId_curso(usuarioDTO.getId_curso());
+        usuario.setTipo(usuarioDTO.getTipo());
+        usuario.setCurso(usuarioDTO.getCurso());
         usuario.setData_nascimento(usuarioDTO.getData_nascimento());
         usuario.setExcluido("n");
 

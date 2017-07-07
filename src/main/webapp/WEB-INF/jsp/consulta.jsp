@@ -35,16 +35,16 @@
 							data-toggle="dropdown"><span
 								class="glyphicon glyphicon-wrench icones"></span> Manutenção</span></a>
 							<ul class="dropdown-menu forAnimate" role="menu">
-								<li><a href="categorias"><span
+								<li><a href="categoria"><span
 										class="glyphicon glyphicon-edit icones"></span> Categorias</a></li>
 								<li class="divider"></li>
-								<li><a href="cursos"><span
+								<li><a href="curso"><span
 										class="glyphicon glyphicon-edit icones"></span> Cursos</a></li>
 								<li class="divider"></li>
-								<li><a href="feriados"><span
+								<li><a href="feriado"><span
 										class="glyphicon glyphicon-edit icones"></span> Feriados</a></li>
 								<li class="divider"></li>
-								<li><a href="tipos"><span
+								<li><a href="tipo"><span
 										class="glyphicon glyphicon-edit icones"></span> Tipos</a></li>
 							</ul></li>
 						<li class="dropdown bb"><a href="#" class="dropdown-toggle"

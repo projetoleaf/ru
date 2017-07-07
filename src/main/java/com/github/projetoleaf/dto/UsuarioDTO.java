@@ -17,9 +17,9 @@ public class UsuarioDTO {
 
 	private Integer matricula;
 
-	private Integer id_curso;
+	private CursoDTO curso;
 
-	private Integer id_tipo;
+	private TipoDTO tipo;
 
 	private Date data_nascimento;
 
@@ -73,20 +73,20 @@ public class UsuarioDTO {
 		this.matricula = matricula;
 	}
 
-	public Integer getId_curso() {
-		return id_curso;
+	public Integer getCurso() {
+		return curso.getId();
 	}
 
-	public void setId_curso(Integer id_curso) {
-		this.id_curso = id_curso;
+	public void setCurso(Integer id) {
+		this.curso.setId(id);
 	}
 
-	public Integer getId_tipo() {
-		return id_tipo;
+	public Integer getTipo() {
+		return tipo.getId();
 	}
 
-	public void setId_tipo(Integer id_tipo) {
-		this.id_tipo = id_tipo;
+	public void setTipo(Integer id) {
+		this.tipo.setId(id);
 	}
 
 	public Date getData_nascimento() {

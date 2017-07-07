@@ -1,27 +1,80 @@
 package com.github.projetoleaf.data;
 
-public class Reserva_item {
+import java.io.Serializable;
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-	private int id;
-	private int id_reserva;
-	private int id_cardapio;
+@Entity
+@Table(name = "reserva_item")
+public class Reserva_item implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 	
-	public int getId() {
+	@OneToOne
+	@JoinColumn(name = "id")
+	private Reserva reserva;
+	
+	@OneToOne
+	@JoinColumn(name = "id")
+	private Cardapio cardapio;
+	
+	public Integer getId() {
 		return id;
 	}
-	public void setId(int id) {
+	
+	public void setId(Integer id) {
 		this.id = id;
+	}	
+	
+	public Reserva getReserva() {
+		return reserva;
 	}
-	public int getId_reserva() {
-		return id_reserva;
+
+	public void setReserva(Reserva reserva) {
+		this.reserva = reserva;
 	}
-	public void setId_reserva(int id_reserva) {
-		this.id_reserva = id_reserva;
+
+	public Cardapio getCardapio() {
+		return cardapio;
 	}
-	public int getId_cardapio() {
-		return id_cardapio;
+
+	public void setCardapio(Cardapio cardapio) {
+		this.cardapio = cardapio;
 	}
-	public void setId_cardapio(int id_cardapio) {
-		this.id_cardapio = id_cardapio;
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 53 * hash + Objects.hashCode(this.id);
+		return hash;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Reserva_item other = (Reserva_item) obj;
+		if (!Objects.equals(this.id, other.id)) {
+			return false;
+		}
+		return true;
+	}
+	
 }

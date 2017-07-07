@@ -63,11 +63,6 @@ public class DesktopController {
 		return "sobre";
 	}
 
-	@GetMapping("/tipos")
-	public String tipos() {
-		return "tipos";
-	}
-
 	@GetMapping("/transferencias")
 	public String transferencias() {
 		return "transferencias";

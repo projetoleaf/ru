@@ -1,9 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <html>
 <head>
-<meta name="header" content="Cursos" />
-<title>Cursos</title>
+<meta name="header" content="Categorias" />
+<title>Categorias</title>
 <link href="<c:url value="/resources/css/ru.css"/>" rel="stylesheet" />
 </head>
 <body>
@@ -33,23 +35,23 @@
 								Usuários</a></li>
 						<li class="dropdown active"><a href="#"
 							class="dropdown-toggle" data-toggle="dropdown"><span
-								class="glyphicon glyphicon-wrench icones"></span> Manutenção</span></a>
+								class="glyphicon glyphicon-wrench icones"></span> Manutenção</a>
 							<ul class="dropdown-menu forAnimate" role="menu">
-								<li><a href="categorias"><span
+								<li><a href="categoria"><span
 										class="glyphicon glyphicon-edit icones"></span> Categorias</a></li>
 								<li class="divider"></li>
-								<li><a href="cursos"><span
+								<li><a href="curso"><span
 										class="glyphicon glyphicon-edit icones"></span> Cursos</a></li>
 								<li class="divider"></li>
-								<li><a href="feriados"><span
+								<li><a href="feriado"><span
 										class="glyphicon glyphicon-edit icones"></span> Feriados</a></li>
 								<li class="divider"></li>
-								<li><a href="tipos"><span
+								<li><a href="tipo"><span
 										class="glyphicon glyphicon-edit icones"></span> Tipos</a></li>
 							</ul></li>
 						<li class="dropdown bb"><a href="#" class="dropdown-toggle"
 							data-toggle="dropdown"><span
-								class="glyphicon glyphicon-stats icones"></span> Relatórios</span></a>
+								class="glyphicon glyphicon-stats icones"></span> Relatórios</a>
 							<ul class="dropdown-menu forAnimate" role="menu">
 								<li><a href="#"><span
 										class="glyphicon glyphicon-list-alt icones"></span> Planilhas</a></li>
@@ -63,54 +65,40 @@
 		</div>
 		<div class="col-sm-9">
 			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<div class="panel-title pull-left">
+			         Alterar categoria
+			         </div>
+			        <div class="panel-title pull-right"><a href="/ru/desktop/categoria">Voltar para a pesquisa</a></div>
+			        <div class="clearfix"></div>
+				</div>
 				<div class="panel-body">
-					<table class="table table-bordered table-condensed texto">
-						<thead>
-							<tr>
-								<th class="col-1">ID</th>
-								<th>Descrição</th>
-								<th>Período</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td>Ciências da Computação</td>
-								<td>Integral</td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>Sistemas de Informação</td>
-								<td>Noturno</td>
-							</tr>
-						</tbody>
-					</table>
-					<form>
-						<div class="row">
-							<div class="col-xs-12 col-sm-6">
-								<div class="form-group">
-									<label for="descricao">Descrição</label> <input type="text"
-										class="form-control" id="descricao" placeholder="Descrição">
-								</div>
-							</div>
-							<div class="col-xs-10 col-sm-4">
-								<div class="form-group">
-									<label for="período">Período</label> <select id="periodo"
-										name="periodo" class="btn btn-default form-control">
-										<option label="Diurno" value="diurno"></option>
-										<option label="Noturno" value="noturno"></option>
-										<option label="Integral" value="integral"></option>
-									</select>
-								</div>
-							</div>
-							<div class="col-xs-2 col-sm-2 pd">
-								<button type="submit" class="btn btn-default mg-tp">Salvar</button>
+					<form:form method="POST" action="/ru/desktop/salvarCategoria" class="form-horizontal">
+						<form:hidden path="id" />
+						<div class="form-group">
+							<label for="descricao" class="col-sm-2 control-label">Descrição</label>
+							<div class="col-sm-4">
+								<form:input type="text"	class="form-control" path="descricao" placeholder="Descrição" />				
 							</div>
 						</div>
-						<button type="submit" class="btn btn-primary">Incluir</button>
-						<button type="submit" class="btn btn-warning">Alterar</button>
-						<button type="submit" class="btn btn-danger">Excluir</button>
-					</form>
+						<div class="form-group">
+							<label for="valor_sem_subsidio" class="col-sm-2 control-label">Valor sem subsidio</label>
+							<div class="col-sm-4">
+								<form:input type="text"	class="form-control" path="valor_sem_subsidio" placeholder="Valor sem subsidio" />				
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="valor_com_subsidio" class="col-sm-2 control-label">Valor com subsidio</label>
+							<div class="col-sm-4">
+								<form:input type="text"	class="form-control" path="valor_com_subsidio" placeholder="Valor com subsidio" />				
+							</div>
+						</div>
+						 <div class="form-group">
+						    <div class="col-sm-offset-2 col-sm-10">
+						      <button type="submit" class="btn btn-primary">Salvar</button>
+						    </div>
+						 </div>				
+					</form:form>
 				</div>
 			</div>
 		</div>

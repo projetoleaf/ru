@@ -8,7 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "usuario")
-public class Usuario implements Serializable{
+public class Usuario implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -31,11 +31,13 @@ public class Usuario implements Serializable{
 	@Column
 	private Integer matricula;
 
-	@Column
-	private Integer id_curso;
+	@OneToOne
+	@JoinColumn(name = "id")
+	private Curso curso;
 
-	@Column
-	private Integer id_tipo;	
+	@OneToOne
+	@JoinColumn(name = "id")
+	private Tipo tipo;	
 	
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -100,21 +102,21 @@ public class Usuario implements Serializable{
 	public void setMatricula(Integer matricula) {
 		this.matricula = matricula;
 	}
-
-	public Integer getId_curso() {
-		return id_curso;
+		
+	public Integer getCurso() {
+		return curso.getId();
 	}
 
-	public void setId_curso(Integer id_curso) {
-		this.id_curso = id_curso;
+	public void setCurso(Integer id) {
+		this.curso.setId(id);
 	}
 
-	public Integer getId_tipo() {
-		return id_tipo;
+	public Integer getTipo() {
+		return tipo.getId();
 	}
 
-	public void setId_tipo(Integer id_tipo) {
-		this.id_tipo = id_tipo;
+	public void setTipo(Integer id) {
+		this.tipo.setId(id);
 	}
 
 	public Date getData_nascimento() {

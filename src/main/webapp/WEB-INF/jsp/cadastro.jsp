@@ -47,7 +47,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="datanasc" class="col-sm-3 control-label">Data
+							<label for="data_nascimento" class="col-sm-3 control-label">Data
 								de nascimento</label>
 							<div class="col-sm-6">
 								<form:input type="text" class="form-control"
@@ -104,6 +104,6 @@
 	<script type="text/javascript"
 		src="<c:url value="/resources/js/bootstrap-datepicker.pt-BR.min.js" />"></script>
 	<script type="text/javascript"
-		src="<c:url value="/resources/js/data_nascimento.js" />"></script>
+		src="<c:url value="/resources/js/data.js" />"></script>
 </body>
 </html>

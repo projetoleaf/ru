@@ -24,15 +24,15 @@
 		<br>
 		<br>
 		<legend>Área do Admin</legend>
-		<a href="categorias">Categorias</a>
+		<a href="categoria">Categorias</a>
 		<br>
 		<a href="consulta">Consulta</a>
 		<br>
-		<a href="cursos">Cursos</a>
+		<a href="curso">Cursos</a>
 		<br>
-		<a href="feriados">Feriados</a>
+		<a href="feriado">Feriados</a>
 		<br>
-		<a href="tipos">Tipos</a>
+		<a href="tipo">Tipos</a>
 		<br>
 		<a href="usuarios">Usuários</a>
 		<br>
