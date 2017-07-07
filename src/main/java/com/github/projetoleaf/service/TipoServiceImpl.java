@@ -1,7 +1,8 @@
 package com.github.projetoleaf.service;
 
-import com.github.projetoleaf.data.Tipo;
-import com.github.projetoleaf.repository.TipoRepository;
+import com.github.projetoleaf.beans.Tipo;
+import com.github.projetoleaf.repositories.TipoRepository;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

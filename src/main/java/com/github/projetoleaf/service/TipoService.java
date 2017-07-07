@@ -1,7 +1,8 @@
 package com.github.projetoleaf.service;
 
 import java.util.List;
-import com.github.projetoleaf.data.Tipo;
+
+import com.github.projetoleaf.beans.Tipo;
 
 public interface TipoService {
 	

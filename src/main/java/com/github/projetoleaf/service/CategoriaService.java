@@ -1,7 +1,8 @@
 package com.github.projetoleaf.service;
 
 import java.util.List;
-import com.github.projetoleaf.data.Categoria;
+
+import com.github.projetoleaf.beans.Categoria;
 
 public interface CategoriaService {
 	

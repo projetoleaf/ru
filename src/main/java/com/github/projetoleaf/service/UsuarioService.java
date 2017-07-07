@@ -1,6 +1,8 @@
 package com.github.projetoleaf.service;
 
-import com.github.projetoleaf.data.Usuario;
+import java.util.List;
+
+import com.github.projetoleaf.beans.Usuario;
 
 public interface UsuarioService {
 

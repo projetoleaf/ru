@@ -1,7 +1,8 @@
 package com.github.projetoleaf.service;
 
-import com.github.projetoleaf.data.Feriado;
-import com.github.projetoleaf.repository.FeriadoRepository;
+import com.github.projetoleaf.beans.Feriado;
+import com.github.projetoleaf.repositories.FeriadoRepository;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

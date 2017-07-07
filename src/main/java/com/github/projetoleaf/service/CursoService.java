@@ -1,7 +1,8 @@
 package com.github.projetoleaf.service;
 
 import java.util.List;
-import com.github.projetoleaf.data.Curso;
+
+import com.github.projetoleaf.beans.Curso;
 
 public interface CursoService {
 	

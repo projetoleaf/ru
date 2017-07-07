@@ -1,7 +1,8 @@
 package com.github.projetoleaf.service;
 
 import java.util.List;
-import com.github.projetoleaf.data.Feriado;
+
+import com.github.projetoleaf.beans.Feriado;
 
 public interface FeriadoService {
 	

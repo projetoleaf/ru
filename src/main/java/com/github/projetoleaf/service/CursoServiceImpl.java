@@ -1,7 +1,8 @@
 package com.github.projetoleaf.service;
 
-import com.github.projetoleaf.data.Curso;
-import com.github.projetoleaf.repository.CursoRepository;
+import com.github.projetoleaf.beans.Curso;
+import com.github.projetoleaf.repositories.CursoRepository;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

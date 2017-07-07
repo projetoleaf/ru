@@ -16,8 +16,7 @@
 				<div class="panel-heading text-center subtitulo">Insira seus
 					dados para cadastro</div>
 				<div class="panel-body">
-					<form:form method="POST" action="salvar" class="form-horizontal"
-						modelAttribute="usuario">
+					<form:form method="POST" action="salvar" class="form-horizontal" modelAttribute="usuario">
 						<div class="form-group">
 							<label for="cpf" class="col-sm-3 control-label">CPF</label>
 							<div class="col-sm-6">
@@ -65,25 +64,26 @@
 						<div class="form-group">
 							<label for="curso" class="col-sm-3 control-label">Curso</label>
 							<div class="col-sm-6">
-								<form:select path="id_curso" class="btn btn-default"
-									required="required">
-									<option value="0">-</option>
-									<option value="1">Ciências da Computação - Integral</option>
-									<option value="2">Arquitetura - Diurno</option>
-									<option value="3">Geografia - Noturno</option>
+							
+								<form:select path="curso" class="form-control">
+								   <form:option value="" label="----- Selecione uma categoria -----"/>
+                                   <form:options items="${cursos}" itemLabel="descricao" itemValue="id" />
 								</form:select>
+							
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="tipo" class="col-sm-3 control-label">Tipo</label>
 							<div class="col-sm-6">
-								<form:select path="id_tipo" class="btn btn-default"
+							
+								<%-- <form:select path="tipo" class="btn btn-default"
 									required="required">
+									<c:forEach var="lista" items="${tipos}" varStatus="status">
 									<option value="0">-</option>
-									<option value="1">Tradicional</option>
-									<option value="2">Vegano</option>
-									<option value="3">Vegetariano</option>
-								</form:select>
+									<option value="${lista.descricao}"></option>
+									</c:forEach>	
+								</form:select> --%>
+							
 							</div>
 						</div>
 						<div class="text-center">

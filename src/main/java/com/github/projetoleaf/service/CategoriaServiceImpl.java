@@ -1,7 +1,8 @@
 package com.github.projetoleaf.service;
 
-import com.github.projetoleaf.data.Categoria;
-import com.github.projetoleaf.repository.CategoriaRepository;
+import com.github.projetoleaf.beans.Categoria;
+import com.github.projetoleaf.repositories.CategoriaRepository;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
