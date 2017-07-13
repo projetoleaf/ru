@@ -1,6 +1,10 @@
 package com.github.projetoleaf.controllers;
 
+import javax.validation.Valid;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,85 +13,76 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.github.projetoleaf.beans.Curso;
-import com.github.projetoleaf.dto.CursoDTO;
-import com.github.projetoleaf.service.CursoService;
+import com.github.projetoleaf.repositories.CursoRepository;
 
 @Controller
+@RequestMapping("/cursos")
 public class CursoController {
 	
 	@Autowired
-    private CursoService cursoService;
+    private CursoRepository repository;
 	
-	@GetMapping("/manutencao/cursos/pesquisar")
-	public String tipo(Model model) {
-		model.addAttribute("cursos", cursoService.listar());
-		return "/manutencao/cursos/pesquisar";
+	@Autowired
+    private MessageSource config;
+	
+	Logger log = Logger.getLogger(CursoController.class);
+	
+	@GetMapping
+	public String pesquisarCurso(Model model) {
+		model.addAttribute("listagemCursos", repository.findAll(new Sort(Sort.Direction.ASC, "descricao")));
+		return "/cursos/pesquisar";
 	}
 	
-	@GetMapping("/manutencao/cursos/incluir")
-	public String adicionarTipo(Model model) {
-		model.addAttribute("curso", new CursoDTO());
-		return "/manutencao/cursos/incluir";
+	@GetMapping("/incluir")
+	public String incluirCurso(Model model) {
+		model.addAttribute("curso", new Curso());
+		return abrirCadastroCurso(model);
 	}
 	
-	@GetMapping(value="/manutencao/cursos/editar/{id}")
-    public ModelAndView editarCurso(@PathVariable Integer id, Model model) {
-        Curso curso = cursoService.buscar(id);
-
-        CursoDTO cursoDTO = new CursoDTO();
-        cursoDTO.setId(curso.getId());
-        cursoDTO.setDescricao(curso.getDescricao());
-        cursoDTO.setPeriodo(curso.getPeriodo());
-        
-        return new ModelAndView("/manutencao/cursos/editar","command", cursoDTO);
+	@GetMapping("/editar/{id}")
+    public String editarCurso(@PathVariable Integer id, Model model) {
+        Curso curso = repository.findOne(id);
+        model.addAttribute("curso", curso);
+        return abrirCadastroCurso(model);
     }
 	
-	@PostMapping(value="/manutencao/cursos/salvar")
-    public String salvarCurso(@ModelAttribute("curso") CursoDTO cursoDTO, BindingResult result) {
-		Curso curso;
-
-        if (cursoDTO.getId() != null) {
-        	curso = cursoService.buscar(cursoDTO.getId());
-        } else {
-        	curso = new Curso();
-        }
-        
-        curso.setDescricao(cursoDTO.getDescricao());        
-        curso.setPeriodo(cursoDTO.getPeriodo());
-        
-        cursoService.incluir(curso);
-        
-        return "redirect:/manutencao/cursos/pesquisar";
-
+	public String abrirCadastroCurso(Model model) {
+        return "/cursos/cadastro";
     }
-	 
-	@PostMapping(value="/manutencao/cursos/incluir")
-    public String incluirCurso(@ModelAttribute CursoDTO cursoDTO, BindingResult result) {
-		Curso curso;
-
-        if (cursoDTO.getId() != null) {
-        	curso = cursoService.buscar(cursoDTO.getId());
-        } else {
-        	curso = new Curso();
+	
+	@PostMapping("/salvar")
+    public String salvarCurso(Model model, @ModelAttribute("curso") @Valid Curso curso, BindingResult result) {
+		try {
+            if (!result.hasErrors()) {
+                Curso cursoAtualizado = repository.save(curso);
+                log.info(cursoAtualizado.toString() + " gravada com sucesso");
+                model.addAttribute("mensagemInfo", config.getMessage("gravadoSucesso", new Object[] { "o curso" }, null));
+            }
+        }
+        catch (Exception ex) {
+            log.error("Erro de processamento", ex);
+            model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
         }
         
-        curso.setDescricao(cursoDTO.getDescricao());
-        curso.setPeriodo(cursoDTO.getPeriodo());
-        
-        cursoService.incluir(curso);
-        
-        return "redirect:/manutencao/cursos/pesquisar";
+		return abrirCadastroCurso(model);
 
     }
 	
-	@PostMapping(value="/manutencao/cursos/excluir/{id}")
-    public String excluirCurso(@PathVariable Integer id) {		
-		cursoService.excluir(id);
+	@GetMapping("/excluir/{id}")
+    public String excluirCurso(RedirectAttributes ra, @PathVariable Integer id) {		
+		try {
+            repository.delete(id);
+            log.info("Curso #" + id + " excluído com sucesso");
+            ra.addFlashAttribute("mensagemInfo", config.getMessage("excluidoSucesso", new Object[] { "o curso" }, null));
+        }
+        catch (Exception ex) {
+            log.error("Erro de processamento", ex);
+            ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+        }
 
-        return "redirect:/manutencao/cursos/pesquisar";
+        return "redirect:/cursos";
     }
 	
 }

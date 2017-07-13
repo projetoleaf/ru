@@ -1,14 +1,20 @@
 package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+@Data
+@EqualsAndHashCode(of = { "subsidiada", "custo" })
+@ToString(of = { "subsidiada", "custo" })
 @Entity
 @Table(name = "quantidade_refeicao")
 public class QuantidadeRefeicao implements Serializable {
@@ -17,61 +23,14 @@ public class QuantidadeRefeicao implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
 	private Integer id;
 	
-	@Column
+	@NotNull
+	@Column(name = "subsidiada")
 	private Integer subsidiada;
 	
-	@Column
+	@NotNull
+	@Column(name = "custo")
 	private Integer	custo;
-	
-	public Integer getId() {
-		return id;
-	}
-	
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	
-	public Integer getSubsidiada() {
-		return subsidiada;
-	}
-	
-	public void setSubsidiada(Integer subsidiada) {
-		this.subsidiada = subsidiada;
-	}
-	
-	public Integer getCusto() {
-		return custo;
-	}
-	
-	public void setCusto(Integer custo) {
-		this.custo = custo;
-	}
-	
-	@Override
-	public int hashCode() {
-		int hash = 5;
-		hash = 53 * hash + Objects.hashCode(this.id);
-		return hash;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final QuantidadeRefeicao other = (QuantidadeRefeicao) obj;
-		if (!Objects.equals(this.id, other.id)) {
-			return false;
-		}
-		return true;
-	}
-	
 }

@@ -1,6 +1,10 @@
 package com.github.projetoleaf.controllers;
 
+import javax.validation.Valid;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,64 +12,77 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
-
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.github.projetoleaf.repositories.TipoRepository;
 import com.github.projetoleaf.beans.Tipo;
-import com.github.projetoleaf.dto.TipoDTO;
-import com.github.projetoleaf.service.TipoService;
 
 @Controller
+@RequestMapping("/tipos")
 public class TipoController {
 	
 	@Autowired
-    private TipoService tipoService;
+    private TipoRepository repository;
 	
-	@GetMapping("/manutencao/tipos/pesquisar")
-	public String pesquisar(Model model) {
-		model.addAttribute("tipos", tipoService.listar());
-		return "/manutencao/tipos/pesquisar";
+	@Autowired
+    private MessageSource config;
+	
+	Logger log = Logger.getLogger(TipoController.class);
+	
+	@GetMapping
+	public String pesquisarTipo(Model model) {
+		model.addAttribute("listagemTipos", repository.findAll(new Sort(Sort.Direction.ASC, "descricao")));
+		return "/tipos/pesquisar";
 	}
 	
-	@GetMapping("/manutencao/tipos/incluir")
-	public String incluir(Model model) {
-		model.addAttribute("tipo", new TipoDTO());
-		return "/manutencao/tipos/incluir";
+	@GetMapping("/incluir")
+	public String incluirTipo(Model model) {
+		model.addAttribute("tipo", new Tipo());
+		return abrirCadastroTipo(model);
 	}
 	
-	@GetMapping(value="/manutencao/tipos/editar/{id}")
-    public ModelAndView editar(@PathVariable Integer id, Model model) {
-        Tipo tipo = tipoService.buscar(id);
-
-        TipoDTO tipoDTO = new TipoDTO();
-        tipoDTO.setId(tipo.getId());
-        tipoDTO.setDescricao(tipo.getDescricao());
-        
-        return new ModelAndView("/manutencao/tipos/editar","command", tipoDTO);
+	@GetMapping("/editar/{id}")
+    public String editarTipo(@PathVariable Integer id, Model model) {
+        Tipo tipo = repository.findOne(id);
+        model.addAttribute("tipo", tipo);
+        return abrirCadastroTipo(model);
+    }
+	
+	public String abrirCadastroTipo(Model model) {
+        return "/tipos/cadastro";
     }
 	 
-	@PostMapping(value="/manutencao/tipos/salvar")
-    public String salvar(@ModelAttribute("tipo") TipoDTO tipoDTO, BindingResult result) {
-        Tipo tipo;
-
-        if (tipoDTO.getId() != null) {
-            tipo = tipoService.buscar(tipoDTO.getId());
-        } else {
-        	tipo = new Tipo();
+	@PostMapping("/salvar")
+    public String salvarTipo(Model model, @ModelAttribute("tipo") @Valid Tipo tipo, BindingResult result) {
+		try {
+            if (!result.hasErrors()) {
+                Tipo tipoAtualizado = repository.save(tipo);
+                log.info(tipoAtualizado.toString() + " gravado com sucesso");
+                model.addAttribute("mensagemInfo", config.getMessage("gravadoSucesso", new Object[] { "o tipo" }, null));
+            }
         }
-        
-        tipo.setDescricao(tipoDTO.getDescricao());
-        
-        tipoService.incluir(tipo);
-        
-        return "redirect:/manutencao/tipos/pesquisar";
+        catch (Exception ex) {
+            log.error("Erro de processamento", ex);
+            model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+        }
+		
+        return abrirCadastroTipo(model);
 
     }
 	
-	@PostMapping(value="/manutencao/tipos/excluir/{id}")
-    public String excluir(@PathVariable Integer id) {		
-		tipoService.excluir(id);
+	@GetMapping("/excluir/{id}")
+    public String excluirTipo(RedirectAttributes ra, @PathVariable Integer id) {		
+		try {
+            repository.delete(id);
+            log.info("Tipo #" + id + " excluído com sucesso");
+            ra.addFlashAttribute("mensagemInfo", config.getMessage("excluidoSucesso", new Object[] { "o tipo" }, null));
+        }
+        catch (Exception ex) {
+            log.error("Erro de processamento", ex);
+            ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+        }
 
-        return "redirect:/manutencao/tipos/pesquisar";
+        return "redirect:/tipos";
     }
 	
 }

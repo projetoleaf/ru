@@ -4,13 +4,11 @@
 <head>
 <meta name="header" content="Login" />
 <title>Login</title>
-<link href="<c:url value="/resources/css/ru.css"/>" rel="stylesheet" />
 </head>
 <body>
 	<div class="row">
 		<div class="col-sm-4 col-sm-offset-4">
 			<div class="panel panel-primary">
-				<div class="panel-heading text-center subtitulo">Login</div>
 				<div class="panel-body">
 					<form method="post">
 						<div class="form-group">

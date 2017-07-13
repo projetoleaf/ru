@@ -1,16 +1,24 @@
 package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+@Data
+@EqualsAndHashCode(of = { "usuario", "categoria", "ativo" })
+@ToString(of = { "usuario", "categoria", "ativo" })
 @Entity
 @Table(name = "usuario_categoria")
 public class UsuarioCategoria implements Serializable {
@@ -19,74 +27,22 @@ public class UsuarioCategoria implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
 	private Integer id;
 	
+	@NotNull
 	@OneToOne
-	@JoinColumn(name = "id")
+	@Enumerated(EnumType.STRING)
+	@JoinColumn(name = "id_usuario", referencedColumnName = "id")
 	private Usuario usuario;
 	
+	@NotNull
 	@OneToOne
-	@JoinColumn(name = "id")
+	@Enumerated(EnumType.STRING)
+	@JoinColumn(name = "id_categoria", referencedColumnName = "id")
 	private Categoria categoria;
 	
-	@Column
+	@NotNull
+	@Column(name = "ativo")
 	private Integer ativo;
-	
-	public Integer getId() {
-		return id;
-	}
-	
-	public void setId(Integer id) {
-		this.id = id;
-	}	
-	
-	public Usuario getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-
-	public Categoria getCategoria() {
-		return categoria;
-	}
-
-	public void setCategoria(Categoria categoria) {
-		this.categoria = categoria;
-	}
-
-	public Integer getAtivo() {
-		return ativo;
-	}
-
-	public void setAtivo(Integer ativo) {
-		this.ativo = ativo;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = 5;
-		hash = 53 * hash + Objects.hashCode(this.id);
-		return hash;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final UsuarioCategoria other = (UsuarioCategoria) obj;
-		if (!Objects.equals(this.id, other.id)) {
-			return false;
-		}
-		return true;
-	}
-	
 }

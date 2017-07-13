@@ -19,8 +19,8 @@ CREATE TABLE categoria
 (	
 	id SERIAL NOT NULL,
 	descricao CHARACTER VARYING(100) NOT NULL,
-	valor_sem_subsidio DECIMAL NOT NULL,
-	valor_com_subsidio DECIMAL NOT NULL,
+	valor_sem_subsidio numeric(15,2) NOT NULL,
+	valor_com_subsidio numeric(15,2) NOT NULL,
 
 	PRIMARY KEY(id)
 );
@@ -59,7 +59,6 @@ CREATE TABLE usuario
 	id_tipo INTEGER NOT NULL,
 	id_curso INTEGER NOT NULL,
 	data_nascimento DATE NOT NULL,
-	excluido char NOT NULL,
 	
 	PRIMARY KEY(id),
 	CONSTRAINT fk_id_tipo FOREIGN KEY(id_tipo) REFERENCES tipo(id),

@@ -1,6 +1,8 @@
 package com.github.projetoleaf.controllers;
 
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,72 +12,76 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.github.projetoleaf.beans.Categoria;
-import com.github.projetoleaf.dto.CategoriaDTO;
 import com.github.projetoleaf.repositories.CategoriaRepository;
-import com.github.projetoleaf.service.CategoriaService;
+import org.apache.log4j.Logger;
 
 @Controller
-@RequestMapping("/manutencao/categorias")
+@RequestMapping("/categorias")
 public class CategoriaController {
 	
-	/*@Autowired
-    private CategoriaService categoriaService;*/
-	
+	@Autowired
 	private CategoriaRepository repository;
 	
-	@GetMapping("/pesquisar")
-	public String pesquisar(Model model) {
-		model.addAttribute("categorias", repository.findAll(new Sort(Sort.Direction.ASC, "descricao")));
-		return "/manutencao/categorias/pesquisar";
+	@Autowired
+    private MessageSource config;
+	
+	Logger log = Logger.getLogger(CategoriaController.class);
+	
+	@GetMapping
+	public String pesquisarCategoria(Model model) {
+		model.addAttribute("listagemCategorias", repository.findAll(new Sort(Sort.Direction.ASC, "descricao")));
+		return "/categorias/pesquisar";
 	}
 	
 	@GetMapping("/incluir")
-	public String incluir(Model model) {
-		model.addAttribute("categoria", new CategoriaDTO());
-		return "/manutencao/categorias/incluir";
+	public String incluirCategoria(Model model) {
+		model.addAttribute("categoria", new Categoria());
+		return abrirCadastroCategoria(model);
 	}
 	
-	@GetMapping(value="/editar/{id}")
-    public ModelAndView editar(@PathVariable Integer id, Model model) {
+	@GetMapping("/editar/{id}")
+    public String editarCategoria(@PathVariable Integer id, Model model) {
         Categoria categoria = repository.findOne(id);
-
-        CategoriaDTO categoriaDTO = new CategoriaDTO();
-        categoriaDTO.setId(categoria.getId());
-        categoriaDTO.setDescricao(categoria.getDescricao());
-        categoriaDTO.setValor_sem_subsidio(categoria.getValor_sem_subsidio());
-        categoriaDTO.setValor_com_subsidio(categoria.getValor_com_subsidio());
-        
-        return new ModelAndView("/manutencao/categorias/editar","command", categoriaDTO);
+        model.addAttribute("categoria", categoria);
+        return abrirCadastroCategoria(model);
     }
 	
-	@PostMapping(value="/salvar")
-    public String salvar(@ModelAttribute("categoria") CategoriaDTO categoriaDTO, BindingResult result) {
-        Categoria categoria;
-
-        if (categoriaDTO.getId() != null) {
-        	categoria = repository.findOne(categoriaDTO.getId());
-        } else {
-        	categoria = new Categoria();
+	public String abrirCadastroCategoria(Model model) {
+        return "/categorias/cadastro";
+    }
+	
+	@PostMapping("/salvar")
+    public String salvarCategoria(Model model, @ModelAttribute("categoria") @Valid Categoria categoria, BindingResult result) {
+		try {
+            if (!result.hasErrors()) {
+                Categoria categoriaAtualizada = repository.save(categoria);
+                log.info(categoriaAtualizada.toString() + " gravada com sucesso");
+                model.addAttribute("mensagemInfo", config.getMessage("gravadoSucesso", new Object[] { "a categoria" }, null));
+            }
         }
-        
-        categoria.setDescricao(categoriaDTO.getDescricao());
-        categoria.setValor_sem_subsidio(categoriaDTO.getValor_sem_subsidio());
-        categoria.setValor_com_subsidio(categoriaDTO.getValor_com_subsidio());
-        
-        repository.save(categoria);
-        
-        return "redirect:/manutencao/categorias/pesquisar";
-
+        catch (Exception ex) {
+            log.error("Erro de processamento", ex);
+            model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+        }
+		
+        return abrirCadastroCategoria(model);
     }
 	
-	@PostMapping(value="/excluir/{id}")
-    public String excluir(@PathVariable Integer id) {		
-		repository.delete(id);
-
-		return "redirect:/manutencao/categorias/pesquisar";
+	@GetMapping("/excluir/{id}")
+    public String excluirCategoria(RedirectAttributes ra, @PathVariable Integer id) {		
+		try {
+            repository.delete(id);
+            log.info("Categoria #" + id + " excluída com sucesso");
+            ra.addFlashAttribute("mensagemInfo", config.getMessage("excluidoSucesso", new Object[] { "a categoria" }, null));
+        }
+        catch (Exception ex) {
+            log.error("Erro de processamento", ex);
+            ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+        }
+	
+		return "redirect:/categorias";
     }
 	
 }

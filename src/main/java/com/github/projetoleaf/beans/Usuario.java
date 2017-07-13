@@ -2,10 +2,17 @@ package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+@Data
+@EqualsAndHashCode(of = { "cpf", "email", "senha", "nome", "matricula", "curso", "tipo", "dataNascimento" })
+@ToString(of = { "cpf", "email", "senha", "nome", "matricula", "curso", "tipo", "dataNascimento" })
 @Entity
 @Table(name = "usuario")
 public class Usuario implements Serializable {
@@ -14,142 +21,44 @@ public class Usuario implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@Column
+	@NotBlank
+	@Column(name = "cpf")
 	private String cpf;
 
-	@Column
+	@NotBlank
+	@Column(name = "email")
 	private String email;
 
-	@Column
+	@NotBlank
+	@Column(name = "senha")
 	private String senha;
 
-	@Column
+	@NotBlank
+	@Column(name = "nome")
 	private String nome;
 
-	@Column
+	@NotNull
+	@Column(name = "matricula")
 	private Integer matricula;
 
-	@OneToOne
-	@JoinColumn(name = "id")
+	@NotNull
+	@ManyToOne
+	@Enumerated(EnumType.STRING)
+    @JoinColumn(name = "id_curso", referencedColumnName = "id")
 	private Curso curso;
 
+	@NotNull
 	@OneToOne
-	@JoinColumn(name = "id")
+	@Enumerated(EnumType.STRING)
+    @JoinColumn(name = "id_tipo", referencedColumnName = "id")
 	private Tipo tipo;	
 	
+	@NotNull
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	@Column	
-	private Date data_nascimento;
-
-	@Column
-	private String excluido;
-
-	public String getExcluido() {
-		return excluido;
-	}
-
-	public void setExcluido(String excluido) {
-		this.excluido = excluido;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public Integer getMatricula() {
-		return matricula;
-	}
-
-	public void setMatricula(Integer matricula) {
-		this.matricula = matricula;
-	}
-		
-	public Integer getCurso() {
-		return curso.getId();
-	}
-
-	public void setCurso(Integer id) {
-		this.curso.setId(id);
-	}
-
-	public Integer getTipo() {
-		return tipo.getId();
-	}
-
-	public void setTipo(Integer id) {
-		this.tipo.setId(id);
-	}
-
-	public Date getData_nascimento() {
-		return data_nascimento;
-	}
-
-	public void setData_nascimento(Date data_nascimento) {
-		this.data_nascimento = data_nascimento;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = 5;
-		hash = 53 * hash + Objects.hashCode(this.id);
-		return hash;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final Usuario other = (Usuario) obj;
-		if (!Objects.equals(this.id, other.id)) {
-			return false;
-		}
-		return true;
-	}
-
+	@Column(name = "data_nascimento")	
+	private Date dataNascimento;
 }

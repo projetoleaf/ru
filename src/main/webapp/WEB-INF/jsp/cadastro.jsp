@@ -1,109 +1,137 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://github.com/dandelion" prefix="dandelion"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+
+<dandelion:bundle includes="jquery.validation,jquery.inputmask,jquery.datetimepicker" />
+
 <html>
 <head>
 <meta name="header" content="Cadastro" />
 <title>Cadastro</title>
-<link href="<c:url value="/resources/css/ru.css"/>" rel="stylesheet" />
-<link href="<c:url value="/resources/css/bootstrap-datepicker3.min.css"/>" rel="stylesheet" />
 </head>
 <body>
-	<div class="row pt">
-		<div class="col-sm-8 col-sm-offset-2">
-			<div class="panel panel-primary">
-				<div class="panel-heading text-center subtitulo">Insira seus
-					dados para cadastro</div>
-				<div class="panel-body">
-					<form:form method="POST" action="salvar" class="form-horizontal" modelAttribute="usuario">
-						<div class="form-group">
-							<label for="cpf" class="col-sm-3 control-label">CPF</label>
-							<div class="col-sm-6">
-								<form:input type="text" class="form-control" path="cpf"
-									placeholder="Digite seu CPF" required="required" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="cpf" class="col-sm-3 control-label">Email</label>
-							<div class="col-sm-6">
-								<form:input type="email" class="form-control" path="email"
-									placeholder="Digite seu email" required="required" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="senha" class="col-sm-3 control-label">Senha</label>
-							<div class="col-sm-6">
-								<form:input type="password" class="form-control" path="senha"
-									placeholder="Digite sua senha" required="required" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="nome" class="col-sm-3 control-label">Nome</label>
-							<div class="col-sm-6">
-								<form:input type="text" class="form-control" path="nome"
-									placeholder="Digite seu nome completo" required="required" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="data_nascimento" class="col-sm-3 control-label">Data
-								de nascimento</label>
-							<div class="col-sm-6">
-								<form:input type="text" class="form-control"
-									path="data_nascimento" required="required"
-									placeholder="dd/mm/aaaa" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="matricula" class="col-sm-3 control-label">Matricula</label>
-							<div class="col-sm-6">
-								<form:input type="text" class="form-control" path="matricula"
-									placeholder="Digite sua matricula" required="required" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="curso" class="col-sm-3 control-label">Curso</label>
-							<div class="col-sm-6">
-							
-								<form:select path="curso" class="form-control">
-								   <form:option value="" label="----- Selecione uma categoria -----"/>
-                                   <form:options items="${cursos}" itemLabel="descricao" itemValue="id" />
-								</form:select>
-							
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="tipo" class="col-sm-3 control-label">Tipo</label>
-							<div class="col-sm-6">
-							
-								<%-- <form:select path="tipo" class="btn btn-default"
-									required="required">
-									<c:forEach var="lista" items="${tipos}" varStatus="status">
-									<option value="0">-</option>
-									<option value="${lista.descricao}"></option>
-									</c:forEach>	
-								</form:select> --%>
-							
-							</div>
-						</div>
-						<div class="text-center">
-							<button type="submit" class="btn btn-primary">
-								<span class="glyphicon glyphicon-send" aria-hidden="true"></span>
-								Enviar
-							</button>
-						</div>
-					</form:form>
-				</div>
-			</div>
-		</div>
-	</div>
-	<script type="text/javascript"
-		src="<c:url value="/resources/js/jquery-3.2.1.min.js" />"></script>
-	<script type="text/javascript"
-		src="<c:url value="/resources/js/bootstrap-datepicker.min.js" />"></script>
-	<script type="text/javascript"
-		src="<c:url value="/resources/js/bootstrap-datepicker.pt-BR.min.js" />"></script>
-	<script type="text/javascript"
-		src="<c:url value="/resources/js/data.js" />"></script>
+	<script type="text/javascript">
+	  $(document).ready(function() {
+	      var formValidator = $("#usuario").validate({
+	          rules : {
+	        	  cpf : { required : true },
+	        	  email : { required : true },
+	        	  senha : { required : true },
+	        	  nome : { required : true },
+	              dataNascimento : { required : true },
+	              matricula : { required : true },
+	              tipo : { required : true },	              
+	              curso : { required : true }
+	          }
+	      });
+	      $("#cpf").focus();
+	      $("#div-data-nascimento").datetimepicker({locale: "pt-br", format: "DD/MM/YYYY"});
+	      $("#dataNascimento").inputmask("99/99/9999");
+	      $("#cpf").inputmask("999.999.999-99");
+	  });
+	</script>
+	<form:form action="salvar" modelAttribute="usuario">
+	    <form:hidden path="id" />
+	    <div class="panel panel-primary col-xs-12 col-md-8 col-md-offset-2">
+	      <div class="panel-body">
+	        <div class="page-header" style="margin-top: 10px;">
+	          <jsp:include page="/layouts/modal-mensagens.jsp"><jsp:param name="model" value="usuario"/></jsp:include>
+	          <h3>
+	            <strong>Cadastro</strong>
+	          </h3>
+	        </div>
+	        <div class="row">
+	          <spring:bind path="cpf">
+	            <div class="form-group col-xs-12 col-md-6 ${status.error ? 'has-error' : ''}">
+	              <label for="cpf" class="control-label">CPF</label>
+	              <form:input path="cpf" class="form-control" placeholder="Digite o seu CPF"/>
+	              <span class="has-error"><form:errors path="cpf" class="help-block"/></span>
+	            </div>
+	          </spring:bind>
+	         </div>
+	         <div class="row">
+	          <spring:bind path="email">
+	            <div class="form-group col-xs-12 col-md-6 ${status.error ? 'has-error' : ''}">
+	              <label for="email" class="control-label">Email</label>
+	              <form:input type="email" path="email" class="form-control" placeholder="Digite o seu email"/>
+	              <span class="has-error"><form:errors path="email" class="help-block"/></span>
+	            </div>
+	          </spring:bind>
+	          <spring:bind path="senha">
+	            <div class="form-group col-xs-12 col-md-6 ${status.error ? 'has-error' : ''}">
+	              <label for="senha" class="control-label">Senha</label>
+	              <form:input type="password" path="senha" class="form-control" placeholder="Digite a sua senha"/>
+	              <span class="has-error"><form:errors path="senha" class="help-block"/></span>
+	            </div>
+	          </spring:bind>
+	         </div>
+	         <div class="row">
+	          <spring:bind path="nome">
+	            <div class="form-group col-xs-12 col-md-6 ${status.error ? 'has-error' : ''}">
+	              <label for="nome" class="control-label">Nome</label>
+	              <form:input path="nome" class="form-control" placeholder="Digite o seu nome completo"/>
+	              <span class="has-error"><form:errors path="nome" class="help-block"/></span>
+	            </div>
+	          </spring:bind>
+	          <spring:bind path="dataNascimento">
+	            <div class="form-group col-xs-12 col-md-3">
+	              <label for="dataNascimento" class="control-label">Data de nascimento</label>
+		          <div class="input-group date" id="div-data-nascimento">
+		          	<form:input path="dataNascimento" class="form-control" extra="placeholder=Data de nascimento" />
+		            <span class="input-group-addon">
+		                <span class="glyphicon glyphicon-calendar"></span>
+		            </span>
+		          </div>
+	            </div>
+	          </spring:bind>
+	          <spring:bind path="matricula">
+	            <div class="form-group col-xs-12 col-md-3 ${status.error ? 'has-error' : ''}">
+	              <label for="matricula" class="control-label">Matricula</label>
+	              <form:input path="matricula" class="form-control" placeholder="Digite a sua matricula"/>
+	              <span class="has-error"><form:errors path="matricula" class="help-block"/></span>
+	            </div>
+	          </spring:bind>
+	         </div>
+	         <div class="row">
+	          <spring:bind path="tipo">
+	            <div class="form-group col-xs-12 col-md-3">
+	              <label for="tipo" class="control-label">Tipo</label>
+	              <form:select path="tipo" class="form-control">
+				  	<form:option value="" label="----- Selecione um tipo -----"/>
+	                <form:options items="${tipos}" itemLabel="descricao" itemValue="id" />
+				  </form:select>
+	            </div>
+	          </spring:bind>
+	          <spring:bind path="curso">
+	            <div class="form-group col-xs-12 col-md-6">
+	              <label for="curso" class="control-label">Curso</label>
+	              <form:select path="curso" class="form-control">
+				  	<form:option value="" label="----- Selecione um curso -----"/>
+	                <form:options items="${cursos}" itemLabel="descricao" itemValue="id" />
+				  </form:select>
+	            </div>
+	          </spring:bind>
+	          <spring:bind path="curso">
+	            <div class="form-group col-xs-12 col-md-3">
+	             <label for="curso" class="control-label">Período</label>
+	              <form:select path="curso" class="form-control">
+	                <option value="">----- Selecione um período -----</option>
+					<option value="Diurno">Diurno</option>
+					<option value="Integral">Integral</option>
+					<option value="Matutino">Matutino</option>
+					<option value="Vespertino">Vespertino</option>
+				  	<option value="Noturno">Noturno</option>
+				  </form:select>
+	            </div>
+	          </spring:bind>
+	         </div>
+	      </div>
+	      <div class="form-group col-x-12 col-md-12" style="text-align: center; margin-top: 25px;">
+	        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Salvar</button>
+	      </div>
+	    </div>
+	</form:form>
 </body>
 </html>

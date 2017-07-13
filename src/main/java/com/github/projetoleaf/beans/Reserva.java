@@ -1,15 +1,24 @@
 package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
-import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+@Data
+@EqualsAndHashCode(of = { "status", "usuario" })
+@ToString(of = { "status", "usuario" })
 @Entity
 @Table(name = "reserva")
 public class Reserva implements Serializable {
@@ -18,63 +27,18 @@ public class Reserva implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
 	private Integer id;
 	
+	@NotNull
 	@OneToOne
-	@JoinColumn(name = "id")
+	@Enumerated(EnumType.STRING)
+	@JoinColumn(name = "id_status", referencedColumnName = "id")
 	private Status status;
 	
+	@NotNull
 	@OneToOne
-	@JoinColumn(name = "id")
+	@Enumerated(EnumType.STRING)
+	@JoinColumn(name = "id_usuario", referencedColumnName = "id")
 	private Usuario usuario;
-	
-	public Integer getId() {
-		return id;
-	}
-	
-	public void setId(Integer id) {
-		this.id = id;
-	}	
-	
-	public Status getStatus() {
-		return status;
-	}
-	
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-	
-	public Usuario getUsuario() {
-		return usuario;
-	}
-	
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-	
-	@Override
-	public int hashCode() {
-		int hash = 5;
-		hash = 53 * hash + Objects.hashCode(this.id);
-		return hash;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final Reserva other = (Reserva) obj;
-		if (!Objects.equals(this.id, other.id)) {
-			return false;
-		}
-		return true;
-	}
-	
 }

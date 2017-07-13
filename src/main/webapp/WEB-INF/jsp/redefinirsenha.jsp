@@ -5,14 +5,11 @@
 <head>
 <meta name="header" content="Redefinir Senha" />
 <title>Redefinir Senha</title>
-<link href="<c:url value="/resources/css/ru.css"/>" rel="stylesheet" />
 </head>
 <body>
 	<div class="row">
 		<div class="col-sm-4 col-sm-offset-4">
 			<div class="panel panel-primary">
-				<div class="panel-heading text-center subtitulo">Redefinir
-					Senha</div>
 				<div class="panel-body">
 					<form action="/action_page.php" id="passwordTest" name="formulario">
 						<div class="form-group">

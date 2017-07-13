@@ -1,86 +1,88 @@
 package com.github.projetoleaf.controllers;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import javax.validation.Valid;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.github.projetoleaf.repositories.FeriadoRepository;
 import com.github.projetoleaf.beans.Feriado;
-import com.github.projetoleaf.dto.FeriadoDTO;
-import com.github.projetoleaf.service.FeriadoService;
 
 @Controller
+@RequestMapping("/feriados")
 public class FeriadoController {
 	
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	    sdf.setLenient(true);
-	    binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
-	}
+	@Autowired
+    private FeriadoRepository repository;
 	
 	@Autowired
-    private FeriadoService feriadoService;
+    private MessageSource config;
 	
-	@GetMapping("/manutencao/feriados/pesquisar")
-	public String tipo(Model model) {
-		model.addAttribute("feriados", feriadoService.listar());
-		return "/manutencao/feriados/pesquisar";
+	Logger log = Logger.getLogger(FeriadoController.class);
+	
+	@GetMapping
+	public String pesquisarFeriado(Model model) {
+		model.addAttribute("listagemFeriados", repository.findAll(new Sort(Sort.Direction.ASC, "descricao")));
+		return "/feriados/pesquisar";
 	}
 	
-	@GetMapping("/manutencao/feriados/incluir")
-	public String adicionarTipo(Model model) {
-		model.addAttribute("feriado", new FeriadoDTO());
-		return "/manutencao/feriados/incluir";
+	@GetMapping("/incluir")
+	public String incluirFeriado(Model model) {
+		model.addAttribute("feriado", new Feriado());
+		return abrirCadastroFeriado(model);
 	}
 	
-	@GetMapping(value="/manutencao/feriados/editar/{id}")
-    public ModelAndView editarFeriado(@PathVariable Integer id, Model model) {
-        Feriado feriado = feriadoService.buscar(id);
-
-        FeriadoDTO feriadoDTO = new FeriadoDTO();
-        feriadoDTO.setId(feriado.getId());
-        feriadoDTO.setDescricao(feriado.getDescricao());
-        feriadoDTO.setData(feriado.getData());
-        
-        return new ModelAndView("/manutencao/feriados/editar","command", feriadoDTO);
+	@GetMapping("/editar/{id}")
+    public String editarFeriado(@PathVariable Integer id, Model model) {
+        Feriado feriado = repository.findOne(id);
+        model.addAttribute("feriado", feriado);        
+        return abrirCadastroFeriado(model);
     }
 	
-	@PostMapping(value="/manutencao/feriados/salvar")
-    public String salvarFeriado(@ModelAttribute("feriado") FeriadoDTO feriadoDTO, BindingResult result) {
-		Feriado feriado;
-
-        if (feriadoDTO.getId() != null) {
-        	feriado = feriadoService.buscar(feriadoDTO.getId());
-        } else {
-        	feriado = new Feriado();
+	public String abrirCadastroFeriado(Model model) {
+        return "/feriados/cadastro";
+    }
+	
+	@PostMapping("/salvar")
+    public String salvarFeriado(Model model, @ModelAttribute("feriado") @Valid Feriado feriado, BindingResult result) {
+		try {
+            if (!result.hasErrors()) {
+                Feriado feriadoAtualizado = repository.save(feriado);
+                log.info(feriadoAtualizado.toString() + " gravado com sucesso");
+                model.addAttribute("mensagemInfo", config.getMessage("gravadoSucesso", new Object[] { "o feriado" }, null));
+            }
         }
-        
-        feriado.setDescricao(feriadoDTO.getDescricao());
-        feriado.setData(feriadoDTO.getData());
-        
-        feriadoService.incluir(feriado);
-        
-        return "redirect:/manutencao/feriados/pesquisar";
+        catch (Exception ex) {
+            log.error("Erro de processamento", ex);
+            model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+        }
+		
+        return abrirCadastroFeriado(model);
 
     }
 	
-	@PostMapping(value="/manutencao/feriados/excluir/{id}")
-    public String excluirFeriado(@PathVariable Integer id) {		
-		feriadoService.excluir(id);
+	@PostMapping("/excluir/{id}")
+    public String excluirFeriado(RedirectAttributes ra, @PathVariable Integer id) {			
+		try {
+            repository.delete(id);
+            log.info("Feriado #" + id + " excluído com sucesso");
+            ra.addFlashAttribute("mensagemInfo", config.getMessage("excluidoSucesso", new Object[] { "o feriado" }, null));
+        }
+        catch (Exception ex) {
+            log.error("Erro de processamento", ex);
+            ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+        }
 
-        return "redirect:/manutencao/feriados/pesquisar";
+        return "redirect:/feriados";
     }
 	
 }

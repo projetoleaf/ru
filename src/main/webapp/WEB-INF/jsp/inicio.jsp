@@ -24,15 +24,7 @@
 		<br>
 		<br>
 		<legend>Área do Admin</legend>
-		<a href="categoria">Categorias</a>
-		<br>
 		<a href="consulta">Consulta</a>
-		<br>
-		<a href="curso">Cursos</a>
-		<br>
-		<a href="feriado">Feriados</a>
-		<br>
-		<a href="tipo">Tipos</a>
 		<br>
 		<a href="usuarios">Usuários</a>
 		<br>
