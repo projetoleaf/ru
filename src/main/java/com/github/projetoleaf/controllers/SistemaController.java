@@ -16,11 +16,6 @@ public class SistemaController {
 		return "inicio";
 	}
 
-	@GetMapping("/iniciousuario")
-	public String iniciousuario() {
-		return "iniciousuario";
-	}
-
 	@GetMapping("/conta")
 	public String conta() {
 		return "conta";
@@ -36,11 +31,6 @@ public class SistemaController {
 		return "reservarefeicoes";
 	}
 
-	@GetMapping("/inicioadmin")
-	public String inicioadmin() {
-		return "inicioadmin";
-	}
-
 	@GetMapping("/sobre")
 	public String sobre() {
 		return "sobre";
@@ -51,9 +41,9 @@ public class SistemaController {
 		return "transferencias";
 	}
 	
-	@GetMapping("/usuarios")
-	public String usuarios() {
-		return "usuarios";
+	@GetMapping("/clientes")
+	public String clientes() {
+		return "clientes";
 	}
 	
 	@GetMapping("/redefinirsenha")

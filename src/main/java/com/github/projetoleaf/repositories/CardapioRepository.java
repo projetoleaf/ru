@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import com.github.projetoleaf.beans.Cardapio;
 
 @Repository
-public interface CardapioRepository extends JpaRepository<Cardapio, Integer> {
+public interface CardapioRepository extends JpaRepository<Cardapio, Long> {
 
 }

@@ -1,7 +1,6 @@
 package com.github.projetoleaf.controllers;
 
 import javax.validation.Valid;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
@@ -16,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.github.projetoleaf.beans.Curso;
 import com.github.projetoleaf.repositories.CursoRepository;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequestMapping("/cursos")
 public class CursoController {
@@ -26,8 +27,6 @@ public class CursoController {
 	
 	@Autowired
     private MessageSource config;
-	
-	Logger log = Logger.getLogger(CursoController.class);
 	
 	@GetMapping
 	public String pesquisarCurso(Model model) {
@@ -42,7 +41,7 @@ public class CursoController {
 	}
 	
 	@GetMapping("/editar/{id}")
-    public String editarCurso(@PathVariable Integer id, Model model) {
+    public String editarCurso(@PathVariable Long id, Model model) {
         Curso curso = repository.findOne(id);
         model.addAttribute("curso", curso);
         return abrirCadastroCurso(model);
@@ -71,7 +70,7 @@ public class CursoController {
     }
 	
 	@GetMapping("/excluir/{id}")
-    public String excluirCurso(RedirectAttributes ra, @PathVariable Integer id) {		
+    public String excluirCurso(RedirectAttributes ra, @PathVariable Long id) {		
 		try {
             repository.delete(id);
             log.info("Curso #" + id + " excluído com sucesso");

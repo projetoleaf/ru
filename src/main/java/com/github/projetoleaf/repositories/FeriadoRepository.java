@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.github.projetoleaf.beans.Feriado;
 
 @Repository
-public interface FeriadoRepository extends JpaRepository<Feriado, Integer> {
+public interface FeriadoRepository extends JpaRepository<Feriado, Long> {
 
 }

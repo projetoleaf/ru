@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import com.github.projetoleaf.beans.Status;
 
 @Repository
-public interface StatusRepository extends JpaRepository<Status, Integer> {
+public interface StatusRepository extends JpaRepository<Status, Long> {
 
 }

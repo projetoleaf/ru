@@ -19,7 +19,7 @@
 		 $(document).ready(function() {
 		     var formValidator = $("#tipo").validate({
 		         rules : {
-		             descricao : { required : true }
+		             descricao : { required : true, maxlength : 50 }
 		         }
 		     });
 		     $("#descricao").focus();

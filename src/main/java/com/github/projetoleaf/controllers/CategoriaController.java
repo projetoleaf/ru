@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.github.projetoleaf.beans.Categoria;
 import com.github.projetoleaf.repositories.CategoriaRepository;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequestMapping("/categorias")
 public class CategoriaController {
@@ -26,8 +27,6 @@ public class CategoriaController {
 	
 	@Autowired
     private MessageSource config;
-	
-	Logger log = Logger.getLogger(CategoriaController.class);
 	
 	@GetMapping
 	public String pesquisarCategoria(Model model) {
@@ -42,7 +41,7 @@ public class CategoriaController {
 	}
 	
 	@GetMapping("/editar/{id}")
-    public String editarCategoria(@PathVariable Integer id, Model model) {
+    public String editarCategoria(@PathVariable Long id, Model model) {
         Categoria categoria = repository.findOne(id);
         model.addAttribute("categoria", categoria);
         return abrirCadastroCategoria(model);
@@ -70,7 +69,7 @@ public class CategoriaController {
     }
 	
 	@GetMapping("/excluir/{id}")
-    public String excluirCategoria(RedirectAttributes ra, @PathVariable Integer id) {		
+    public String excluirCategoria(RedirectAttributes ra, @PathVariable Long id) {		
 		try {
             repository.delete(id);
             log.info("Categoria #" + id + " excluída com sucesso");

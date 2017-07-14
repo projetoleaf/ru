@@ -7,26 +7,22 @@
 </head>
 <body>
 	<div class="col-sm-4 col-sm-offset-4 text-center">
-		<legend>Área do Usuário</legend>
-		<a href="cadastro">Cadastro</a>
-		<br>
+		<h3>Área do Cliente</h3>
+		<hr>
 		<a href="conta">Conta</a>
 		<br>
 		<a href="historicorefeicoes">Histórico</a>
-		<br>
-		<a href="login">Login</a>
-		<br>
-		<a href="redefinirsenha">Redefinir senha</a>
 		<br>
 		<a href="reservarefeicoes">Reservar</a>
 		<br>
 		<a href="transferencias">Transferências</a>
 		<br>
 		<br>
-		<legend>Área do Admin</legend>
+		<h3>Área do Admin</h3>
+		<hr>
 		<a href="consulta">Consulta</a>
 		<br>
-		<a href="usuarios">Usuários</a>
+		<a href="clientes">Clientes</a>
 		<br>
 	</div>
 </body>

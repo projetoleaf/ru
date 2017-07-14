@@ -1,7 +1,6 @@
 package com.github.projetoleaf.controllers;
 
 import javax.validation.Valid;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
@@ -15,8 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.github.projetoleaf.repositories.FeriadoRepository;
+import lombok.extern.slf4j.Slf4j;
 import com.github.projetoleaf.beans.Feriado;
 
+@Slf4j
 @Controller
 @RequestMapping("/feriados")
 public class FeriadoController {
@@ -26,8 +27,6 @@ public class FeriadoController {
 	
 	@Autowired
     private MessageSource config;
-	
-	Logger log = Logger.getLogger(FeriadoController.class);
 	
 	@GetMapping
 	public String pesquisarFeriado(Model model) {
@@ -42,7 +41,7 @@ public class FeriadoController {
 	}
 	
 	@GetMapping("/editar/{id}")
-    public String editarFeriado(@PathVariable Integer id, Model model) {
+    public String editarFeriado(@PathVariable Long id, Model model) {
         Feriado feriado = repository.findOne(id);
         model.addAttribute("feriado", feriado);        
         return abrirCadastroFeriado(model);
@@ -71,7 +70,7 @@ public class FeriadoController {
     }
 	
 	@PostMapping("/excluir/{id}")
-    public String excluirFeriado(RedirectAttributes ra, @PathVariable Integer id) {			
+    public String excluirFeriado(RedirectAttributes ra, @PathVariable Long id) {			
 		try {
             repository.delete(id);
             log.info("Feriado #" + id + " excluído com sucesso");

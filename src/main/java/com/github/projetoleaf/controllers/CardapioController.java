@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.github.projetoleaf.beans.Cardapio;
 import com.github.projetoleaf.repositories.CardapioRepository;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequestMapping("/cardapios")
 public class CardapioController {
@@ -26,8 +27,6 @@ public class CardapioController {
 	
 	@Autowired
     private MessageSource config;
-	
-	Logger log = Logger.getLogger(CardapioController.class);
 	
 	@GetMapping
 	public String pesquisarCategoria(Model model) {
@@ -42,7 +41,7 @@ public class CardapioController {
 	}
 	
 	@GetMapping("/editar/{id}")
-    public String editarCardapio(@PathVariable Integer id, Model model) {
+    public String editarCardapio(@PathVariable Long id, Model model) {
         Cardapio cardapio = repository.findOne(id);
         model.addAttribute("cardapio", cardapio);
         return abrirCadastroCardapio(model);
@@ -70,7 +69,7 @@ public class CardapioController {
     }
 	
 	@GetMapping("/excluir/{id}")
-    public String excluirCardapio(RedirectAttributes ra, @PathVariable Integer id) {		
+    public String excluirCardapio(RedirectAttributes ra, @PathVariable Long id) {		
 		try {
             repository.delete(id);
             log.info("Cardápio #" + id + " excluído com sucesso");

@@ -19,8 +19,8 @@
 		 $(document).ready(function() {
 		     var formValidator = $("#curso").validate({
 		         rules : {
-		             descricao : { required : true },
-		             periodo : { required : true }
+		             descricao : { required : true, maxlength : 100 },
+		             periodo : { required : true, maxlength : 50 }
 		         }
 		     });
 		     $("#descricao").focus();

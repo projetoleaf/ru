@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -17,18 +18,19 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = { "status", "usuario" })
-@ToString(of = { "status", "usuario" })
+@EqualsAndHashCode(of = { "status", "cliente" })
+@ToString(of = { "status", "cliente" })
 @Entity
 @Table(name = "reserva")
 public class Reserva implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 44393616612232895L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@SequenceGenerator(name = "reserva_id_seq", sequenceName = "reserva_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reserva_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 	
 	@NotNull
 	@OneToOne
@@ -39,6 +41,6 @@ public class Reserva implements Serializable {
 	@NotNull
 	@OneToOne
 	@Enumerated(EnumType.STRING)
-	@JoinColumn(name = "id_usuario", referencedColumnName = "id")
-	private Usuario usuario;
+	@JoinColumn(name = "id_cliente", referencedColumnName = "id")
+	private Cliente cliente;
 }

@@ -1,7 +1,6 @@
 package com.github.projetoleaf.controllers;
 
 import javax.validation.Valid;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
@@ -15,8 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.github.projetoleaf.repositories.StatusRepository;
+import lombok.extern.slf4j.Slf4j;
 import com.github.projetoleaf.beans.Status;
 
+@Slf4j
 @Controller
 @RequestMapping("/status")
 public class StatusController {
@@ -26,8 +27,6 @@ public class StatusController {
 	
 	@Autowired
     private MessageSource config;
-	
-	Logger log = Logger.getLogger(StatusController.class);
 	
 	@GetMapping
 	public String pesquisarStatus(Model model) {
@@ -42,7 +41,7 @@ public class StatusController {
 	}
 	
 	@GetMapping("/editar/{id}")
-    public String editarStatus(@PathVariable Integer id, Model model) {
+    public String editarStatus(@PathVariable Long id, Model model) {
         Status status = repository.findOne(id);
         model.addAttribute("status", status);
         return abrirCadastroStatus(model);
@@ -71,7 +70,7 @@ public class StatusController {
     }
 	
 	@GetMapping("/excluir/{id}")
-    public String excluirStatus(RedirectAttributes ra, @PathVariable Integer id) {		
+    public String excluirStatus(RedirectAttributes ra, @PathVariable Long id) {		
 		try {
             repository.delete(id);
             log.info("Status #" + id + " excluído com sucesso");

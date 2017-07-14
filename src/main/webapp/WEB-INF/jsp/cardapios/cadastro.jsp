@@ -20,13 +20,13 @@
 		     var formValidator = $("#cardapio").validate({
 		         rules : {
 		             data : { required : true },
-		             pratoBase : { required : true },
-		             pratoTradicional : { required : true },
-		             pratoVegetariano : { required : true },
-		             guarnicao : { required : true },
-		             salada : { required : true },
-		             sobremesa : { required : true },
-		             suco : { required : true }
+		             pratoBase : { required : true, maxlength : 50 },
+		             pratoTradicional : { required : true, maxlength : 100 },
+		             pratoVegetariano : { required : true, maxlength : 100 },
+		             guarnicao : { required : true, maxlength : 100 },
+		             salada : { required : true, maxlength : 50 },
+		             sobremesa : { required : true, maxlength : 50 },
+		             suco : { required : true, maxlength : 50 }
 		         }
 		     });
 		     $("#data").focus();

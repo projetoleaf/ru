@@ -19,9 +19,9 @@
 		 $(document).ready(function() {
 		     var formValidator = $("#categoria").validate({
 		         rules : {
-		             descricao : { required : true },
-		             valorSemSubsidio : { required : true },
-		             valorComSubsidio : { required : true }
+		             descricao : { required : true, maxlength: 100 },
+		             valorSemSubsidio : { required : true, digits : true, maxlength : 17 },
+		             valorComSubsidio : { required : true, digits : true, maxlength : 17 }
 		         }
 		     });
 		     $("#descricao").focus();
@@ -44,14 +44,14 @@
 	        <div class="page-header" style="margin-top: 10px;">
 	          <jsp:include page="/layouts/modal-mensagens.jsp"><jsp:param name="model" value="categoria"/></jsp:include>
 	          <h3>
-	            <strong>Categoria de Usuários</strong>
+	            <strong>Categoria</strong>
 	          </h3>
 	        </div>
 	        <div class="row">
 	          <spring:bind path="descricao">
 	            <div class="form-group col-xs-12 col-md-12 ${status.error ? 'has-error' : ''}">
 	              <label for="descricao" class="control-label">Descrição</label>
-	              <form:input path="descricao" class="form-control" placeholder="Digite a descrição da categoria de usuários"/>
+	              <form:input path="descricao" class="form-control" placeholder="Digite a descrição da categoria"/>
 	              <span class="has-error"><form:errors path="descricao" class="help-block"/></span>
 	            </div>
 	          </spring:bind>

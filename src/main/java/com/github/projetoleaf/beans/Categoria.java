@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
@@ -22,12 +23,13 @@ import lombok.ToString;
 @Table(name = "categoria")
 public class Categoria implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 44393616612232895L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@SequenceGenerator(name = "categoria_id_seq", sequenceName = "categoria_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categoria_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 	
 	@NotBlank
 	@Column(name = "descricao")

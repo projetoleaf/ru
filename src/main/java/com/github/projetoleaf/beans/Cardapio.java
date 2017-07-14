@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,12 +25,13 @@ import lombok.ToString;
 @Table(name = "cardapio")
 public class Cardapio implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 44393616612232895L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@SequenceGenerator(name = "cardapio_id_seq", sequenceName = "cardapio_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cardapio_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 	
 	@NotNull
 	@Temporal(TemporalType.DATE)

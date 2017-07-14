@@ -19,7 +19,7 @@
 	  $(document).ready(function() {
 	      var formValidator = $("#feriado").validate({
 	          rules : {
-	              descricao : { required : true },
+	              descricao : { required : true, maxlength : 100 },
 	              data : { required : true }
 	          }
 	      });
