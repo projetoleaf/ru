@@ -14,60 +14,56 @@
 	          </h3>
 	        </div>
 			<div class="row">
-				<div class="col-sm-4">
-					<legend class="conta">Dados Pessoais</legend>
-					<div class="form-group">
-						<label for="nome">Nome</label> <input type="text"
-							class="form-control" id="nome" placeholder="Nome" required>
+				<div class="col-sm-12">
+					<h4>Dados Pessoais</h4>
+					<div class="col-sm-4">
+						<p><b>CPF</b></p>
+						<p>XXX.XXX.XXX-XX</p>
 					</div>
-					<div class="form-group">
-						<label for="cpf">CPF</label> <input type="text"
-							class="form-control" id="cpf" placeholder="CPF" required>
+					<div class="col-sm-4">
+						<p><b>Nome</b></p>
+						<p>João Carlos de Souza</p>
 					</div>
-					<div class="form-group">
-						<label for="datanasc">Data de nascimento</label> <input
-							type="date" class="form-control" id="datanasc" required>
-					</div>
-					<div class="text-center">
-						<button type="button" class="btn btn-primary">Editar
-							dados</button>
-						<button type="button" class="btn btn-warning">Editar
-							senha</button>
-					</div>
+					<div class="col-sm-4">
+						<p><b>Data de nascimento</b></p>
+						<p>23 de Janeiro de 1987</p>
+					</div>	
 				</div>
-				<div class="col-sm-4">
-					<legend class="conta">Dados Acadêmicos</legend>
-					<div class="form-group">
-						<label for="categoria">Categoria</label> <input type="text"
-							class="form-control" id="categoria" placeholder="Categoria">
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-sm-12">
+					<h4>Dados Acadêmicos</h4>
+					<div class="col-sm-6">
+						<p><b>Matricula</b></p>
+						<p>1111111111</p>
 					</div>
-					<div class="form-group">
-						<label for="ra">RA | Matrícula</label> <input type="text"
-							class="form-control" id="ra" placeholder="RA | Matrícula">
+					<div class="col-sm-6">
+						<p><b>Categoria</b></p>
+						<p>Discente de Graduação</p>
 					</div>
-					<div class="form-group">
-						<label for="curso">Curso</label> <input type="text"
-							class="form-control" id="curso" placeholder="Curso">
+					<div class="col-sm-6">
+						<p><b>Curso</b></p>
+						<p>Ciência da Computação</p>
 					</div>
-					<div class="form-group">
-						<label for="periodo">Período</label> <input type="text"
-							class="form-control" id="periodo" placeholder="Período">
-					</div>
-					<div class="text-center">
-						<button type="button" class="btn btn-primary">Editar
-							dados</button>
-					</div>
+					<div class="col-sm-6">
+						<p><b>Período</b></p>
+						<p>Integral</p>
+					</div>	
 				</div>
-				<div class="col-sm-4">
-					<legend class="conta">Dados Financeiros</legend>
-					<div class="form-group">
-						<label for="saldo">Saldo</label> <input type="text"
-							class="form-control" id="saldo" placeholder="R$ 25,90">
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-sm-12">
+					<h4>Dados Financeiros</h4>
+					<div class="col-sm-6">
+						<p><b>Saldo</b></p>
+						<p>R$ 50,75</p>
 					</div>
-					<div class="form-group">
-						<label for="ultReserva">Última Reserva</label> <input
-							type="text" class="form-control" id="ultReserva">
-					</div>
+					<div class="col-sm-6">
+						<p><b>Última reserva</b></p>
+						<p>27 de Agosto de 2017</p>
+					</div>		
 				</div>
 			</div>
 		</div>
