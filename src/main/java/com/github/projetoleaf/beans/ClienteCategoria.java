@@ -17,11 +17,11 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = { "usuario", "categoria", "ativo" })
-@ToString(of = { "usuario", "categoria", "ativo" })
+@EqualsAndHashCode(of = { "cliente", "categoria", "ativo" })
+@ToString(of = { "cliente", "categoria", "ativo" })
 @Entity
-@Table(name = "usuario_categoria")
-public class UsuarioCategoria implements Serializable {
+@Table(name = "cliente_categoria")
+public class ClienteCategoria implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -33,8 +33,8 @@ public class UsuarioCategoria implements Serializable {
 	@NotNull
 	@OneToOne
 	@Enumerated(EnumType.STRING)
-	@JoinColumn(name = "id_usuario", referencedColumnName = "id")
-	private Usuario usuario;
+	@JoinColumn(name = "id_cliente", referencedColumnName = "id")
+	private Cliente cliente;
 	
 	@NotNull
 	@OneToOne
