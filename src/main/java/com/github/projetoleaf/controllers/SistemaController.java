@@ -5,11 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class SistemaController {
-	
-	@GetMapping("/login")
-	public String login() {
-		return "login";
-	}
 
 	@GetMapping("/inicio")
 	public String inicio() {
@@ -46,10 +41,6 @@ public class SistemaController {
 		return "clientes";
 	}
 	
-	@GetMapping("/redefinirsenha")
-	public String redefinirsenha() {
-		return "redefinirsenha";
-	}
 	
 	@GetMapping("/consulta")
 	public String consulta() {
