@@ -42,7 +42,7 @@ public class Cardapio implements Serializable {
 	private String pratoBase;
 	
 	@NotBlank
-	@Column(name = "prato_tracidional")
+	@Column(name = "prato_tradicional")
 	private String pratoTradicional;
 	
 	@NotBlank
