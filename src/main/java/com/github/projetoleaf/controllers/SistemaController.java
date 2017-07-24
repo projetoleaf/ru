@@ -16,14 +16,14 @@ public class SistemaController {
 		return "conta";
 	}
 
-	@GetMapping("/historicorefeicoes")
-	public String historicorefeicoes() {
-		return "historicorefeicoes";
+	@GetMapping("/historicoRefeicoes")
+	public String historicoRefeicoes() {
+		return "historicoRefeicoes";
 	}
 
-	@GetMapping("/reservarefeicoes")
-	public String reservarefeicoes() {
-		return "reservarefeicoes";
+	@GetMapping("/reservaRefeicoes")
+	public String reservaRefeicoes() {
+		return "reservaRefeicoes";
 	}
 
 	@GetMapping("/sobre")
@@ -41,10 +41,33 @@ public class SistemaController {
 		return "clientes";
 	}
 	
-	
-	@GetMapping("/consulta")
-	public String consulta() {
-		return "consulta";
+	@GetMapping("/reservas")
+	public String reservas() {
+		return "reservas";
 	}
 	
+	@GetMapping("/remanescentes")
+	public String remanescentes() {
+		return "remanescentes";
+	}
+	
+	@GetMapping("/creditos")
+	public String creditos() {
+		return "creditos";
+	}
+	
+	@GetMapping("/semanaAtual")
+	public String semanaAtual() {
+		return "semanaAtual";
+	}
+	
+	@GetMapping("/planilhas")
+	public String planilhas() {
+		return "planilhas";
+	}
+	
+	@GetMapping("/graficos")
+	public String graficos() {
+		return "graficos";
+	}
 }

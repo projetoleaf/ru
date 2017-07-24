@@ -24,7 +24,7 @@
 
 	<a href="${linkController}/incluir" class="float-button"><i	class="fa fa-plus"></i></a>
 
-	<datatables:table data="${listagemStatus}" row="status" id="GridDatatable" sortable="false">
+	<datatables:table data="${listagemStatus}" row="status" id="GridDatatable">
 		<datatables:column title="Descrição" property="descricao" />
 		<datatables:column title="Operações" filterable="false"	searchable="false" cssCellClass="text-center">
 			<a href="${linkController}/editar/${tipo.id}"

@@ -11,19 +11,11 @@
 		<hr>
 		<a href="conta">Conta</a>
 		<br>
-		<a href="historicorefeicoes">Histórico</a>
+		<a href="historicoRefeicoes">Histórico</a>
 		<br>
-		<a href="reservarefeicoes">Reservar</a>
+		<a href="reservaRefeicoes">Reservar</a>
 		<br>
 		<a href="transferencias">Transferências</a>
-		<br>
-		<br>
-		<h3>Área do Admin</h3>
-		<hr>
-		<a href="consulta">Consulta</a>
-		<br>
-		<a href="clientes">Clientes</a>
-		<br>
 	</div>
 </body>
 </html>

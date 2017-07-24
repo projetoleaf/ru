@@ -24,7 +24,7 @@
 
 	<a href="${linkController}/incluir" class="float-button"><i	class="fa fa-plus"></i></a>
 
-	<datatables:table data="${listagemCursos}" row="curso" id="GridDatatable" sortable="false">
+	<datatables:table data="${listagemCursos}" row="curso" id="GridDatatable">
 		<datatables:column title="Descrição" property="descricao" />
 		<datatables:column title="Período" property="periodo" />
 		<datatables:column title="Operações" filterable="false"	searchable="false" cssCellClass="text-center">

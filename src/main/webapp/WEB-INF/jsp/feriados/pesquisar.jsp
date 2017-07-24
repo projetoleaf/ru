@@ -24,8 +24,8 @@
 
 	<a href="${linkController}/incluir" class="float-button"><i	class="fa fa-plus"></i></a>
 
-	<datatables:table data="${listagemFeriados}" row="feriado" id="GridDatatable" sortable="false">
-		<datatables:column title="Data" property="data" />
+	<datatables:table data="${listagemFeriados}" row="feriado" id="GridDatatable">
+		<datatables:column title="Data" property="data" format="{0,date,dd/MM/yyyy}" sortType="date-uk" />
 		<datatables:column title="Descrição" property="descricao" />		
 		<datatables:column title="Operações" filterable="false"	searchable="false" cssCellClass="text-center">
 			<a href="${linkController}/editar/${feriado.id}"

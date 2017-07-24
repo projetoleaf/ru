@@ -13,17 +13,21 @@
             <strong>Reserva</strong>
           </h3>
         </div>
-		<h3>Selecione o(s) dia(s) que deseja reservar:</h3>
-		<br> <br>
-		<div class="text-center">
-			<input type="checkbox">&nbsp;Segunda-feira - 20/05&nbsp; <input
-				type="checkbox">&nbsp;Terça-feira - 21/05&nbsp; <input
-				type="checkbox">&nbsp;Quarta-feira - 22/05&nbsp; <input
-				type="checkbox">&nbsp;Quinta-feira - 23/05&nbsp; <input
-				type="checkbox">&nbsp;Sexta-feira - 24/05
+        
+		<h4>Selecione o(s) dia(s) que deseja reservar:</h4>
+		
+		<br/> 
+		
+		<div class="row">
+			<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Segunda-feira - 20/05 </div>
+			<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Terça-feira - 21/05 </div>
+			<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input	type="checkbox">&nbsp;Quarta-feira - 22/05 </div>
+			<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Quinta-feira - 23/05 </div>
+			<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Sexta-feira - 24/05 </div>
 		</div>
+		
 		<div class="text-center">
-			<br> <br>
+			<br/> <br/>
 			<button type="submit" class="btn btn-primary" data-toggle="modal"
 				data-target="#myModal">
 				<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>

@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://github.com/dandelion" prefix="dandelion"%>
+
+<dandelion:bundle includes="font-awesome" />
+
 <html>
 <head>
 <meta name="header" content="Conta" />
@@ -34,22 +38,26 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<h4>Dados Acadêmicos</h4>
-					<div class="col-sm-6">
+					<div class="col-sm-4">
 						<p><b>Matricula</b></p>
 						<p>1111111111</p>
 					</div>
-					<div class="col-sm-6">
+					<div class="col-sm-4">
 						<p><b>Categoria</b></p>
 						<p>Discente de Graduação</p>
 					</div>
-					<div class="col-sm-6">
+					<div class="col-sm-4">
+						<p><b>Refeição</b></p>
+						<p>Tradicional  <a href="#" title="Editar"> <span class="fa fa-pencil-square-o"></span></a></p>
+					</div>	
+					<div class="col-sm-4">
 						<p><b>Curso</b></p>
 						<p>Ciência da Computação</p>
 					</div>
-					<div class="col-sm-6">
+					<div class="col-sm-8">
 						<p><b>Período</b></p>
 						<p>Integral</p>
-					</div>	
+					</div>						
 				</div>
 			</div>
 			<hr />
@@ -57,7 +65,7 @@
 				<div class="col-sm-12">
 					<h4>Dados Financeiros</h4>
 					<div class="col-sm-6">
-						<p><b>Saldo</b></p>
+						<p><b>Créditos</b></p>
 						<p>R$ 50,75</p>
 					</div>
 					<div class="col-sm-6">

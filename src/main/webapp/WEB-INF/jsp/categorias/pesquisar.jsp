@@ -24,7 +24,7 @@
 
 	<a href="${linkController}/incluir" class="float-button"><i	class="fa fa-plus"></i></a>
 
-	<datatables:table data="${listagemCategorias}" row="categoria" id="GridDatatable" sortable="false">
+	<datatables:table data="${listagemCategorias}" row="categoria" id="GridDatatable">
 		<datatables:column title="Descrição" property="descricao" />
 		<datatables:column title="Valor sem subsídio" property="valorSemSubsidio" />
 		<datatables:column title="Valor com subsídio" property="valorComSubsidio" />

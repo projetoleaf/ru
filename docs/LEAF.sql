@@ -59,6 +59,7 @@ CREATE TABLE cliente
 	id_tipo SERIAL NOT NULL,
 	id_curso SERIAL NOT NULL,
 	data_nascimento DATE NOT NULL,
+	creditos numeric(15,2) NOT NULL, 
 	
 	PRIMARY KEY(id),
 	CONSTRAINT fk_id_tipo FOREIGN KEY(id_tipo) REFERENCES tipo(id),
