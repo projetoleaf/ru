@@ -45,7 +45,8 @@ CREATE TABLE cardapio
   sobremesa varchar(50) NOT NULL,
   suco varchar(50) NOT NULL,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  CONSTRAINT un_cardapio UNIQUE (id, data)
 );
 
 CREATE TABLE cliente

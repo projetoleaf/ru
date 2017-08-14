@@ -17,15 +17,6 @@
 <body>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			var formValidator = $("#cliente").validate({
-				rules : {
-					cpf : {
-						required : true
-					}
-				}
-			});
-			$("#cpf").focus();
-			$("#cpf").inputmask("999.999.999-99");
 			$("#valor").maskMoney({
 		          //prefix: "R$ ",
 		          decimal: ",",
@@ -43,26 +34,6 @@
 		     });
 		});
 	</script>
-
-	<form name="cliente" id="cliente">
-		<%@include file="/layouts/modal-processando.jsp"%>
-		<div class="row">
-			<div class="form-group col-xs-12 col-md-2">
-				<label for="cpf" class="control-label">CPF</label>
-				<div class="input-group">
-					<input type="text" name="cpf" id="cpf" class="form-control" /> <span
-						class="input-group-btn">
-						<button type="button" class="btn btn-primary" name="btn_pesquisar"
-							id="btn_pesquisar">
-							<span class="glyphicon glyphicon-search"></span>
-						</button>
-					</span>
-				</div>
-			</div>
-		</div>
-	</form>
-
-	<br />
 
 	<datatables:table data="${listagemCreditos}" row="creditos" id="GridDatatable">
 		<datatables:column title="Nome" property="descricao" />

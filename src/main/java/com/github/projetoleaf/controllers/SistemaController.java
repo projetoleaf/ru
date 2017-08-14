@@ -16,19 +16,9 @@ public class SistemaController {
 		return "inicio";
 	}
 
-	@GetMapping("/conta")
-	public String conta() {
-		return "conta";
-	}
-
 	@GetMapping("/historicoRefeicoes")
 	public String historicoRefeicoes() {
 		return "historicoRefeicoes";
-	}
-
-	@GetMapping("/reservaRefeicoes")
-	public String reservaRefeicoes() {
-		return "reservaRefeicoes";
 	}
 
 	@GetMapping("/sobre")
@@ -39,11 +29,6 @@ public class SistemaController {
 	@GetMapping("/transferencias")
 	public String transferencias() {
 		return "transferencias";
-	}
-	
-	@GetMapping("/clientes")
-	public String clientes() {
-		return "clientes";
 	}
 	
 	@GetMapping("/reservas")

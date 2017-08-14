@@ -1,5 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
+<c:set var="actionSalvar"> <c:url value="/reservaRefeicoes/salvar"/> </c:set>
+
 <html>
 <head>
 <meta name="header" content="Reserva" />
@@ -18,48 +23,19 @@
 		
 		<br/> 
 		
-		<div class="row">
-			<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Segunda-feira - 20/05 </div>
-			<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Terça-feira - 21/05 </div>
-			<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input	type="checkbox">&nbsp;Quarta-feira - 22/05 </div>
-			<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Quinta-feira - 23/05 </div>
-			<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Sexta-feira - 24/05 </div>
-		</div>
-		
-		<div class="text-center">
-			<br/> <br/>
-			<button type="submit" class="btn btn-primary" data-toggle="modal"
-				data-target="#myModal">
-				<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>
-				Reservar
-			</button>
-		</div>
-	</div>
-</div>
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-	<div class="modal-dialog">
-
-		<!-- Modal content-->
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Reservas</h4>
+		<form:form method="POST" action="${actionSalvar}" modelAttribute="datas">
+			<div class="row">				
+				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <form:checkboxes items="${todasAsDatas}" path="data" itemLabel="data" itemValue="id" delimiter="<br/>"/> </div>
 			</div>
-			<div class="modal-body">
-				<p>Confirme os dias da sua reserva...</p>
-				<p>&#10004...</p>
-				<p>&#10004...</p>
-				<p>&#10004...</p>
+			
+			<div class="text-center">
+				<br/> <br/>
+				<button type="submit" class="btn btn-primary">
+					<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>
+					Reservar
+				</button>
 			</div>
-			<div class="modal-footer">
-				<div class="text-center">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-					<button type="submit" class="btn btn-primary" data-toggle="modal"
-						data-target="#myModal">Confirmar reserva</button>
-				</div>
-			</div>
-		</div>
+		</form:form>
 	</div>
 </div>
 </body>
