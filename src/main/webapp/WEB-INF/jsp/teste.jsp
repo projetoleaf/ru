@@ -8,7 +8,7 @@
 <body>
 	<h2>As datas selecionadas são:</h2>
 	<br>
-	<c:forEach items="${datasSelecionadas.data}" var="dias">  
+	<c:forEach items="${datasSelecionadas}" var="dias">  
 		<c:out value="${dias}"/><br>
 	</c:forEach>
 </body>

@@ -25,18 +25,44 @@
 		
 		<form:form method="POST" action="${actionSalvar}" modelAttribute="datas">
 			<div class="row">				
-				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <form:checkboxes items="${todasAsDatas}" path="data" itemLabel="data" itemValue="id" delimiter="<br/>"/> </div>
+				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <form:checkboxes items="${todasAsDatas}" path="data" itemLabel="data" itemValue="id" delimiter="<br/>" /> </div>
 			</div>
 			
 			<div class="text-center">
 				<br/> <br/>
-				<button type="submit" class="btn btn-primary">
-					<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>
-					Reservar
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+				 	<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> Reservar
 				</button>
 			</div>
+			
+			<!-- Modal -->
+			<div id="myModal" class="modal fade" role="dialog">
+				<div class="modal-dialog modal-md">
+			
+					<!-- Modal content-->
+			 		<div class="modal-content">
+			 			<div class="modal-header">
+			 				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			 				<h3 class="modal-title">Reserva</h3>
+			 			</div>
+			 			<div class="modal-body">
+			 				<p>Confirme os dias da sua reserva...</p>
+			 				<p>&#10004...</p>
+			 				<p>&#10004...</p>
+			 				<p>&#10004...</p>
+			 			</div>
+			 			<div class="modal-footer">
+			 				<div class="text-center">
+			 					<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+			 					<button type="submit" class="btn btn-primary" data-toggle="modal"
+			 						data-target="#myModal">Confirmar reserva</button>
+			 				</div>
+			 			</div>
+			 		</div>
+			 	</div>
+			</div>
 		</form:form>
+	  </div>
 	</div>
-</div>
 </body>
 </html>

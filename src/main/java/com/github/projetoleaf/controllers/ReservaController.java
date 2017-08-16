@@ -5,24 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import com.github.projetoleaf.beans.Cardapio;
+import com.github.projetoleaf.beans.Reserva;
 import com.github.projetoleaf.repositories.CardapioRepository;
+import com.github.projetoleaf.repositories.ReservaRepository;
 
 @Controller
 public class ReservaController {
 	
-	/*@Autowired
+	@Autowired
 	private ReservaRepository reservaRepository;
-	
-	@Autowired
-	private ReservaItemRepository reservaItemRepository;
-
-	@Autowired
-	private ClienteRepository clienteRepository;*/
 	
 	@Autowired
 	private CardapioRepository cardapioRepository;
@@ -39,11 +34,18 @@ public class ReservaController {
 	}
 	
 	@PostMapping("/reservaRefeicoes/salvar")
-    public String salvarReserva(Model model, @ModelAttribute("datas") Cardapio cardapio, BindingResult result) {
+	public String salvarReserva(@RequestParam("data") String[] idsCardapios) {
 		
-		model.addAttribute("datasSelecionadas", cardapio);
-		
-		return "teste";
-    }
+	   Reserva reserva = new Reserva();
+	   
+	   for (int x = 0; x < idsCardapios.length; x++) {
+		   reserva.setIdStatus(1);
+		   reserva.setIdCliente(1);
+		   reserva.setIdCardapio(Integer.parseInt(idsCardapios[x]));
+		   reservaRepository.save(reserva);		   
+	   }
+	   
+	   return "redirect:/historicoRefeicoes";
+	}
 	
 }
