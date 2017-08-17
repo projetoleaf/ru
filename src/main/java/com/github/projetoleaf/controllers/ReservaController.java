@@ -36,13 +36,19 @@ public class ReservaController {
 	@PostMapping("/reservaRefeicoes/salvar")
 	public String salvarReserva(@RequestParam("data") String[] idsCardapios) {
 		
-	   Reserva reserva = new Reserva();
 	   
-	   for (int x = 0; x < idsCardapios.length; x++) {
+	   
+	   System.out.println("Array qtde = " + idsCardapios.length);
+	   
+	   for (int x = 0; x <= idsCardapios.length -1; x++) {
+		   Reserva reserva = new Reserva();
+		   
 		   reserva.setIdStatus(1);
 		   reserva.setIdCliente(1);
 		   reserva.setIdCardapio(Integer.parseInt(idsCardapios[x]));
-		   reservaRepository.save(reserva);		   
+		   reservaRepository.save(reserva);		
+		   
+		   System.out.println("Items do array [" + x + "] = " + idsCardapios[x]);
 	   }
 	   
 	   return "redirect:/historicoRefeicoes";
