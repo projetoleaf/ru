@@ -19,7 +19,7 @@ CREATE TABLE curso
   PRIMARY KEY(id)
 );
 
-/* Tabela referente aos status que as refeições podem ter antes de serem consumidas (pago, aguardando pagamento, expirado/não pago, transferido, transferente) */
+/* Tabela referente aos status que as refeições podem ter antes de serem consumidas (pago, solicitado, expirado/não pago????, transferido, transferente, consuimida) */
 CREATE TABLE status
 (
   id SERIAL NOT NULL,
@@ -41,12 +41,15 @@ CREATE TABLE cardapio
   salada varchar(50) NOT NULL,
   sobremesa varchar(50) NOT NULL,
   suco varchar(50) NOT NULL,
+  id_tipo_refeicao INTEGER NOT NULL,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  CONSTRAINT fk_id_tipo_refeicao FOREIGN KEY(id_tipo_refeicao)REFERENCES tipo_refeicao(id),
 );
 
-/* Tabela para identificar se a reserva foi feita com o valor sem ou com subsídio */
-CREATE TABLE tipo_valor
+/* Tabela para identificar se a reserva foi feita com o valor sem ou com subsídio
+Pensar em um nome melhor */
+CREATE TABLE tipo_valor 
 (
   id SERIAL NOT NULL,
   descricao CHARACTER VARYING(50),
@@ -106,7 +109,7 @@ CREATE TABLE reserva_item
 (
   id SERIAL NOT NULL,
   id_reserva INTEGER NOT NULL,
-  id_data INTEGER NOT NULL, /* id_cardapio? */
+  id_cardapio INTEGER NOT NULL,
   id_status INTEGER NOT NULL,
   
   PRIMARY KEY(id),
@@ -115,73 +118,53 @@ CREATE TABLE reserva_item
   CONSTRAINT fk_id_status FOREIGN KEY(id_status) REFERENCES status(id)
 );
 
-/* Tabela temporária (será limpada todo domingo) para gravar das 7h ás 10h do primeiro dia útil todas as solicitações de reservas e associar a reserva com um cliente */
-CREATE TABLE reserva_temp
+/* VER COMO É MELHOR ??
+ Tabela temporária para gravar das 7h às 10h do primeiro dia útil todas as solicitações de reservas e associar a reserva com um cliente */
+CREATE TABLE reserva_temp (solic. reserva)
 (
   id SERIAL NOT NULL,
   id_usuario INTEGER NOT NULL,
+  data_hora TIMESTAMPO NOT NULL,
 
   PRIMARY KEY(id),
   CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id)
 );
 
-/* Tabela temporária (será limpada todo domingo) para gravar das 7h ás 10h do primeiro dia útil todas as solicitações de reservas e associar seus itens com a data */
+/* Tabela temporária para gravar das 7h às 10h do primeiro dia útil todas as solicitações de reservas e associar seus itens com a data
+Somente colocará status pago nas datas reservadas se ele tiver créditos para todos os dias */
 CREATE TABLE reserva_item_temp
 (
   id SERIAL NOT NULL,
   id_reserva_temp INTEGER NOT NULL,
-  id_data INTEGER NOT NULL, /* id_cardapio? /*
+  id_cardapio INTEGER NOT NULL,
   
   PRIMARY KEY(id),
   CONSTRAINT fk_id_reserva_temp FOREIGN KEY(id_reserva_temp) REFERENCES reserva_temp(id),
   CONSTRAINT fk_id_data FOREIGN KEY(id_data) REFERENCES cardapio(id)
 );
 
-/* Tabela que registra as reservas consumidas, cliente passou pela catraca */
-CREATE TABLE catraca
-(
-  id SERIAL NOT NULL,
-  id_reserva_item INTEGER NOT NULL,
-
-  PRIMARY KEY(id),
-  CONSTRAINT fk_id_reserva_item FOREIGN KEY(id_reserva_item) REFERENCES reserva_item(id)
-);
-
 /* Tabela com os dados dos usuarios
 Quais dados terão no nosso banco e quais não visto que serão puxados do banco da central de acesso da unesp ?
 Como será o primeiro login ? -> Precisa saber o tipo de refeição que ele quer consumir.
 Como saber se o cara já tem cadastro no nosso banco - login ?
-Não  haverá histórico de créditos.
-Pode mudar o curso ? */
+Fazer histórico de créditos.
+Pode mudar o curso ?
+Haverá perfis de usuários na central de acessos que fará a autenticação */
 CREATE TABLE cliente
 (
   id SERIAL NOT NULL,
-  login CHARACTER VARYING(50) NOT NULL,
+  identificacao CHARACTER VARYING(50) NULL,
   cpf CHARACTER VARYING(14) NOT NULL, /* Terá ? */
-  email CHARACTER VARYING(100) NOT NULL, /* Terá ? */
-  senha CHARACTER VARYING(100) NOT NULL, /* Terá ? */
   nome CHARACTER VARYING(100) NOT NULL, /* Terá ? */
-  matricula INTEGER NOT NULL, /* Terá ? */
-  id_curso INTEGER NOT NULL, /* Terá ? */
   data_nascimento DATE NOT NULL, /* Terá ? */
   data_criado TIMESTAMP NOT NULL,
   creditos numeric(15,2) NOT NULL,
-  id_tipo_cliente INTEGER NOT NULL,
-  ativo BOOLEAN NOT NULL, /* Unesp pode fornecer automático ? */
 
   PRIMARY KEY(id),
   CONSTRAINT fk_id_curso FOREIGN KEY(id_curso) REFERENCES curso(id), /* Terá ? */
   CONSTRAINT fk_id_tipo_cliente FOREIGN KEY(id_tipo_cliente) REFERENCES tipo_cliente(id) 
 );
 
-/* Tabela com os tipos de usuário (admin, STN - Seção Técnica de Nutrição, STF - Seção Técnica de Finanças, cliente) */
-CREATE TABLE tipo_cliente
-(
-  id SERIAL NOT NULL,
-  descricao CHARACTER VARYING(50) NOT NULL,
-
-  PRIMARY KEY(id)
-);
 
 /* Tabela que relaciona o cliente com sua categoria e mantém em histórico através de Triggers (UPDATE) e campos para data_inicio e data_fim.
 Usuário pode até pertencer a duas categorias, mas deve escolher uma.
@@ -192,7 +175,9 @@ CREATE TABLE cliente_categoria
   id_cliente INTEGER NOT NULL,
   id_categoria INTEGER NOT NULL,
   data_inicio TIMESTAMP NOT NULL,
-  data_fim TIMESTAMP /* Pode ser NULL ->saber atual */
+  data_fim TIMESTAMP, /* Pode ser NULL ->saber atual */
+  /* Se tiver** matricula INTEGER NOT NULL, /* Terá ? */
+  /* Ainda ver -> id_curso INTEGER NOT NULL, /* Terá ? -> Por enquanoto NÃO */
 
   PRIMARY KEY(id),
   CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
@@ -207,8 +192,7 @@ CREATE TABLE cliente_tipo_refeicao
   id SERIAL NOT NULL,
   id_cliente INTEGER NOT NULL,
   id_tipo_refeicao INTEGER NOT NULL,
-  data_inicio TIMESTAMP NOT NULL,
-  data_fim TIMESTAMP /* Pode ser NULL ->saber atual */
+  ativo BOOLEAN NOT NULL,
 
   PRIMARY KEY(id),
   CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
