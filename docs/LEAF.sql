@@ -45,7 +45,8 @@ CREATE TABLE cardapio
   sobremesa varchar(50) NOT NULL,
   suco varchar(50) NOT NULL,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  CONSTRAINT un_cardapio UNIQUE (id, data)
 );
 
 CREATE TABLE cliente
@@ -101,19 +102,10 @@ CREATE TABLE reserva
   id SERIAL NOT NULL,
   id_status INTEGER NOT NULL,
   id_cliente INTEGER NOT NULL,
-
-  PRIMARY KEY(id),
-  CONSTRAINT fk_id_status FOREIGN KEY(id_status) REFERENCES status(id),
-  CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id)
-);
-
-CREATE TABLE reserva_item
-(
-  id SERIAL NOT NULL,
-  id_reserva INTEGER NOT NULL,
   id_cardapio INTEGER NOT NULL,
 
   PRIMARY KEY(id),
-  CONSTRAINT fk_id_reserva FOREIGN KEY(id_reserva) REFERENCES reserva(id),
+  CONSTRAINT fk_id_status FOREIGN KEY(id_status) REFERENCES status(id),
+  CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
   CONSTRAINT fk_id_cardapio FOREIGN KEY(id_cardapio) REFERENCES cardapio(id)
 );
