@@ -1,3 +1,23 @@
+/* Tabela com os dados dos usuarios
+Quais dados terão no nosso banco e quais não visto que serão puxados do banco da central de acesso da unesp ?
+Como será o primeiro login ? -> Precisa saber o tipo de refeição que ele quer consumir.
+Como saber se o cara já tem cadastro no nosso banco - login ?
+Fazer histórico de créditos.
+Pode mudar o curso ?
+Haverá perfis de usuários na central de acessos que fará a autenticação */
+CREATE TABLE cliente
+(
+  id SERIAL NOT NULL,
+  identificacao CHARACTER VARYING(50) NULL,
+  cpf CHARACTER VARYING(14) NOT NULL,
+  nome CHARACTER VARYING(100) NOT NULL,
+  data_nascimento DATE NOT NULL,
+  data_criado TIMESTAMP NOT NULL,
+  creditos numeric(15,2) NOT NULL,
+
+  PRIMARY KEY(id)
+);
+
 /* Tabela para diferenciar tipo de refeição (tradicional, vegetariano, vegano) */
 CREATE TABLE tipo_refeicao
 (
@@ -17,7 +37,7 @@ CREATE TABLE curso
   periodo CHARACTER VARYING(50),
 
   PRIMARY KEY(id)
-);
+);*/
 
 /* Tabela referente aos status que as refeições podem ter antes de serem consumidas (pago, solicitado, expirado/não pago????, transferido, transferente, consuimida) */
 CREATE TABLE status
@@ -45,7 +65,7 @@ CREATE TABLE cardapio
   id_tipo_refeicao INTEGER NOT NULL,
 
   PRIMARY KEY (id),
-  CONSTRAINT fk_id_tipo_refeicao FOREIGN KEY(id_tipo_refeicao)REFERENCES tipo_refeicao(id),
+  CONSTRAINT fk_id_tipo_refeicao FOREIGN KEY(id_tipo_refeicao)REFERENCES tipo_refeicao(id)
 );
 
 /* Tabela para identificar se a reserva foi feita com o valor sem ou com subsídio
@@ -64,7 +84,7 @@ CREATE TABLE categoria
   id SERIAL NOT NULL,
   descricao CHARACTER VARYING(100) NOT NULL,
   valor_sem_subsidio numeric(15,2) NOT NULL,
-  valor_com_subsidio numeric(15,2) NOT NULL
+  valor_com_subsidio numeric(15,2) NOT NULL,
 
   PRIMARY KEY(id)
 );
@@ -96,6 +116,7 @@ CREATE TABLE reserva
   id SERIAL NOT NULL,
   id_cliente INTEGER NOT NULL,
   id_tipo_valor INTEGER NOT NULL,
+  data_hora TIMESTAMP NOT NULL,
 
   PRIMARY KEY(id),
   CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
@@ -113,7 +134,7 @@ CREATE TABLE reserva_item
   
   PRIMARY KEY(id),
   CONSTRAINT fk_id_reserva FOREIGN KEY(id_reserva) REFERENCES reserva(id),
-  CONSTRAINT fk_id_data FOREIGN KEY(id_data) REFERENCES cardapio(id),
+  CONSTRAINT fk_id_cardapio FOREIGN KEY(id_cardapio) REFERENCES cardapio(id),
   CONSTRAINT fk_id_status FOREIGN KEY(id_status) REFERENCES status(id)
 );
 
@@ -127,7 +148,7 @@ CREATE TABLE reserva_temp (solic. reserva)
 
   PRIMARY KEY(id),
   CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id)
-);
+); */
 
 /* Tabela temporária para gravar das 7h às 10h do primeiro dia útil todas as solicitações de reservas e associar seus itens com a data
 Somente colocará status pago nas datas reservadas se ele tiver créditos para todos os dias 
@@ -140,30 +161,7 @@ CREATE TABLE reserva_item_temp
   PRIMARY KEY(id),
   CONSTRAINT fk_id_reserva_temp FOREIGN KEY(id_reserva_temp) REFERENCES reserva_temp(id),
   CONSTRAINT fk_id_data FOREIGN KEY(id_data) REFERENCES cardapio(id)
-);
-
-/* Tabela com os dados dos usuarios
-Quais dados terão no nosso banco e quais não visto que serão puxados do banco da central de acesso da unesp ?
-Como será o primeiro login ? -> Precisa saber o tipo de refeição que ele quer consumir.
-Como saber se o cara já tem cadastro no nosso banco - login ?
-Fazer histórico de créditos.
-Pode mudar o curso ?
-Haverá perfis de usuários na central de acessos que fará a autenticação */
-CREATE TABLE cliente
-(
-  id SERIAL NOT NULL,
-  identificacao CHARACTER VARYING(50) NULL,
-  cpf CHARACTER VARYING(14) NOT NULL,
-  nome CHARACTER VARYING(100) NOT NULL,
-  data_nascimento DATE NOT NULL,
-  data_criado TIMESTAMP NOT NULL,
-  creditos numeric(15,2) NOT NULL,
-
-  PRIMARY KEY(id),
-  CONSTRAINT fk_id_curso FOREIGN KEY(id_curso) REFERENCES curso(id),
-  CONSTRAINT fk_id_tipo_cliente FOREIGN KEY(id_tipo_cliente) REFERENCES tipo_cliente(id) 
-);
-
+); */
 
 /* Tabela que relaciona o cliente com sua categoria e mantém em histórico através de Triggers (UPDATE) e campos para data_inicio e data_fim.
 Usuário pode até pertencer a duas categorias, mas deve escolher uma.
@@ -176,10 +174,11 @@ CREATE TABLE cliente_categoria
   data_inicio TIMESTAMP NOT NULL,
   data_fim TIMESTAMP, /* Pode ser NULL ->saber atual(ais) */
   matricula INTEGER NOT NULL, /* Terá ? Por enquanto sim */
-  /* id_curso INTEGER, /* Terá ? -> Por enquanoto NÃO */
+  /* id_curso INTEGER */ /* Terá ? -> Por enquanoto NÃO */
 
   PRIMARY KEY(id),
   CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
+  /*CONSTRAINT fk_id_curso FOREIGN KEY(id_curso) REFERENCES curso(id),*/
   CONSTRAINT fk_id_categoria FOREIGN KEY(id_categoria) REFERENCES categoria(id)
 );
 
