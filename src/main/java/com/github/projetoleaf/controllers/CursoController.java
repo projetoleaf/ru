@@ -1,4 +1,4 @@
-package com.github.projetoleaf.controllers;
+/*package com.github.projetoleaf.controllers;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,4 +84,4 @@ public class CursoController {
         return "redirect:/cursos";
     }
 	
-}
+}*/

@@ -66,4 +66,8 @@ public class Cardapio implements Serializable {
 	@NotBlank
 	@Column(name = "suco")
 	private String suco;
+	
+	/*@NotNull
+	@Column(name = "id_tipo_refeicao")
+	private Integer idTipoRefeicao;*/
 }
