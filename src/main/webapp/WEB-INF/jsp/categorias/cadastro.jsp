@@ -20,8 +20,8 @@
 		     var formValidator = $("#categoria").validate({
 		         rules : {
 		             descricao : { required : true, maxlength: 100 },
-		             valorSemSubsidio : { required : true, digits : true, maxlength : 17 },
-		             valorComSubsidio : { required : true, digits : true, maxlength : 17 }
+		             valorSemSubsidio : { required : true, digits : false, maxlength : 17 },
+		             valorComSubsidio : { required : true, digits : false, maxlength : 17 }
 		         }
 		     });
 		     $("#descricao").focus();

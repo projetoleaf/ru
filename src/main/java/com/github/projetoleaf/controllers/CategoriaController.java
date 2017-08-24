@@ -55,8 +55,8 @@ public class CategoriaController {
     public String salvarCategoria(Model model, @ModelAttribute("categoria") @Valid Categoria categoria, BindingResult result) {
 		try {
             if (!result.hasErrors()) {
-                Categoria categoriaAtualizada = repository.save(categoria);
-                log.info(categoriaAtualizada.toString() + " gravada com sucesso");
+               categoria = repository.save(categoria);
+                log.info(categoria.toString() + " gravada com sucesso");
                 model.addAttribute("mensagemInfo", config.getMessage("gravadoSucesso", new Object[] { "a categoria" }, null));
             }
         }
@@ -65,7 +65,7 @@ public class CategoriaController {
             model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
         }
 		
-        return abrirCadastroCategoria(model);
+		return "redirect:/categorias";
     }
 	
 	@GetMapping("/excluir/{id}")
