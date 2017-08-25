@@ -1,25 +1,26 @@
 package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = { "cliente", "categoria", "ativo" })
-@ToString(of = { "cliente", "categoria", "ativo" })
+@EqualsAndHashCode(of = { "idCliente", "categoria", "dataInicio", "dataFim", "matricula" })
+@ToString(of = { "idCliente", "categoria", "dataInicio", "dataFim", "matricula" })
 @Entity
 @Table(name = "cliente_categoria")
 public class ClienteCategoria implements Serializable {
@@ -33,18 +34,25 @@ public class ClienteCategoria implements Serializable {
 	private Long id;
 	
 	@NotNull
-	@OneToOne
-	@Enumerated(EnumType.STRING)
-	@JoinColumn(name = "id_cliente", referencedColumnName = "id")
-	private Cliente cliente;
+	@Column(name = "id_cliente")
+	private Integer idCliente;
 	
 	@NotNull
-	@OneToOne
-	@Enumerated(EnumType.STRING)
-	@JoinColumn(name = "id_categoria", referencedColumnName = "id")
-	private Categoria categoria;
+    @ManyToOne
+    @JoinColumn(name = "id_categoria", referencedColumnName = "id")
+    private Categoria categoria;
 	
 	@NotNull
-	@Column(name = "ativo")
-	private Integer ativo;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "data_inicio")	
+	private Date dataInicio;
+	
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "data_fim")	
+	private Date dataFim;
+	
+	@NotNull
+	@Column(name = "matricula")
+	private int matricula;
 }

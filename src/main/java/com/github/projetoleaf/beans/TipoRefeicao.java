@@ -17,14 +17,14 @@ import lombok.ToString;
 @EqualsAndHashCode(of = { "descricao" })
 @ToString(of = { "descricao" })
 @Entity
-@Table(name = "tipo")
-public class Tipo implements Serializable {
+@Table(name = "tipo_refeicao")
+public class TipoRefeicao implements Serializable {
 	
 	private static final long serialVersionUID = 44393616612232895L;
 
 	@Id
-	@SequenceGenerator(name = "tipo_id_seq", sequenceName = "tipo_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tipo_id_seq")
+	@SequenceGenerator(name = "tipo_refeicao_id_seq", sequenceName = "tipo_refeicao_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tipo_refeicao_id_seq")
 	@Column(name = "id", nullable = false)
 	private Long id;
 	

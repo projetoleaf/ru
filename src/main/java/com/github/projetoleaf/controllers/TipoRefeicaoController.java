@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import com.github.projetoleaf.repositories.TipoRepository;
+import com.github.projetoleaf.repositories.TipoRefeicaoRepository;
 import lombok.extern.slf4j.Slf4j;
-import com.github.projetoleaf.beans.Tipo;
+import com.github.projetoleaf.beans.TipoRefeicao;
 
 @Slf4j
 @Controller
 @RequestMapping("/tipos")
-public class TipoController {
+public class TipoRefeicaoController {
 	
 	@Autowired
-    private TipoRepository repository;
+    private TipoRefeicaoRepository repository;
 	
 	@Autowired
     private MessageSource config;
@@ -36,14 +36,14 @@ public class TipoController {
 	
 	@GetMapping("/incluir")
 	public String incluirTipo(Model model) {
-		model.addAttribute("tipo", new Tipo());
+		model.addAttribute("tipo", new TipoRefeicao());
 		return abrirCadastroTipo(model);
 	}
 	
 	@GetMapping("/editar/{id}")
     public String editarTipo(@PathVariable Long id, Model model) {
-        Tipo tipo = repository.findOne(id);
-        model.addAttribute("tipo", tipo);
+        TipoRefeicao tipoRefeicao = repository.findOne(id);
+        model.addAttribute("tipo", tipoRefeicao);
         return abrirCadastroTipo(model);
     }
 	
@@ -52,10 +52,10 @@ public class TipoController {
     }
 	 
 	@PostMapping("/salvar")
-    public String salvarTipo(Model model, @ModelAttribute("tipo") @Valid Tipo tipo, BindingResult result) {
+    public String salvarTipo(Model model, @ModelAttribute("tipo") @Valid TipoRefeicao tipoRefeicao, BindingResult result) {
 		try {
             if (!result.hasErrors()) {
-                Tipo tipoAtualizado = repository.save(tipo);
+                TipoRefeicao tipoAtualizado = repository.save(tipoRefeicao);
                 log.info(tipoAtualizado.toString() + " gravado com sucesso");
                 model.addAttribute("mensagemInfo", config.getMessage("gravadoSucesso", new Object[] { "o tipo" }, null));
             }
@@ -73,7 +73,7 @@ public class TipoController {
     public String excluirTipo(RedirectAttributes ra, @PathVariable Long id) {		
 		try {
             repository.delete(id);
-            log.info("Tipo #" + id + " excluído com sucesso");
+            log.info("TipoRefeicao #" + id + " excluído com sucesso");
             ra.addFlashAttribute("mensagemInfo", config.getMessage("excluidoSucesso", new Object[] { "o tipo" }, null));
         }
         catch (Exception ex) {

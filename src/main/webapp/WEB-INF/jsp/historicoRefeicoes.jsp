@@ -64,13 +64,11 @@
 
 			<br />
 
-			<datatables:table data="${listagemPendentes}" row="receber"
+			<datatables:table data="${listagemHistorico}" row="receber"
 				id="GridDatatable">
-				<datatables:column title="Data" property="dataVencimento"
-					format="{0,date,dd/MM/yyyy}" sortType="date-uk"
-					sortInitDirection="asc" cssCellClass="text-center" />
-				<datatables:column title="Status" property="descricao" />
-				<datatables:callback function="fnFooterCallback" type="footer" />
+				<datatables:column title="Data" property="cardapio.data" sortInitDirection="asc" cssCellClass="text-center" />
+				<datatables:column title="Status" property="status.descricao" />
+		
 				<datatables:extraJs bundles="datatables.extended.config"
 					placeholder="before_start_document_ready" />
 			</datatables:table>

@@ -6,5 +6,6 @@ import com.github.projetoleaf.beans.Reserva;
 
 @Repository
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
-
+	
+	Reserva findFirstByOrderByIdDesc();
 }
