@@ -16,10 +16,6 @@ public class SistemaController {
 		return "inicio";
 	}
 
-	@GetMapping("/historicoRefeicoes")
-	public String historicoRefeicoes() {
-		return "historicoRefeicoes";
-	}
 
 	@GetMapping("/sobre")
 	public String sobre() {
