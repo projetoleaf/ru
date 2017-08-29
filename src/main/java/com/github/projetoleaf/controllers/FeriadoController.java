@@ -65,7 +65,7 @@ public class FeriadoController {
             model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
         }
 		
-        return abrirCadastroFeriado(model);
+		return "redirect:/feriados";
 
     }
 	

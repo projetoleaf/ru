@@ -2,12 +2,19 @@ package com.github.projetoleaf.controllers;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +27,10 @@ import com.github.projetoleaf.beans.Status;
 import com.github.projetoleaf.beans.Cliente;
 import com.github.projetoleaf.beans.TipoValor;
 import com.github.projetoleaf.repositories.CardapioRepository;
+import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ReservaRepository;
+import com.github.projetoleaf.repositories.StatusRepository;
+import com.github.projetoleaf.repositories.TipoValorRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
 
 @Controller
@@ -35,60 +45,132 @@ public class ReservaClienteController {
 	@Autowired
 	private ReservaItemRepository reservaItemRepository;
 	
-	@GetMapping("/reservaRefeicoes")
-	public String reservaRefeicoes(Model model) throws JsonGenerationException, JsonMappingException, IOException {
+	@Autowired
+	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private TipoValorRepository tipoValorRepository;
+	
+	@Autowired
+	private StatusRepository statusRepository;
+	
+	@GetMapping("/reserva")
+	public String reservaRefeicoes(Model model) throws JsonGenerationException, JsonMappingException, IOException, ParseException {
 		
-		List<Cardapio> cardapio = cardapioRepository.findAll(new Sort(Sort.Direction.ASC, "data"));
+		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
 		
+		List<Cardapio> cardapio = new ArrayList<Cardapio>();
+		
+		Calendar dataAtual = Calendar.getInstance();		
+		dataAtual = verificarData(dataAtual);       
+        
+        for (int i = 0; i < 5; i++) {
+        	
+        	Cardapio c = new Cardapio();        	
+        	List<Object[]> dataDoBanco = cardapioRepository.verificarSeDataExisteNoBD(dataAtual.getTime());
+        	
+        	for(Object[] linhaDoBanco : dataDoBanco){
+        		
+        		String dataFormatada = formatoDesejado.format((Date)linhaDoBanco[1]);
+                Date dataVar = formatoDesejado.parse(dataFormatada);
+                
+                c.setId((Long)linhaDoBanco[0]);
+                c.setData(dataVar);
+            	
+            	if(formatoDesejado.format(c.getData()).equals(formatoDesejado.format(dataAtual.getTime())))
+                	cardapio.add(c);
+            }       	
+        	
+        	dataAtual.add(Calendar.DAY_OF_MONTH, 1);	            
+        }
+        
 		model.addAttribute("datas", new Cardapio());
 		model.addAttribute("todasAsDatas", cardapio);
+		
+		//List<Cardapio> teste = new ArrayList<Cardapio>();
 		
 		ObjectMapper mapper = new ObjectMapper();// jackson lib for converting to json
         String objectJSON = mapper.writeValueAsString(cardapio);// json string
         model.addAttribute("objectJSON", objectJSON);
 		
-		return "reservaRefeicoes";
+		return "reserva";
 	}
 	
-	@PostMapping("/reservaRefeicoes/salvar")
+	@PostMapping("/reserva/salvar")
 	public String salvarReserva(@RequestParam("data") String[] idsCardapios) {
 		
 		Reserva reserva = new Reserva();	
-		Cliente cliente = new Cliente();
 		
-		Integer variavel = 1;
-		cliente.setId(Long.parseLong(variavel.toString()));
-		TipoValor tipoValor = new TipoValor();
-		tipoValor.setId(Long.parseLong(variavel.toString()));
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();			
 		
-	    reserva.setCliente(cliente); //pegar id da sessão do momento
-	    reserva.setTipoValor(tipoValor); //Definir como subsidiada caso seja umas das 360 primeiras refeições
-	    Timestamp timestamp = new Timestamp(System.currentTimeMillis()); //Data e hora atual	    
-	    reserva.setDataHora(timestamp);
+		if (!(authentication instanceof AnonymousAuthenticationToken)) {	
+			
+		    String identificacao = authentication.getName();		
+		    
+		    Cliente cliente = clienteRepository.buscarCliente(identificacao); //Pega o id da pessoa logada
+		    
+			TipoValor tipoValor = new TipoValor();
+			tipoValor.setId(tipoValorRepository.buscarIdDoTipoValorSubsidiada());
+			
+		    reserva.setCliente(cliente); 
+		    reserva.setTipoValor(tipoValor); //Definir como subsidiada caso seja umas das 360 primeiras refeições
+		    Timestamp timestamp = new Timestamp(System.currentTimeMillis()); //Data e hora atual	    
+		    reserva.setDataHora(timestamp);
+		    
+		    reservaRepository.save(reserva);		
+		    
+		    long idReserva = reservaRepository.findFirstByOrderByIdDesc().getId();
+			
+		    for (int x = 0; x <= idsCardapios.length -1; x++) {
+			   
+			   ReservaItem reservaItem = new ReservaItem();		
+			   Reserva r = new Reserva();
+			   Cardapio c = new Cardapio();
+			   Status s = new Status();
+			   
+			   r.setId(idReserva);
+			   c.setId(Long.parseLong((idsCardapios[x])));
+			   s.setId(statusRepository.buscarIdDoStatusSocilicitado());
+			   
+			   reservaItem.setReserva(r);
+			   reservaItem.setCardapio(c);
+			   reservaItem.setStatus(s);	   
+			   
+			   reservaItemRepository.save(reservaItem);
+		    }
+		}
 	    
-	    reservaRepository.save(reserva);		
-	    
-	    long id = reservaRepository.findFirstByOrderByIdDesc().getId();
-		
-	    for (int x = 0; x <= idsCardapios.length -1; x++) {
-		   
-		   ReservaItem reservaItem = new ReservaItem();		
-		   Reserva r = new Reserva();
-		   Cardapio c = new Cardapio();
-		   Status s = new Status();
-		   
-		   r.setId(id);
-		   c.setId(Long.parseLong((idsCardapios[x])));
-		   s.setId(Long.parseLong(variavel.toString()));
-		   
-		   reservaItem.setReserva(r);
-		   reservaItem.setCardapio(c);
-		   reservaItem.setStatus(s);	   
-		   
-		   reservaItemRepository.save(reservaItem);
-	    }
-	    
-	    return "redirect:/historicoRefeicoes";
+	    return "redirect:/historico";
 	}
+	
+	public static Calendar verificarData(Calendar data)
+    {
+		// se for segunda
+        if (data.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
+        {
+            data.add(Calendar.DATE, 7);
+        }
+        // se for terça
+        else if (data.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
+        {
+            data.add(Calendar.DATE, 6);
+        }
+        // se for quarta
+        else if (data.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
+        {
+            data.add(Calendar.DATE, 5);
+        }
+        // se for quinta
+        else if (data.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
+        {
+            data.add(Calendar.DATE, 4);
+        }
+        // se for sexta
+        else if (data.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
+        {
+            data.add(Calendar.DATE, 3);
+        }
+        return data;
+    }
 	
 }

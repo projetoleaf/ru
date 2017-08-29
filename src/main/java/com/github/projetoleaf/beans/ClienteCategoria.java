@@ -19,8 +19,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = { "idCliente", "categoria", "dataInicio", "dataFim", "matricula" })
-@ToString(of = { "idCliente", "categoria", "dataInicio", "dataFim", "matricula" })
+@EqualsAndHashCode(of = { "cliente", "categoria", "dataInicio", "dataFim", "matricula" })
+@ToString(of = { "cliente", "categoria", "dataInicio", "dataFim", "matricula" })
 @Entity
 @Table(name = "cliente_categoria")
 public class ClienteCategoria implements Serializable {
@@ -34,8 +34,9 @@ public class ClienteCategoria implements Serializable {
 	private Long id;
 	
 	@NotNull
-	@Column(name = "id_cliente")
-	private Integer idCliente;
+	@ManyToOne
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id")
+	private Cliente cliente;
 	
 	@NotNull
     @ManyToOne
@@ -47,12 +48,11 @@ public class ClienteCategoria implements Serializable {
 	@Column(name = "data_inicio")	
 	private Date dataInicio;
 	
-	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "data_fim")	
 	private Date dataFim;
 	
 	@NotNull
 	@Column(name = "matricula")
-	private int matricula;
+	private Integer matricula;
 }

@@ -12,9 +12,9 @@
 		<hr>
 		<a href="conta">Conta</a>
 		<br>
-		<a href="historicoRefeicoes">Histórico</a>
+		<a href="historico">Histórico</a>
 		<br>
-		<a href="reservaRefeicoes">Reservar</a>
+		<a href="reserva">Reservar</a>
 		<br>
 		<a href="transferencias">Transferências</a>
 	</div>
