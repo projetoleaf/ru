@@ -22,13 +22,15 @@
         <li class="divider"></li>
         <li><a href="<c:url value="/categorias"/>"><span class="fa fa-pencil-square-o"></span> Categorias</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/cursos"/>"><span class="fa fa-pencil-square-o"></span> Cursos</a></li>
-        <li class="divider"></li>
+        <!--  <li><a href="<c:url value="/cursos"/>"><span class="fa fa-pencil-square-o"></span> Cursos</a></li>
+        <li class="divider"></li>-->
         <li><a href="<c:url value="/feriados"/>"><span class="fa fa-pencil-square-o"></span> Feriados</a></li>
         <li class="divider"></li>
         <li><a href="<c:url value="/status"/>"><span class="fa fa-pencil-square-o"></span> Status</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/tipos"/>"><span class="fa fa-pencil-square-o"></span> Tipos</a></li>
+        <li><a href="<c:url value="/tiposRefeicoes"/>"><span class="fa fa-pencil-square-o"></span> Tipos Refeições</a></li>
+        <li class="divider"></li>
+        <li><a href="<c:url value="/tiposValores"/>"><span class="fa fa-pencil-square-o"></span> Tipos Valores</a></li>
       </ul>
     </li>
     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-list-alt"></span> Relatórios</a>
@@ -38,4 +40,16 @@
         <li><a href="<c:url value="/graficos"/>"><span class="fa fa-pie-chart"></span> Gráficos</a></li>
       </ul>
     </li>
+</sec:authorize>
+
+<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_CLIENTE')">
+    <p>Sou cliente</p>
+</sec:authorize>
+
+<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_STF')">
+    <p>Sou de finanças</p>
+</sec:authorize>
+
+<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_STN')">
+    <p>Sou de nutrição</p>
 </sec:authorize>

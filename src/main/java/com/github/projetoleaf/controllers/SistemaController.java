@@ -16,7 +16,6 @@ public class SistemaController {
 		return "inicio";
 	}
 
-
 	@GetMapping("/sobre")
 	public String sobre() {
 		return "sobre";

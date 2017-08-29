@@ -21,22 +21,22 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<h4>Dados Pessoais</h4>
-				<div class="col-sm-4">
+				<div class="col-sm-3">
 					<p><b>CPF</b></p>
-					<p>${usuario.cpf}</p>
+					<p>${cliente.cpf}</p>
 				</div>
-				<div class="col-sm-4">
+				<div class="col-sm-5">
 					<p><b>Nome</b></p>
-					<p>${usuario.nome}</p>
+					<p>${cliente.nome}</p>
 				</div>
 				<div class="col-sm-4">
 					<p><b>Data de nascimento</b></p>
-					<p>23 de Janeiro de 1987</p>
+					<p>${cliente.dataNascimento}</p>
 				</div>	
 			</div>
 		</div>
 		<hr />
-		<div class="row">
+		<!-- <div class="row">
 			<div class="col-sm-12">
 				<h4>Dados Acadêmicos</h4>
 				<div class="col-sm-4">
@@ -61,17 +61,17 @@
 				</div>						
 			</div>
 		</div>
-		<hr />
+		<hr /> -->
 		<div class="row">
 			<div class="col-sm-12">
 				<h4>Dados Financeiros</h4>
 				<div class="col-sm-6">
 					<p><b>Créditos</b></p>
-					<p>R$ 50,75</p>
+					<p>${cliente.creditos}</p>
 				</div>
 				<div class="col-sm-6">
 					<p><b>Última reserva</b></p>
-					<p>27 de Agosto de 2017</p>
+					<p></p>
 				</div>		
 			</div>
 		</div>

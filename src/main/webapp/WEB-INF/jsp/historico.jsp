@@ -76,9 +76,8 @@
 			<div class="row">
 				<div class="col-sm-4 pull-right">
 					<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>&nbsp;Pago<br>
-					<span class="glyphicon glyphicon-time" aria-hidden="true"></span>&nbsp;Aguardando
-					Pagamento<br> <span class="glyphicon glyphicon-remove-circle"
-						aria-hidden="true"></span>&nbsp;Não Pago<br> <span
+					<span class="glyphicon glyphicon-time" aria-hidden="true"></span>&nbsp;Solicitado<br> <span class="glyphicon glyphicon-ok-sign"
+						aria-hidden="true"></span>&nbsp;Consumida<br> <span
 						class="glyphicon glyphicon-download" aria-hidden="true"></span>&nbsp;Transferido<br>
 					<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp;Transferente
 				</div>

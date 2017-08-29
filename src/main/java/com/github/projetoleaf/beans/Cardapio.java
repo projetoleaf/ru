@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -19,8 +21,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = { "data", "pratoBase", "pratoTradicional", "pratoVegetariano", "guarnicao", "salada", "sobremesa", "suco" })
-@ToString(of = { "data", "pratoBase", "pratoTradicional", "pratoVegetariano", "guarnicao", "salada", "sobremesa", "suco" })
+@EqualsAndHashCode(of = { "data", "pratoBase", "pratoPrincipal", "guarnicao", "salada", "sobremesa", "suco" })
+@ToString(of = { "data", "pratoBase", "pratoPrincipal", "guarnicao", "salada", "sobremesa", "suco" })
 @Entity
 @Table(name = "cardapio")
 public class Cardapio implements Serializable {
@@ -44,12 +46,8 @@ public class Cardapio implements Serializable {
 	private String pratoBase;
 	
 	@NotBlank
-	@Column(name = "prato_tradicional")
-	private String pratoTradicional;
-	
-	@NotBlank
-	@Column(name = "prato_vegetariano")
-	private String pratoVegetariano;
+	@Column(name = "prato_principal")
+	private String pratoPrincipal;
 	
 	@NotBlank
 	@Column(name = "guarnicao")
@@ -67,7 +65,8 @@ public class Cardapio implements Serializable {
 	@Column(name = "suco")
 	private String suco;
 	
-	/*@NotNull
-	@Column(name = "id_tipo_refeicao")
-	private Integer idTipoRefeicao;*/
+	@NotNull
+	@ManyToOne
+    @JoinColumn(name = "id_tipo_refeicao", referencedColumnName = "id")
+	private TipoRefeicao tipoRefeicao;
 }

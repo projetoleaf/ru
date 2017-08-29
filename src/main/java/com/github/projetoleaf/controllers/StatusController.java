@@ -65,7 +65,7 @@ public class StatusController {
             model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
         }
 		
-        return abrirCadastroStatus(model);
+		return "redirect:/status";
 
     }
 	

@@ -58,7 +58,7 @@ public class ProjetoLeafApplication {
     @Component
     public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-        private final AuthenticationSuccessHandler authenticationSuccessHandler = new SimpleUrlAuthenticationSuccessHandler("/inicio");
+        private final AuthenticationSuccessHandler authenticationSuccessHandler = new SimpleUrlAuthenticationSuccessHandler("/boasVindas");
 
         @Resource(name = "springSecurityFilterChain")
         private FilterChainProxy chainProxy;

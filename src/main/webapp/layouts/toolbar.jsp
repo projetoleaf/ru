@@ -4,9 +4,9 @@
 
 <dandelion:bundle includes="font-awesome" />
 
-<li><a href="<c:url value="/inicio"/>"><i class="fa fa-tachometer" aria-hidden="true"></i> Sistema</a></li>
-<li><a href="<c:url value="/sobre"/>"><span class="fa fa-leaf"></span> Sobre</a></li>
 <sec:authorize access="isAuthenticated()">
+	<li><a href="<c:url value="/inicio"/>"><i class="fa fa-tachometer" aria-hidden="true"></i> Sistema</a></li>
+	<li><a href="<c:url value="/sobre"/>"><span class="fa fa-leaf"></span> Sobre</a></li>
     <li class="dropdown">
         <a href="#" class="dropdown-togle" data-toggle="dropdown">
             <i class="fa fa-user" aria-hidden="true"></i> <b class="caret"></b>
