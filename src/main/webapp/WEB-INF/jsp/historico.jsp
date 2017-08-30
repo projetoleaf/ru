@@ -1,14 +1,10 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@taglib prefix="datatables"
-	uri="http://github.com/dandelion/datatables"%>
+<%@taglib prefix="datatables" uri="http://github.com/dandelion/datatables"%>
 <%@taglib prefix="dandelion" uri="http://github.com/dandelion"%>
 
-<dandelion:bundle
-	includes="datatables.extended,font-awesome,jquery.validation,jquery.inputmask,jquery.datetimepicker" />
-	
-<c:set var="linkController"><c:url value="/categorias" /></c:set>
+<dandelion:bundle includes="datatables.extended,font-awesome,jquery.validation,jquery.inputmask,jquery.datetimepicker" />
 
 <html>
 <head>
@@ -64,13 +60,11 @@
 
 			<br />
 
-			<datatables:table data="${listagemHistorico}" row="receber"
-				id="GridDatatable">
+			<datatables:table data="${listagemHistorico}" id="GridDatatable">
 				<datatables:column title="Data" property="cardapio.data" sortInitDirection="asc" cssCellClass="text-center" />
 				<datatables:column title="Status" property="status.descricao" />
 		
-				<datatables:extraJs bundles="datatables.extended.config"
-					placeholder="before_start_document_ready" />
+				<datatables:extraJs bundles="datatables.extended.config" placeholder="before_start_document_ready" />
 			</datatables:table>
 			<br /> <br />
 			<div class="row">

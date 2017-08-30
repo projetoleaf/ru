@@ -42,11 +42,7 @@
     </li>
 </sec:authorize>
 
-<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_CLIENTE')">
-    <p>Sou cliente</p>
-</sec:authorize>
-
-<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_STF')">
+<sec:authorize access="hasAuthority('ROLE_FC.UNESP.RU_STF')">
     <p>Sou de finanças</p>
 </sec:authorize>
 
