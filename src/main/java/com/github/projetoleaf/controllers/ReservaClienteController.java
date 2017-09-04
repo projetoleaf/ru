@@ -12,6 +12,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -99,18 +100,17 @@ public class ReservaClienteController {
 	@PostMapping("/reserva/salvar")
 	public String salvarReserva(@RequestParam("data") String[] idsCardapios) {
 		
-		Reserva reserva = new Reserva();	
-		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();			
 		
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {	
 			
-		    String identificacao = authentication.getName();		
+		    String identificacao = authentication.getName();			    
 		    
 		    Cliente cliente = clienteRepository.buscarCliente(identificacao); //Pega o id da pessoa logada
 		    
-			TipoValor tipoValor = new TipoValor();
-			tipoValor.setId(tipoValorRepository.buscarIdDoTipoValorSubsidiada());
+			TipoValor tipoValor = tipoValorRepository.findByDescricao("Subsidiada");
+			
+			Reserva reserva = new Reserva();
 			
 		    reserva.setCliente(cliente); 
 		    reserva.setTipoValor(tipoValor); //Definir como subsidiada caso seja umas das 360 primeiras refeições
@@ -119,18 +119,21 @@ public class ReservaClienteController {
 		    
 		    reservaRepository.save(reserva);		
 		    
-		    long idReserva = reservaRepository.findFirstByOrderByIdDesc().getId();
+		    Reserva idReserva = reservaRepository.findFirstByOrderByIdDesc();
+		    
+		    //Long idReserva = teste.get(teste.size() - 1).getId();
+		    
+		    //System.out.println("Vamos ver se funciona " + idReserva);
 			
 		    for (int x = 0; x <= idsCardapios.length -1; x++) {
 			   
 			   ReservaItem reservaItem = new ReservaItem();		
 			   Reserva r = new Reserva();
 			   Cardapio c = new Cardapio();
-			   Status s = new Status();
+			   Status s = statusRepository.findByDescricao("Solicitado");
 			   
-			   r.setId(idReserva);
+			   r.setId(idReserva.getId());
 			   c.setId(Long.parseLong((idsCardapios[x])));
-			   s.setId(statusRepository.buscarIdDoStatusSocilicitado());
 			   
 			   reservaItem.setReserva(r);
 			   reservaItem.setCardapio(c);

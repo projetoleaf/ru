@@ -6,6 +6,8 @@
 
 <dandelion:bundle includes="datatables.extended,font-awesome,jquery.validation,jquery.inputmask,jquery.datetimepicker" />
 
+<c:set var="linkController"><c:url value="/historico"/></c:set>
+
 <html>
 <head>
 <meta name="header" content="Histórico" />
@@ -39,16 +41,17 @@
 				</h3>
 			</div>
 
-			<form name="historico" id="historico">
+			<form name="historico" id="historico" action="${linkController}">
 				<%@include file="/layouts/modal-processando.jsp"%>
 				<div class="row">
 					<div class="form-group col-xs-12 col-md-4">
 						<label for="txt_data" class="control-label">Até a Data</label>
 						<div class="input-group date" id="data">
-							<input type="text" name="txt_data" id="txt_data"
-								class="form-control" /> <span class="input-group-addon">
+							<input type="text" name="txt_data" id="txt_data" class="form-control" value="${txt_data}"/> 
+							<span class="input-group-addon">
 								<span class="glyphicon glyphicon-calendar"></span>
-							</span> <span class="input-group-btn">
+							</span> 
+							<span class="input-group-btn">
 								<button type="button" class="btn btn-primary" name="btn_pesquisar" id="btn_pesquisar">
 									<span class="glyphicon glyphicon-search"></span>
 								</button>
@@ -61,13 +64,13 @@
 			<br />
 
 			<datatables:table data="${listagemHistorico}" id="GridDatatable">
-				<datatables:column title="Data" property="cardapio.data" sortInitDirection="asc" cssCellClass="text-center" />
-				<datatables:column title="Status" property="status.descricao" />
+				<datatables:column title="Data" property="cardapio.data" sortInitDirection="desc" format="{0,date,dd/MM/yyyy}" sortType="date-uk" cssCellClass="text-center" />
+				<datatables:column title="Status" property="status.descricao" cssCellClass="text-center" />
 		
 				<datatables:extraJs bundles="datatables.extended.config" placeholder="before_start_document_ready" />
 			</datatables:table>
 			<br /> <br />
-			<div class="row">
+			<!-- <div class="row">
 				<div class="col-sm-4 pull-right">
 					<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>&nbsp;Pago<br>
 					<span class="glyphicon glyphicon-time" aria-hidden="true"></span>&nbsp;Solicitado<br> <span class="glyphicon glyphicon-ok-sign"
@@ -75,7 +78,7 @@
 						class="glyphicon glyphicon-download" aria-hidden="true"></span>&nbsp;Transferido<br>
 					<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>&nbsp;Transferente
 				</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </body>
