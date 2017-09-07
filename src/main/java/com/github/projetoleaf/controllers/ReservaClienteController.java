@@ -12,7 +12,6 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -119,11 +118,19 @@ public class ReservaClienteController {
 		    
 		    reservaRepository.save(reserva);		
 		    
-		    Reserva idReserva = reservaRepository.findFirstByOrderByIdDesc();
+		    List<Reserva> teste = reservaRepository.findAll();
 		    
-		    //Long idReserva = teste.get(teste.size() - 1).getId();
+		    Long id = null;
 		    
-		    //System.out.println("Vamos ver se funciona " + idReserva);
+		    for(int x = 0; x < teste.size(); x++){
+		    	
+		    	if(teste.get(x).getCliente().getIdentificacao() == cliente.getIdentificacao())
+		    	{
+		    		id = teste.get(teste.size() - 1).getId();
+		    	}
+		    }
+		    
+		    System.out.println("Vamos ver se funciona " + id);
 			
 		    for (int x = 0; x <= idsCardapios.length -1; x++) {
 			   
@@ -132,7 +139,7 @@ public class ReservaClienteController {
 			   Cardapio c = new Cardapio();
 			   Status s = statusRepository.findByDescricao("Solicitado");
 			   
-			   r.setId(idReserva.getId());
+			   r.setId(id);
 			   c.setId(Long.parseLong((idsCardapios[x])));
 			   
 			   reservaItem.setReserva(r);

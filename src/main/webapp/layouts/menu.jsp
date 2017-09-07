@@ -4,7 +4,7 @@
 
 <dandelion:bundle includes="font-awesome" />
 
-<sec:authorize access="isAuthenticated()">
+<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_ADMIN') || hasRole('ROLE_FC.UNESP.RU_STF')">
     <li><a href="<c:url value="/reservas"/>"><span class="fa fa-calendar"></span> Reservas</a></li>
     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-usd"></span> Vendas</a>
       <ul class="dropdown-menu">
@@ -15,6 +15,8 @@
         <li><a href="<c:url value="/creditos"/>"><span class="fa fa-usd"></span> Créditos</a></li>
       </ul>
     </li>
+</sec:authorize>
+<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_ADMIN') || hasRole('ROLE_FC.UNESP.RU_STN')">
     <li><a href="<c:url value="/clientes"/>"><span class="fa fa-users"></span> Clientes</a></li>
     <li class="dropdown"><a href="#" class="dropdown-togle" data-toggle="dropdown"><span class="fa fa-wrench"></span> Manutenção</a>
       <ul class="dropdown-menu">
@@ -33,19 +35,21 @@
         <li><a href="<c:url value="/tiposValores"/>"><span class="fa fa-pencil-square-o"></span> Tipos Valores</a></li>
       </ul>
     </li>
-    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-list-alt"></span> Relatórios</a>
-      <ul class="dropdown-menu">
-        <li><a href="<c:url value="/planilhas"/>"><span class="fa fa-table"></span> Planilhas</a></li>
-        <li class="divider"></li>
-        <li><a href="<c:url value="/graficos"/>"><span class="fa fa-pie-chart"></span> Gráficos</a></li>
-      </ul>
-    </li>
 </sec:authorize>
 
-<sec:authorize access="hasAuthority('ROLE_FC.UNESP.RU_STF')">
-    <p>Sou de finanças</p>
+<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_CLIENTE')">
+	<li><a href="<c:url value="/conta"/>"><span class="fa fa-calendar"></span> Conta</a></li>
+	<li><a href="<c:url value="/historico"/>"><span class="fa fa-calendar"></span> Histórico</a></li>
+	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-calendar"></span> Reservar</a></li>
+	<li><a href="<c:url value="/transferencias"/>"><span class="fa fa-calendar"></span> Transferências</a></li>
+	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-calendar"></span> Comprar</a></li>
+	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-calendar"></span> Remanescentes</a></li>
 </sec:authorize>
 
-<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_STN')">
-    <p>Sou de nutrição</p>
-</sec:authorize>
+<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-list-alt"></span> Relatórios</a>
+  <ul class="dropdown-menu">
+    <li><a href="<c:url value="/planilhas"/>"><span class="fa fa-table"></span> Planilhas</a></li>
+    <li class="divider"></li>
+    <li><a href="<c:url value="/graficos"/>"><span class="fa fa-pie-chart"></span> Gráficos</a></li>
+  </ul>
+</li>

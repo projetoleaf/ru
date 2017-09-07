@@ -37,6 +37,52 @@
 		          decimal: ",",
 		          thousands: "."
 		     });
+			
+			$('#valor').hide();
+	    	$('#refeicoes').hide();
+	    	$('#recargas').hide();
+	    	$('#troco').hide();
+	    	$('#btnPagamento').hide();
+	    	$('label[for="valor"]').hide();
+	    	$('label[for="refeicoes"]').hide();
+	    	$('label[for="recargas"]').hide();
+	    	$('label[for="troco"]').hide();
+	    	
+	    	$("#recargas").prop('disabled',true);
+	    	
+			$('#habilitarRecargas').change(function(){
+				
+				if($(this).prop("checked")) {
+					$("#recargas").prop('disabled',false);
+			  	} else {
+			  		$("#recargas").prop('disabled',true);
+			  	}
+			});
+			
+			$('#utilizarCreditos').change(function(){
+				
+				if($(this).prop("checked")) {
+			    	$('#valor').show();
+			    	$('#refeicoes').show();
+			    	$('#recargas').show();
+			    	$('#troco').show();
+			    	$('#btnPagamento').show();
+			    	$('label[for="valor"]').show();
+			    	$('label[for="refeicoes"]').show();
+			    	$('label[for="recargas"]').show();
+			    	$('label[for="troco"]').show();
+			  	} else {
+			    	$('#valor').hide();
+			    	$('#refeicoes').hide();
+			    	$('#recargas').hide();
+			    	$('#troco').hide();
+			    	$('#btnPagamento').hide();
+			    	$('label[for="valor"]').hide();
+			    	$('label[for="refeicoes"]').hide();
+			    	$('label[for="recargas"]').hide();
+			    	$('label[for="troco"]').hide();
+			  	}
+			});
 		});
 	</script>
 
@@ -58,7 +104,7 @@
 	<form>
 		<div class="row">
 			<div class="col-sm-12 form-group">
-				<input type="checkbox" id="credito"> Utilizar créditos
+				<input type="checkbox" id="utilizarCreditos"> Utilizar créditos
 			</div>
 		</div>
 		<div class="row">
@@ -73,7 +119,7 @@
 				<input type="text" class="form-control" id="refeicoes">
 			</div>
 			<div class="col-sm-2 form-group">
-				<label for="recargas"> <input type="checkbox"> Recargas</label> 
+				<label for="recargas"> <input type="checkbox" id="habilitarRecargas"> Recargas</label> 
 				<input type="text" class="form-control" id="recargas">
 			</div>
 			<div class="col-sm-2 form-group" style="margin-top: 2px">
@@ -81,7 +127,7 @@
 				<input type="text" class="form-control" id="troco">
 			</div>
 			<div class="col-sm-2 form-group" style="margin-top: 27px">
-				<a href="#" class="btn btn-primary">Confirmar pagamento</a>
+				<a href="#" id="btnPagamento" class="btn btn-primary">Confirmar pagamento</a>
 			</div>
 		</div>
 	</form>
