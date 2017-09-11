@@ -26,11 +26,6 @@ public class SistemaController {
 		return "transferencias";
 	}
 	
-	@GetMapping("/reservas")
-	public String reservas() {
-		return "reservas";
-	}
-	
 	@GetMapping("/remanescentes")
 	public String remanescentes() {
 		return "remanescentes";

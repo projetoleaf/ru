@@ -56,6 +56,10 @@ public class Cliente implements Serializable {
 	@Column(name = "creditos")
 	private BigDecimal creditos;
 	
+	@NotBlank
+	@Column(name = "biometria")
+	private String biometria;
+	
 	public String imprimeCPF(String CPF) {
 	    return(CPF.substring(0, 3) + "." + CPF.substring(3, 6) + "." +
 	      CPF.substring(6, 9) + "-" + CPF.substring(9, 11));

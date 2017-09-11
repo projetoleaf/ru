@@ -12,6 +12,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,30 +60,47 @@ public class ReservaClienteController {
 		
 		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
 		
-		List<Cardapio> cardapio = new ArrayList<Cardapio>();
+		List<Cardapio> cardapio = new ArrayList<Cardapio>();				
+		List<Reserva> todasAsReservasDoBD = reservaRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
 		
 		Calendar dataAtual = Calendar.getInstance();		
-		dataAtual = verificarData(dataAtual);       
-        
-        for (int i = 0; i < 5; i++) {
-        	
-        	Cardapio c = new Cardapio();        	
-        	List<Object[]> dataDoBanco = cardapioRepository.verificarSeDataExisteNoBD(dataAtual.getTime());
-        	
-        	for(Object[] linhaDoBanco : dataDoBanco){
-        		
-        		String dataFormatada = formatoDesejado.format((Date)linhaDoBanco[1]);
-                Date dataVar = formatoDesejado.parse(dataFormatada);
-                
-                c.setId((Long)linhaDoBanco[0]);
-                c.setData(dataVar);
-            	
-            	if(formatoDesejado.format(c.getData()).equals(formatoDesejado.format(dataAtual.getTime())))
-                	cardapio.add(c);
-            }       	
-        	
-        	dataAtual.add(Calendar.DAY_OF_MONTH, 1);	            
-        }
+		
+		int count = 0;
+		
+		for(int c = 0; c < todasAsReservasDoBD.size(); c++) {
+			String dataHoraBanco = formatoDesejado.format(todasAsReservasDoBD.get(c).getDataHora());
+			String dataDeHoje = formatoDesejado.format(dataAtual.getTime());
+			
+			if(dataHoraBanco.equals(dataDeHoje)) {
+				count++;
+			}
+		}	
+		
+		System.out.println("Contador = " + count);
+		
+		if(count < 360) {
+			dataAtual = verificarData(dataAtual);   
+			
+			for (int i = 0; i < 5; i++) {
+	        	
+	        	Cardapio c = new Cardapio();        	
+	        	List<Object[]> dataDoBanco = cardapioRepository.verificarSeDataExisteNoBD(dataAtual.getTime());
+	        	
+	        	for(Object[] linhaDoBanco : dataDoBanco){
+	        		
+	        		String dataFormatada = formatoDesejado.format((Date)linhaDoBanco[1]);
+	                Date dataVar = formatoDesejado.parse(dataFormatada);
+	                
+	                c.setId((Long)linhaDoBanco[0]);
+	                c.setData(dataVar);
+	            	
+	            	if(formatoDesejado.format(c.getData()).equals(formatoDesejado.format(dataAtual.getTime())))
+	                	cardapio.add(c);
+	            }       	
+	        	
+	        	dataAtual.add(Calendar.DAY_OF_MONTH, 1);	            
+	        }
+		}        
         
 		model.addAttribute("datas", new Cardapio());
 		model.addAttribute("todasAsDatas", cardapio);
@@ -97,7 +115,7 @@ public class ReservaClienteController {
 	}
 	
 	@PostMapping("/reserva/salvar")
-	public String salvarReserva(@RequestParam("data") String[] idsCardapios) {
+	public String salvarReservaRefeicoes(@RequestParam("data") String[] idsCardapios) {
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();			
 		
@@ -130,7 +148,7 @@ public class ReservaClienteController {
 		    	}
 		    }
 		    
-		    System.out.println("Vamos ver se funciona " + id);
+		    System.out.println("Vamos ver se funciona o ultimo ID Reserva de acordo com o cliente " + id);
 			
 		    for (int x = 0; x <= idsCardapios.length -1; x++) {
 			   

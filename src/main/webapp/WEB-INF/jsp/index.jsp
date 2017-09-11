@@ -6,8 +6,8 @@
 
 <html>
 <head>
-<meta name="header" content="Início"/>
-<title></title>
+<meta name="header" content="Entrar"/>
+<title>Entrar</title>
 </head>
 <body>
 	<div class="col-sm-4 col-sm-offset-4 text-center">

@@ -23,7 +23,7 @@
 				<h4>Dados Pessoais</h4>
 				<div class="col-sm-3">
 					<p><b>CPF</b></p>
-					<p>${cpf}</p>
+					<p>${cliente.cpf}</p>
 				</div>
 				<div class="col-sm-5">
 					<p><b>Nome</b></p>

@@ -14,6 +14,7 @@ CREATE TABLE cliente
   data_nascimento DATE NOT NULL,
   data_criado TIMESTAMP NOT NULL,
   creditos numeric(15,2) NOT NULL,
+  biometria CHARACTER VARYING(100) NOT NULL,
 
   PRIMARY KEY(id)
 );

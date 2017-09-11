@@ -90,7 +90,6 @@ public class ContaController {
 		    String dataFormatada = formatoData.format(cliente.getDataNascimento());
 		    String dataHoraFormatada = formatoDataHora.format(ultimaReserva);
 		    String creditosFormatado = nf.format (cliente.getCreditos());
-		    String cpfFormatado = cliente.imprimeCPF(cliente.getCpf());
 		    
 		    model.addAttribute("cliente", cliente);		   
 		    model.addAttribute("tipo", tipo);
@@ -98,7 +97,6 @@ public class ContaController {
 		    model.addAttribute("ultimaReserva", dataHoraFormatada);
 		    model.addAttribute("dtnasc", dataFormatada);
 		    model.addAttribute("creditos", creditosFormatado);
-		    model.addAttribute("cpf", cpfFormatado);
 		}
 		
 		return "conta";

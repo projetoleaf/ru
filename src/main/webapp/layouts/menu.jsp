@@ -46,10 +46,12 @@
 	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-calendar"></span> Remanescentes</a></li>
 </sec:authorize>
 
-<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-list-alt"></span> Relatórios</a>
-  <ul class="dropdown-menu">
-    <li><a href="<c:url value="/planilhas"/>"><span class="fa fa-table"></span> Planilhas</a></li>
-    <li class="divider"></li>
-    <li><a href="<c:url value="/graficos"/>"><span class="fa fa-pie-chart"></span> Gráficos</a></li>
-  </ul>
-</li>
+<sec:authorize access="isAuthenticated()">
+	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-list-alt"></span> Relatórios</a>
+	  <ul class="dropdown-menu">
+	    <li><a href="<c:url value="/planilhas"/>"><span class="fa fa-table"></span> Planilhas</a></li>
+	    <li class="divider"></li>
+	    <li><a href="<c:url value="/graficos"/>"><span class="fa fa-pie-chart"></span> Gráficos</a></li>
+	  </ul>
+	</li>
+</sec:authorize>

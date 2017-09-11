@@ -96,11 +96,12 @@ public class PrimeiroAcessoController {
         		    
         		    Cliente clienteAtualizado = new Cliente();
         		    clienteAtualizado.setIdentificacao(identificacao);
-        		    clienteAtualizado.setCpf(cpf);
+        		    clienteAtualizado.setCpf(cliente.imprimeCPF(cpf));
         		    clienteAtualizado.setNome(nome);
         		    clienteAtualizado.setDataNascimento(cliente.getDataNascimento());
         		    clienteAtualizado.setDataCriado(timestamp);
         		    clienteAtualizado.setCreditos(creditos);
+        		    clienteAtualizado.setBiometria("N");
         		    
         		    clienteRepository.save(clienteAtualizado);
                     
