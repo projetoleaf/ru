@@ -4,7 +4,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<c:set var="actionSalvar"><c:url value="/reservas/pagamento/salvar"/></c:set>
+<c:set var="actionSalvar"><c:url value="/reservas/salvar"/></c:set>
 
 <dandelion:bundle includes="jquery.validation,jquery.inputmask" />
 
@@ -27,7 +27,7 @@
 			$("#recargas").prop('disabled',true);
 			$("#troco").prop('disabled',true);		
 			
-			$('input:checkbox[name="nome"]').change(function(){
+			$('input:checkbox[name="datas"]').change(function(){
 				
 				if($(this).prop("checked")) {					
 					$("#valor").prop('disabled',false);
@@ -56,7 +56,7 @@
 			});
 			
 			$('#confirmarPagamento').click(function () {
-				var todosOsStatus = $("input:checkbox[name='nome']");
+				var todosOsStatus = $("input:checkbox[name='datas']");
 			    
 			    if(!todosOsStatus.is(":checked")) {			
 			    	$("#modalErro .modal-body").append("<p>Selecione pelo menos um dia!</p>");
@@ -114,7 +114,7 @@
 	         <div class="row">
 	            <div class="form-group col-xs-6 col-md-6">
 	              <label class="control-label">Nome</label>
-	               <input class="form-control" value="${cliente.nome}" disabled/>	              
+	              <form:input path="nome" class="form-control" value="${cliente.nome}" disabled="true"/>	              
 	            </div>
 	            <div class="form-group col-xs-6 col-md-6">
 	              <label for="creditos" class="control-label">Créditos</label>
@@ -124,7 +124,7 @@
 	        <br>
 	        <div class="row">
 	        	<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4 text-center">
-	        		<form:checkboxes items="${datasReservas}" path="nome" delimiter="<br>" />
+	        		<form:checkboxes items="${datasReservas}" path="datas" delimiter="<br>" />
 	        	</div>
 	        </div>
 	        <br>
@@ -142,7 +142,7 @@
 			<div class="row">
 				<div class="col-sm-3 form-group">
 					<label for="valor">Valor dado</label> 
-					<input type="text" class="form-control" id="valor" />
+					<form:input path="valor" class="form-control" />
 				</div>
 				<div class="col-sm-3 form-group">
 					<label for="recargas"> <input type="checkbox" id="habilitarRecargas"> Recargas</label> 

@@ -23,10 +23,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.github.projetoleaf.beans.Cliente;
 import com.github.projetoleaf.beans.ReservaItem;
 import com.github.projetoleaf.beans.ReservasAdmin;
+import com.github.projetoleaf.beans.Status;
 import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
 import com.github.projetoleaf.repositories.ReservaRepository;
+import com.github.projetoleaf.repositories.StatusRepository;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -45,6 +48,9 @@ public class ReservaAdminController {
 	
 	@Autowired
 	private ReservaItemRepository reservaItemRepository;
+	
+	@Autowired
+	private StatusRepository statusRepository;
 	
 	@Autowired
     private MessageSource config;
@@ -295,19 +301,41 @@ public class ReservaAdminController {
 		return "/reservas/pagamento";
 	}
 	
-	@PostMapping("/reservas/pagamento/salvar")
-	public String salvarReservas(@RequestParam("nome") Date[] idsDatas, @RequestParam("valor") BigDecimal valor) {
+	@PostMapping("/salvar")
+	public String salvarReservas(@RequestParam("nome") String nome, @RequestParam("datas") String[] datasSelecionadas, @RequestParam("valor") String valor) {
 		
-		try {
-			System.out.println("Valor = " + valor);
+		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
+		
+		List<ReservaItem> reservasItensDoBD = reservaItemRepository.findAll();
+		
+		int z = 0;
+		
+		for(int x = 0; x < reservasItensDoBD.size(); x++) {
 			
-			for(Date i : idsDatas) {
-				System.out.println("O que tem aqui? = " + i);
+			System.out.println(reservasItensDoBD.get(x).getReserva().getCliente().getNome() + " - " + nome);
+			
+			if(reservasItensDoBD.get(x).getReserva().getCliente().getNome() == nome) {
+				
+				System.out.println(formatoDesejado.format(reservasItensDoBD.get(x).getCardapio().getData()) + " - " + datasSelecionadas[z]);
+				
+				if(formatoDesejado.format(reservasItensDoBD.get(x).getCardapio().getData()).equals(datasSelecionadas[z])) {
+					
+					System.out.println("Entrou e deu certo :)");
+					
+					Status status = statusRepository.findByDescricao("Pago");
+					reservasItensDoBD.get(x).setStatus(status);
+					
+					z++;
+				}
 			}
-        }
-        catch (Exception ex) {
-            log.error("Erro de processamento", ex);
-        }
+		}
+		
+		System.out.println("Valor = " + valor);
+		
+		for(String i : datasSelecionadas) {
+			System.out.println("O que tem aqui? = " + i);
+		}
+        
 		
 		return "redirect:/reservas";
 	}
