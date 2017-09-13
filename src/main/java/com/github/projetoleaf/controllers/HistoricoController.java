@@ -39,15 +39,15 @@ public class HistoricoController {
 		    
 		    List<ReservaItem> historico = new ArrayList<ReservaItem>();
 		    
-		    List<ReservaItem> base = reservaItemRepository.findAll();
+		    List<ReservaItem> todoHistoricoDoBd = reservaItemRepository.findAll();
 		    
-		    for(int x = 0; x < base.size(); x++) {
+		    for(int x = 0; x < todoHistoricoDoBd.size(); x++) {
 		    	
-		    	if(base.get(x).getReserva().getCliente().getIdentificacao().equals(identificacao)) {
+		    	if(todoHistoricoDoBd.get(x).getReserva().getCliente().getIdentificacao().equals(identificacao)) {
 		    		
-		    		if(base.get(x).getCardapio().getData().before(data) || base.get(x).getCardapio().getData().equals(data)) {
+		    		if(todoHistoricoDoBd.get(x).getCardapio().getData().before(data) || todoHistoricoDoBd.get(x).getCardapio().getData().equals(data)) {
 		    			
-		    			historico.add(base.get(x));
+		    			historico.add(todoHistoricoDoBd.get(x));
 		    		}		    
 		    	}
 		    }

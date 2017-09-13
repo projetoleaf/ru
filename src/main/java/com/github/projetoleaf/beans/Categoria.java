@@ -2,11 +2,14 @@ package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -44,4 +47,7 @@ public class Categoria implements Serializable {
 	@NumberFormat(pattern = "#,##0.00")
 	@Column(name = "valor_com_subsidio")
 	private BigDecimal valorComSubsidio;
+	
+	@OneToMany(mappedBy="categoria", cascade=CascadeType.ALL)
+	private List<ClienteCategoria> clientesCategoria;
 }

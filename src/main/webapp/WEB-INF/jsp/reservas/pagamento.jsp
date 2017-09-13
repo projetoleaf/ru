@@ -114,11 +114,11 @@
 	         <div class="row">
 	            <div class="form-group col-xs-6 col-md-6">
 	              <label class="control-label">Nome</label>
-	              <form:input path="nome" class="form-control" value="${cliente.nome}" disabled="true"/>	              
+	              <form:input path="nome" class="form-control" value="${cliente.nome}" readonly="true"/>	              
 	            </div>
 	            <div class="form-group col-xs-6 col-md-6">
 	              <label for="creditos" class="control-label">Créditos</label>
-	              <input class="form-control" id="creditos" value="${cliente.creditos}" disabled/>	
+	              <input class="form-control" id="creditos" value="${cliente.creditos}" readonly="true"/>	
 	            </div>	            
 	        </div>
 	        <br>
@@ -197,6 +197,7 @@
 			 		</div>
 			 	</div>
 			</div>
+			
 	      </div>
 	    </div>    
 	</form:form>

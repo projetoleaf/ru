@@ -1,7 +1,6 @@
 package com.github.projetoleaf.controllers;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,11 +10,9 @@ import java.util.List;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +24,8 @@ import com.github.projetoleaf.beans.Status;
 import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
-import com.github.projetoleaf.repositories.ReservaRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Controller
 @RequestMapping("/reservas")
 public class ReservaAdminController {
@@ -44,16 +37,10 @@ public class ReservaAdminController {
 	private ClienteRepository clienteRepository;
 	
 	@Autowired
-	private ReservaRepository reservaRepository;
-	
-	@Autowired
 	private ReservaItemRepository reservaItemRepository;
 	
 	@Autowired
 	private StatusRepository statusRepository;
-	
-	@Autowired
-    private MessageSource config;
 	
 	@GetMapping
 	public String pesquisarReserva(Model model) throws ParseException {
@@ -308,34 +295,30 @@ public class ReservaAdminController {
 		
 		List<ReservaItem> reservasItensDoBD = reservaItemRepository.findAll();
 		
-		int z = 0;
+		for(int z = 0; z < datasSelecionadas.length; z++) {
 		
-		for(int x = 0; x < reservasItensDoBD.size(); x++) {
-			
-			System.out.println(reservasItensDoBD.get(x).getReserva().getCliente().getNome() + " - " + nome);
-			
-			if(reservasItensDoBD.get(x).getReserva().getCliente().getNome() == nome) {
+			for(int x = 0; x < reservasItensDoBD.size(); x++) {
 				
-				System.out.println(formatoDesejado.format(reservasItensDoBD.get(x).getCardapio().getData()) + " - " + datasSelecionadas[z]);
-				
-				if(formatoDesejado.format(reservasItensDoBD.get(x).getCardapio().getData()).equals(datasSelecionadas[z])) {
+				if(reservasItensDoBD.get(x).getReserva().getCliente().getNome().equals(nome)) {
 					
-					System.out.println("Entrou e deu certo :)");
-					
-					Status status = statusRepository.findByDescricao("Pago");
-					reservasItensDoBD.get(x).setStatus(status);
-					
-					z++;
+					if(formatoDesejado.format(reservasItensDoBD.get(x).getCardapio().getData()).equals(datasSelecionadas[z])) {
+						
+						Status status = statusRepository.findByDescricao("Pago");
+						
+						System.out.println(status.getId());
+						System.out.println(status.getDescricao());
+						
+						reservasItensDoBD.get(x).setStatus(status);
+						
+						reservaItemRepository.save(reservasItensDoBD.get(x));
+						
+						z++;
+					}
 				}
 			}
-		}
+		}	
 		
-		System.out.println("Valor = " + valor);
-		
-		for(String i : datasSelecionadas) {
-			System.out.println("O que tem aqui? = " + i);
-		}
-        
+		System.out.println("Valor = " + valor);        
 		
 		return "redirect:/reservas";
 	}

@@ -1,8 +1,6 @@
 package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -43,7 +41,7 @@ public class ReservaItem implements Serializable {
     private Cardapio cardapio;
 	
 	@NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "id_status", referencedColumnName = "id")
     private Status status;
 }
