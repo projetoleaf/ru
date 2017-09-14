@@ -46,10 +46,6 @@ public class ProjetoLeafApplication {
                     .antMatchers("/layouts/**").permitAll()
                     .antMatchers("/").permitAll()
                     .anyRequest().authenticated()
-                .and()
-                    .logout()
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/")
                 ;
         }
 
