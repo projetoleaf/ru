@@ -27,7 +27,7 @@ public class SistemaController {
 			retorno = "boasVindas";
 		}
 		else {
-			retorno = "index";
+			retorno = "redirect:/login";
 		}
 		
 		return retorno;
