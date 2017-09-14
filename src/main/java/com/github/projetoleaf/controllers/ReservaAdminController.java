@@ -85,36 +85,33 @@ public class ReservaAdminController {
                 		{
                 			if(formatoDesejado.format(dataVar).equals(formatoDesejado.format(dataAtual.getTime())) && formatoDesejado.format(dataVar).equals(formatoDesejado.format(reservasItensDoBD.get(x).getCardapio().getData())))
                         	{    
-                				if(reservasItensDoBD.get(x).getStatus().getDescricao().equals("Solicitado"))
+            					Calendar cal = Calendar.getInstance();
+                				cal.setTime(reservasItensDoBD.get(x).getCardapio().getData());
+                				
+                				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
                 				{
-                					Calendar cal = Calendar.getInstance();
-                    				cal.setTime(reservasItensDoBD.get(x).getCardapio().getData());
-                    				
-                    				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
-                    				{
-                    					reservasAdmin.setSegundaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
-                    				}
-                    				
-                    				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
-                    				{
-                    					reservasAdmin.setTercaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
-                    				}
-                    				
-                    				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
-                    				{
-                    					reservasAdmin.setQuartaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
-                    				}
-                    				
-                    				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
-                    				{
-                    					reservasAdmin.setQuintaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
-                    				}
-                    				
-                    				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
-                    				{
-                    					reservasAdmin.setSextaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
-                    				}
-                				}            				
+                					reservasAdmin.setSegundaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
+                				}
+                				
+                				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
+                				{
+                					reservasAdmin.setTercaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
+                				}
+                				
+                				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
+                				{
+                					reservasAdmin.setQuartaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
+                				}
+                				
+                				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
+                				{
+                					reservasAdmin.setQuintaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
+                				}
+                				
+                				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
+                				{
+                					reservasAdmin.setSextaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
+                				}      				
                         	}
                 		}      			
             		}

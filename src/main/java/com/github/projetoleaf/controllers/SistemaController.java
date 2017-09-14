@@ -24,7 +24,7 @@ public class SistemaController {
 		
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {	
 			
-			retorno = "boasVindas";
+			retorno = "redirect:/boasVindas";
 		}
 		else {
 			retorno = "redirect:/login";

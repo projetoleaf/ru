@@ -95,6 +95,8 @@ public class PrimeiroAcessoController {
         		    
         		    Cliente cliente = new Cliente();
         		    
+        		    System.out.println("Primeiro acesso bugado" + primeiroAcesso.getDataNascimento());
+        		    
         		    Cliente clienteAtualizado = new Cliente();
         		    clienteAtualizado.setIdentificacao(identificacao);
         		    clienteAtualizado.setCpf(cliente.imprimeCPF(cpf));
