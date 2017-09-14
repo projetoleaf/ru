@@ -3,7 +3,6 @@ package com.github.projetoleaf.controllers;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -77,30 +76,28 @@ public class ContaController {
 		    
 		    List<Reserva> reservasDoCliente = reservaRepository.findAll();
 		    
-		    Date ultimaReserva = new Date();
-		    
-		    for(int x = 0; x < reservasDoCliente.size(); x++){
+		    String mensagemReserva = "Nenhuma reserva solicitada";
+		    String variavel = mensagemReserva;
+		      
+		    for(int x = 0; x < reservasDoCliente.size(); x++) {
 		    	
 		    	if(reservasDoCliente.get(x).getCliente().getIdentificacao() == cliente.getIdentificacao())
-		    	{
-		    		ultimaReserva = reservasDoCliente.get(reservasDoCliente.size() - 1).getDataHora();
+		    	{	
+	    			variavel = formatoDataHora.format(reservasDoCliente.get(reservasDoCliente.size() - 1).getDataHora());
 		    	}
 		    }
 		    		    
 		    String dataFormatada = formatoData.format(cliente.getDataNascimento());
-		    String dataHoraFormatada = formatoDataHora.format(ultimaReserva);
 		    String creditosFormatado = nf.format (cliente.getCreditos());
 		    
 		    model.addAttribute("cliente", cliente);		   
 		    model.addAttribute("tipo", tipo);
 		    model.addAttribute("categoria", categoria);
-		    model.addAttribute("ultimaReserva", dataHoraFormatada);
+		    model.addAttribute("ultimaReserva", variavel);
 		    model.addAttribute("dtnasc", dataFormatada);
 		    model.addAttribute("creditos", creditosFormatado);
 		}
 		
 		return "conta";
-	}
-	
-	
+	}	
 }
