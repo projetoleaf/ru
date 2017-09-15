@@ -27,7 +27,7 @@
 	<datatables:table data="${listagemStatus}" row="status" id="GridDatatable">
 		<datatables:column title="Descrição" property="descricao" />
 		<datatables:column title="Operações" filterable="false"	searchable="false" cssCellClass="text-center">
-			<a href="${linkController}/editar/${tipo.id}"
+			<a href="${linkController}/editar/${status.id}"
 				class="btn btn-default btn-xs" data-toggle="tooltip" title="Alterar">
 				<span class='glyphicon glyphicon-pencil'></span>
 			</a>

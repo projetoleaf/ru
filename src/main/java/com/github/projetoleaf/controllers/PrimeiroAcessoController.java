@@ -13,19 +13,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import com.github.projetoleaf.beans.Categoria;
 import com.github.projetoleaf.beans.Cliente;
 import com.github.projetoleaf.beans.ClienteCategoria;
 import com.github.projetoleaf.beans.ClienteTipoRefeicao;
-import com.github.projetoleaf.beans.TipoRefeicao;
+import com.github.projetoleaf.beans.PrimeiroAcesso;
 import com.github.projetoleaf.beans.UsuarioDetails;
 import com.github.projetoleaf.repositories.CategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ClienteTipoRefeicaoRepository;
 import com.github.projetoleaf.repositories.TipoRefeicaoRepository;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -66,7 +63,9 @@ public class PrimeiroAcessoController {
 		    if(cliente != null) {		    	
 		    	retorno = "boasVindas";
 		    } else {
-		    	model.addAttribute("primeiroAcesso", new Cliente());
+		    	model.addAttribute("primeiroAcesso", new PrimeiroAcesso());
+		    	model.addAttribute("categoria", categoriaRepository.findAll());
+				model.addAttribute("tipoRefeicao", tipoRefeicaoRepository.findAll());
 		    	retorno = abrirPrimeiroAcesso(model); 
 		    }
 		}
@@ -75,11 +74,11 @@ public class PrimeiroAcessoController {
 	}
 	
 	public String abrirPrimeiroAcesso(Model model) {						
-        return "primeiroAcessoI";
+        return "primeiroAcesso";
     }
 	
     @PostMapping("/primeiroAcesso/salvar")
-    public String salvarPrimeiroLogin(Model model, @ModelAttribute("primeiroAcesso") Cliente cliente, BindingResult result) {
+    public String salvarPrimeiroLogin(Model model, @ModelAttribute("primeiroAcesso") PrimeiroAcesso primeiroAcesso, BindingResult result) {
 		try {
             if (!result.hasErrors()) {   
             	
@@ -94,15 +93,37 @@ public class PrimeiroAcessoController {
         		    BigDecimal creditos = new BigDecimal(0.00);
         		    Timestamp timestamp = new Timestamp(System.currentTimeMillis()); //Data e hora atual	    
         		    
+        		    Cliente cliente = new Cliente();
+        		    
+        		    System.out.println("Primeiro acesso bugado" + primeiroAcesso.getDataNascimento());
+        		    
         		    Cliente clienteAtualizado = new Cliente();
         		    clienteAtualizado.setIdentificacao(identificacao);
-        		    clienteAtualizado.setCpf(cpf);
+        		    clienteAtualizado.setCpf(cliente.imprimeCPF(cpf));
         		    clienteAtualizado.setNome(nome);
-        		    clienteAtualizado.setDataNascimento(cliente.getDataNascimento());
+        		    clienteAtualizado.setDataNascimento(primeiroAcesso.getDataNascimento());
         		    clienteAtualizado.setDataCriado(timestamp);
         		    clienteAtualizado.setCreditos(creditos);
+        		    clienteAtualizado.setBiometria("N");
         		    
         		    clienteRepository.save(clienteAtualizado);
+        		    
+        		    ClienteTipoRefeicao clienteTipoRefeicao = new ClienteTipoRefeicao();
+        		    clienteTipoRefeicao.setCliente(clienteAtualizado);
+        		    clienteTipoRefeicao.setTipoRefeicao(primeiroAcesso.getTipoRefeicao());
+        		    clienteTipoRefeicao.setAtivo(true);
+        		    
+        		    clienteTipoRefeicaoRepository.save(clienteTipoRefeicao);
+        		    
+        		    ClienteCategoria clienteCategoria = new ClienteCategoria();
+        		    clienteCategoria.setCliente(clienteAtualizado);
+        		    clienteCategoria.setCategoria(primeiroAcesso.getCategoria());
+        		    Timestamp timestamp2 = new Timestamp(System.currentTimeMillis()); //Data e hora atual	    
+        		    clienteCategoria.setDataInicio(timestamp2); 
+        		    clienteCategoria.setDataFim(null);
+        		    clienteCategoria.setMatricula(11111111);
+        		    
+        		    clienteCategoriaRepository.save(clienteCategoria);
                     
                     log.info(clienteAtualizado.toString() + " gravado com sucesso");
                     model.addAttribute("mensagemInfo", config.getMessage("gravadoSucesso", new Object[] { "o primeiro acesso" }, null));
@@ -112,89 +133,8 @@ public class PrimeiroAcessoController {
         catch (Exception ex) {
             log.error("Erro de processamento", ex);
             model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
-        }
+        }		
 		
-		model.addAttribute("primeiroTipoRefeicao", new TipoRefeicao());
-		model.addAttribute("tipoRefeicao", tipoRefeicaoRepository.findAll());
-        return abrirPrimeiroTipoRefeicao(model);
-    }	
-    
-    public String abrirPrimeiroTipoRefeicao(Model model) {						
-        return "primeiroAcessoII";
-    }
-    
-    @PostMapping("/primeiroTipoRefeicao/salvar")
-    public String salvarPrimeiroTipoRefeicao(Model model, @ModelAttribute("primeiroTipoRefeicao") TipoRefeicao tipoRefeicao, BindingResult result) {
-		try {
-            if (!result.hasErrors()) {   
-            	
-            	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();	
-        		
-        		if (!(authentication instanceof AnonymousAuthenticationToken)) {	
-        			
-        			String identificacao = authentication.getName();	
-        			   
-        		    Cliente cliente = clienteRepository.buscarCliente(identificacao); 
-        		    
-        		    ClienteTipoRefeicao clienteTipoRefeicao = new ClienteTipoRefeicao();
-        		    clienteTipoRefeicao.setCliente(cliente);
-        		    clienteTipoRefeicao.setTipoRefeicao(tipoRefeicao);
-        		    clienteTipoRefeicao.setAtivo(true);
-        		    
-        		    clienteTipoRefeicaoRepository.save(clienteTipoRefeicao);
-                    
-                    log.info(clienteTipoRefeicao.toString() + " gravado com sucesso");
-                    model.addAttribute("mensagemInfo", config.getMessage("gravadoSucesso", new Object[] { "a primeira refeição" }, null));
-        		}              
-            }
-        }
-        catch (Exception ex) {
-            log.error("Erro de processamento", ex);
-            model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
-        }
-		
-		model.addAttribute("primeiraCategoriaCliente", new Categoria());
-		model.addAttribute("categoriaCliente", categoriaRepository.findAll());
-        return abrirPrimeiraCategoriaCliente(model);
-    }	
-    
-    public String abrirPrimeiraCategoriaCliente(Model model) {						
-        return "primeiroAcessoIII";
-    }
-    
-    @PostMapping("/primeiraCategoriaCliente/salvar")
-    public String salvarPrimeiraCategoriaCliente(Model model, @ModelAttribute("primeiraCategoriaCliente") Categoria categoria, BindingResult result) {
-		try {
-            if (!result.hasErrors()) {   
-            	
-            	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();	
-        		
-        		if (!(authentication instanceof AnonymousAuthenticationToken)) {	
-        			
-        			String identificacao = authentication.getName();	
-        			   
-        		    Cliente cliente = clienteRepository.buscarCliente(identificacao);   
-        		    
-        		    ClienteCategoria clienteCategoria = new ClienteCategoria();
-        		    clienteCategoria.setCliente(cliente);
-        		    clienteCategoria.setCategoria(categoria);
-        		    Timestamp timestamp = new Timestamp(System.currentTimeMillis()); //Data e hora atual	    
-        		    clienteCategoria.setDataInicio(timestamp); 
-        		    clienteCategoria.setDataFim(null);
-        		    clienteCategoria.setMatricula(11111111);
-        		    
-        		    clienteCategoriaRepository.save(clienteCategoria);
-                    
-                    log.info(clienteCategoria.toString() + " gravado com sucesso");
-                    model.addAttribute("mensagemInfo", config.getMessage("gravadoSucesso", new Object[] { "a primeira categoria" }, null));
-        		}              
-            }
-        }
-        catch (Exception ex) {
-            log.error("Erro de processamento", ex);
-            model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
-        }
-		
-        return "redirect:/boasVindas";
-    }	
+		return "redirect:/boasVindas";
+    }	        	
 }

@@ -31,47 +31,47 @@
 				</div>
 				<div class="col-sm-4">
 					<p><b>Data de nascimento</b></p>
-					<p>${cliente.dataNascimento}</p>
+					<p>${dtnasc}</p>
 				</div>	
 			</div>
 		</div>
 		<hr />
-		<!-- <div class="row">
+		<div class="row">
 			<div class="col-sm-12">
 				<h4>Dados Acadêmicos</h4>
 				<div class="col-sm-4">
-					<p><b>Matricula</b></p>
-					<p>1111111111</p>
+					<p><b>RA / Matricula</b></p>
+					<p>${categoria.matricula}</p>
 				</div>
 				<div class="col-sm-4">
 					<p><b>Categoria</b></p>
-					<p>Discente de Graduação</p>
+					<p>${categoria.categoria.descricao}</p>
 				</div>
 				<div class="col-sm-4">
 					<p><b>Refeição</b></p>
-					<p>Tradicional  <a href="#" title="Editar"> <span class="fa fa-pencil-square-o"></span></a></p>
+					<p>${tipo}  <a href="#" title="Editar"> <span class="fa fa-pencil-square-o"></span></a></p>
 				</div>	
-				<div class="col-sm-4">
+				<!-- <div class="col-sm-4">
 					<p><b>Curso</b></p>
 					<p>Ciência da Computação</p>
 				</div>
 				<div class="col-sm-8">
 					<p><b>Período</b></p>
 					<p>Integral</p>
-				</div>						
+				</div> -->						
 			</div>
 		</div>
-		<hr /> -->
+		<hr />
 		<div class="row">
 			<div class="col-sm-12">
 				<h4>Dados Financeiros</h4>
 				<div class="col-sm-6">
 					<p><b>Créditos</b></p>
-					<p>${cliente.creditos}</p>
+					<p>${creditos}</p>
 				</div>
 				<div class="col-sm-6">
 					<p><b>Última reserva</b></p>
-					<p></p>
+					<p>${ultimaReserva}</p>
 				</div>		
 			</div>
 		</div>

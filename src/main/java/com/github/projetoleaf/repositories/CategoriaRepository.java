@@ -8,4 +8,6 @@ import com.github.projetoleaf.beans.Categoria;
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
+	Categoria findByDescricao(String categoria);
+
 }

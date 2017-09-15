@@ -3,12 +3,12 @@ package com.github.projetoleaf.beans;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -55,4 +55,25 @@ public class Cliente implements Serializable {
 	@NumberFormat(pattern = "#,##0.00")
 	@Column(name = "creditos")
 	private BigDecimal creditos;
+	
+	@NotBlank
+	@Column(name = "biometria")
+	private String biometria;
+	
+	@OneToMany(mappedBy="cliente", cascade=CascadeType.ALL)
+	private List<Reserva> reservas;
+	
+	@OneToMany(mappedBy="cliente", cascade=CascadeType.ALL)
+	private List<ClienteCategoria> clientesCategoria;
+	
+	@OneToMany(mappedBy="cliente", cascade=CascadeType.ALL)
+	private List<ClienteTipoRefeicao> clientesTipoRefeicao;
+	
+	@OneToMany(mappedBy="cliente", cascade=CascadeType.ALL)
+	private List<Extrato> extratos;
+	
+	public String imprimeCPF(String CPF) {
+	    return(CPF.substring(0, 3) + "." + CPF.substring(3, 6) + "." +
+	      CPF.substring(6, 9) + "-" + CPF.substring(9, 11));
+	}
 }

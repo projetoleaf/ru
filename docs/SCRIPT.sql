@@ -14,6 +14,7 @@ CREATE TABLE cliente
   data_nascimento DATE NOT NULL,
   data_criado TIMESTAMP NOT NULL,
   creditos numeric(15,2) NOT NULL,
+  biometria CHARACTER VARYING(100) NOT NULL,
 
   PRIMARY KEY(id)
 );
@@ -196,13 +197,15 @@ CREATE TABLE cliente_tipo_refeicao
   CONSTRAINT fk_id_tipo_refeicao FOREIGN KEY(id_tipo_refeicao) REFERENCES tipo_refeicao(id)
 );
 
-/* Tabela extrato -> Fazer posteriormente 1.Entrada 2.Saída
+/* Tabela extrato -> Fazer posteriormente 1.Entrada 2.Saída */
 CREATE TABLE extrato
 (
   id SERIAL NOT NULL,
   id_cliente INTEGER NOT NULL,
-  ......
+  transacao BOOLEAN NOT NULL,
+  data_hora TIMESTAMP NOT NULL,
+  saldo numeric(15,2) NOT NULL,
+  
   PRIMARY KEY(id),
-  CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
-}
-*/
+  CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id)
+);

@@ -2,10 +2,9 @@ package com.github.projetoleaf.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.github.projetoleaf.beans.Status;
+import com.github.projetoleaf.beans.Extrato;
 
 @Repository
-public interface StatusRepository extends JpaRepository<Status, Long> {
+public interface ExtratoRepository extends JpaRepository<Extrato, Long> {
 
-	Status findByDescricao(String descricao);
 }

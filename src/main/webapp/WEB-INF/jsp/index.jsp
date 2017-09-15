@@ -6,13 +6,13 @@
 
 <html>
 <head>
-<meta name="header" content="Início"/>
-<title></title>
+<meta name="header" content="Entrar"/>
+<title>Entrar</title>
 </head>
 <body>
 	<div class="col-sm-4 col-sm-offset-4 text-center">
         <p>Você não está logado. Clique no botão abaixo para entrar.</p>
-        <a href="<c:url value="/login"/>" class="btn btn-default fa fa-sign-in"> Entrar</a>
+        <a href="<c:url value="/login"/>" class="btn btn-primary"><span class="fa fa-sign-in"></span> Entrar</a>
 	</div>
 </body>
 </html>

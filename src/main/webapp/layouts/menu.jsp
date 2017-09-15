@@ -1,57 +1,58 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
-
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://github.com/dandelion" prefix="dandelion"%>
 <%@taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 
 <dandelion:bundle includes="font-awesome" />
 
-<sec:authorize access="isAuthenticated()">
+<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_ADMIN') || hasRole('ROLE_FC.UNESP.RU_STF')">
     <li><a href="<c:url value="/reservas"/>"><span class="fa fa-calendar"></span> Reservas</a></li>
-    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-usd"></span> Vendas</a>
+    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-bank"></span> Vendas</a>
       <ul class="dropdown-menu">
         <li><a href="<c:url value="/semanaAtual"/>"><span class="fa fa-calendar"></span> Semana Atual</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/remanescentes"/>"><span class="fa fa-calendar-o"></span> Remanescentes</a></li>
+        <li><a href="<c:url value="/remanescentes"/>"><span class="fa fa-calendar-plus-o"></span> Remanescentes</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/creditos"/>"><span class="fa fa-usd"></span> Cr√©ditos</a></li>
+        <li><a href="<c:url value="/creditos"/>"><span class="fa fa-usd"></span> CrÈditos</a></li>
       </ul>
     </li>
+</sec:authorize>
+<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_ADMIN') || hasRole('ROLE_FC.UNESP.RU_STN')">
     <li><a href="<c:url value="/clientes"/>"><span class="fa fa-users"></span> Clientes</a></li>
-    <li class="dropdown"><a href="#" class="dropdown-togle" data-toggle="dropdown"><span class="fa fa-wrench"></span> Manuten√ß√£o</a>
+    <li class="dropdown"><a href="#" class="dropdown-togle" data-toggle="dropdown"><span class="fa fa-wrench"></span> ManutenÁ„o</a>
       <ul class="dropdown-menu">
-        <li><a href="<c:url value="/cardapios"/>"><span class="fa fa-pencil-square-o"></span> Card√°pios</a></li>
+        <li><a href="<c:url value="/cardapios"/>"><span class="fa fa-cog"></span> Card·pios</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/categorias"/>"><span class="fa fa-pencil-square-o"></span> Categorias</a></li>
+        <li><a href="<c:url value="/categorias"/>"><span class="fa fa-cog"></span> Categorias</a></li>
         <li class="divider"></li>
-        <!--  <li><a href="<c:url value="/cursos"/>"><span class="fa fa-pencil-square-o"></span> Cursos</a></li>
+        <!--  <li><a href="<c:url value="/cursos"/>"><span class="fa fa-cog"></span> Cursos</a></li>
         <li class="divider"></li>-->
-        <li><a href="<c:url value="/feriados"/>"><span class="fa fa-pencil-square-o"></span> Feriados</a></li>
+        <li><a href="<c:url value="/feriados"/>"><span class="fa fa-cog"></span> Feriados</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/status"/>"><span class="fa fa-pencil-square-o"></span> Status</a></li>
+        <li><a href="<c:url value="/status"/>"><span class="fa fa-cog"></span> Status</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/tiposRefeicoes"/>"><span class="fa fa-pencil-square-o"></span> Tipos Refei√ß√µes</a></li>
+        <li><a href="<c:url value="/tiposRefeicoes"/>"><span class="fa fa-cog"></span> Tipos RefeiÁıes</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/tiposValores"/>"><span class="fa fa-pencil-square-o"></span> Tipos Valores</a></li>
-      </ul>
-    </li>
-    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-list-alt"></span> Relat√≥rios</a>
-      <ul class="dropdown-menu">
-        <li><a href="<c:url value="/planilhas"/>"><span class="fa fa-table"></span> Planilhas</a></li>
-        <li class="divider"></li>
-        <li><a href="<c:url value="/graficos"/>"><span class="fa fa-pie-chart"></span> Gr√°ficos</a></li>
+        <li><a href="<c:url value="/tiposValores"/>"><span class="fa fa-cog"></span> Tipos Valores</a></li>
       </ul>
     </li>
 </sec:authorize>
 
 <sec:authorize access="hasRole('ROLE_FC.UNESP.RU_CLIENTE')">
-    <p>Sou cliente</p>
+	<li><a href="<c:url value="/conta"/>"><span class="fa fa-id-card"></span> Conta</a></li>
+	<li><a href="<c:url value="/historico"/>"><span class="fa fa-calendar"></span> HistÛrico</a></li>
+	<li><a href="<c:url value="/reserva"/>"><span class="fa fa-cutlery"></span> Reservar</a></li>
+	<li><a href="<c:url value="/transferencias"/>"><span class="fa fa-exchange"></span> TransferÍncias</a></li>
+	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-money"></span> Comprar</a></li>
+	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-feed"></span> Remanescentes</a></li>
+	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-bank"></span> Extrato</a></li>
 </sec:authorize>
 
-<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_STF')">
-    <p>Sou de finan√ßas</p>
-</sec:authorize>
-
-<sec:authorize access="hasRole('ROLE_FC.UNESP.RU_STN')">
-    <p>Sou de nutri√ß√£o</p>
+<sec:authorize access="isAuthenticated()">
+	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-info-circle"></span> RelatÛrios</a>
+	  <ul class="dropdown-menu">
+	    <li><a href="<c:url value="/planilhas"/>"><span class="fa fa-table"></span> Planilhas</a></li>
+	    <li class="divider"></li>
+	    <li><a href="<c:url value="/graficos"/>"><span class="fa fa-pie-chart"></span> Gr·ficos</a></li>
+	  </ul>
+	</li>
 </sec:authorize>

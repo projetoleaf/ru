@@ -58,7 +58,7 @@ public class CardapioController {
 	
 	@GetMapping("/editar/{id}")
     public String editarCardapio(@PathVariable Long id, Model model) {
-Cardapio cardapio = cardapioRepository.findOne(id);
+		Cardapio cardapio = cardapioRepository.findOne(id);
         
         TipoRefeicao trad = tipoRefeicaoRepository.findByDescricao("Tradicional");
 		TipoRefeicao veget = tipoRefeicaoRepository.findByDescricao("Vegetariano");
