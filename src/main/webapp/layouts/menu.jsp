@@ -14,7 +14,7 @@
         <li class="divider"></li>
         <li><a href="<c:url value="/remanescentes"/>"><span class="fa fa-calendar-plus-o"></span> Remanescentes</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/creditos"/>"><span class="fa fa-usd"></span> Cr�ditos</a></li>
+        <li><a href="<c:url value="/creditos"/>"><span class="fa fa-usd"></span> Créditos</a></li>
       </ul>
     </li>
 </sec:authorize>
@@ -22,7 +22,7 @@
     <li><a href="<c:url value="/clientes"/>"><span class="fa fa-users"></span> Clientes</a></li>
     <li class="dropdown"><a href="#" class="dropdown-togle" data-toggle="dropdown"><span class="fa fa-wrench"></span> Manuten��o</a>
       <ul class="dropdown-menu">
-        <li><a href="<c:url value="/cardapios"/>"><span class="fa fa-cog"></span> Card�pios</a></li>
+        <li><a href="<c:url value="/cardapios"/>"><span class="fa fa-cog"></span> Cardápios</a></li>
         <li class="divider"></li>
         <li><a href="<c:url value="/categorias"/>"><span class="fa fa-cog"></span> Categorias</a></li>
         <li class="divider"></li>
@@ -32,7 +32,7 @@
         <li class="divider"></li>
         <li><a href="<c:url value="/status"/>"><span class="fa fa-cog"></span> Status</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/tiposRefeicoes"/>"><span class="fa fa-cog"></span> Tipos Refei��es</a></li>
+        <li><a href="<c:url value="/tiposRefeicoes"/>"><span class="fa fa-cog"></span> Tipos Refeições</a></li>
         <li class="divider"></li>
         <li><a href="<c:url value="/tiposValores"/>"><span class="fa fa-cog"></span> Tipos Valores</a></li>
       </ul>
@@ -41,20 +41,20 @@
 
 <sec:authorize access="hasRole('ROLE_FC.UNESP.RU_CLIENTE')">
 	<li><a href="<c:url value="/conta"/>"><span class="fa fa-id-card"></span> Conta</a></li>
-	<li><a href="<c:url value="/historico"/>"><span class="fa fa-calendar"></span> Hist�rico</a></li>
+	<li><a href="<c:url value="/historico"/>"><span class="fa fa-calendar"></span> Histórico</a></li>
 	<li><a href="<c:url value="/reserva"/>"><span class="fa fa-cutlery"></span> Reservar</a></li>
-	<li><a href="<c:url value="/transferencias"/>"><span class="fa fa-exchange"></span> Transfer�ncias</a></li>
+	<li><a href="<c:url value="/transferencias"/>"><span class="fa fa-exchange"></span> Transferências</a></li>
 	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-money"></span> Comprar</a></li>
 	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-feed"></span> Remanescentes</a></li>
 	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-bank"></span> Extrato</a></li>
 </sec:authorize>
 
 <sec:authorize access="isAuthenticated()">
-	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-info-circle"></span> Relat�rios</a>
+	<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-info-circle"></span> Relatórios</a>
 	  <ul class="dropdown-menu">
 	    <li><a href="<c:url value="/planilhas"/>"><span class="fa fa-table"></span> Planilhas</a></li>
 	    <li class="divider"></li>
-	    <li><a href="<c:url value="/graficos"/>"><span class="fa fa-pie-chart"></span> Gr�ficos</a></li>
+	    <li><a href="<c:url value="/graficos"/>"><span class="fa fa-pie-chart"></span> Gráficos</a></li>
 	  </ul>
 	</li>
 </sec:authorize>
