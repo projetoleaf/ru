@@ -13,11 +13,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.github.projetoleaf.beans.Cliente;
 import com.github.projetoleaf.beans.ClienteCategoria;
-import com.github.projetoleaf.beans.ClienteTipoRefeicao;
+import com.github.projetoleaf.beans.ClienteCurso;
 import com.github.projetoleaf.beans.Reserva;
 import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
-import com.github.projetoleaf.repositories.ClienteTipoRefeicaoRepository;
+import com.github.projetoleaf.repositories.ClienteCursoRepository;
 import com.github.projetoleaf.repositories.ReservaRepository;
 
 @Controller
@@ -30,7 +30,7 @@ public class ContaController {
 	private ClienteCategoriaRepository clienteCategoriaRepository;
 	
 	@Autowired
-	private ClienteTipoRefeicaoRepository clienteTipoRefeicaoRepository;
+	private ClienteCursoRepository clienteCursoRepository;
 	
 	@Autowired
 	private ReservaRepository reservaRepository;
@@ -44,58 +44,53 @@ public class ContaController {
 			
 		    String identificacao = authentication.getName();	
 		   
-		    Cliente cliente = clienteRepository.buscarCliente(identificacao);
+		    Cliente cliente = clienteRepository.buscarCliente(identificacao);		    
 		    
-		    List<ClienteTipoRefeicao> cTipoRefeicao = clienteTipoRefeicaoRepository.findAll();
-		    
-		    List<ClienteCategoria> cCategoria = clienteCategoriaRepository.findAll();
-		    
-		    SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
 		    SimpleDateFormat formatoDataHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
-		    NumberFormat nf = NumberFormat.getCurrencyInstance();  
+		    //NumberFormat nf = NumberFormat.getCurrencyInstance(); 
 		    
-		    String tipo = null;
+		    List<ClienteCategoria> todosOsClientesCategorias = clienteCategoriaRepository.findAll();
 		    
 		    ClienteCategoria categoria = new ClienteCategoria();
 		    
-		    for(int x = 0; x < cTipoRefeicao.size(); x++)
+		    for(int x = 0; x < todosOsClientesCategorias.size(); x++)
 		    {
-		    	if(cTipoRefeicao.get(x).getCliente().getIdentificacao() == cliente.getIdentificacao())
+		    	if(todosOsClientesCategorias.get(x).getCliente().getIdentificacao() == cliente.getIdentificacao())
 		    	{
-		    		tipo = cTipoRefeicao.get(x).getTipoRefeicao().getDescricao();
+		    		categoria = todosOsClientesCategorias.get(x);
 		    	}
-		    }	    
+		    }
 		    
-		    for(int x = 0; x < cCategoria.size(); x++)
+		    List<ClienteCurso> todosOsClientesCursos = clienteCursoRepository.findAll();
+		    
+		    ClienteCurso curso = new ClienteCurso();
+		    
+		    for(int x = 0; x < todosOsClientesCursos.size(); x++)
 		    {
-		    	if(cCategoria.get(x).getCliente().getIdentificacao() == cliente.getIdentificacao())
+		    	if(todosOsClientesCursos.get(x).getCliente().getIdentificacao() == cliente.getIdentificacao())
 		    	{
-		    		categoria = cCategoria.get(x);
+		    		curso = todosOsClientesCursos.get(x);
 		    	}
 		    }
 		    
 		    List<Reserva> reservasDoCliente = reservaRepository.findAll();
 		    
-		    String mensagemReserva = "Nenhuma reserva solicitada";
-		    String variavel = mensagemReserva;
+		    String ultimaReserva = "Nenhuma reserva solicitada";
 		      
 		    for(int x = 0; x < reservasDoCliente.size(); x++) {
 		    	
 		    	if(reservasDoCliente.get(x).getCliente().getIdentificacao() == cliente.getIdentificacao())
 		    	{	
-	    			variavel = formatoDataHora.format(reservasDoCliente.get(reservasDoCliente.size() - 1).getDataHora());
+		    		ultimaReserva = formatoDataHora.format(reservasDoCliente.get(reservasDoCliente.size() - 1).getDataReserva());
 		    	}
 		    }
-		    		    
-		    String dataFormatada = formatoData.format(cliente.getDataNascimento());
-		    String creditosFormatado = nf.format (cliente.getCreditos());
+		    //String creditosFormatado = nf.format (cliente.getCreditos());
 		    
 		    model.addAttribute("cliente", cliente);		   
-		    model.addAttribute("tipo", tipo);
 		    model.addAttribute("categoria", categoria);
-		    model.addAttribute("ultimaReserva", variavel);
-		    model.addAttribute("dtnasc", dataFormatada);
-		    model.addAttribute("creditos", creditosFormatado);
+		    model.addAttribute("ultimaReserva", ultimaReserva);
+		    model.addAttribute("curso", curso);
+		    //model.addAttribute("creditos", creditosFormatado);
 		}
 		
 		return "conta";

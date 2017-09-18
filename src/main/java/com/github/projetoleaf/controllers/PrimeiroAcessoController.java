@@ -1,6 +1,5 @@
 package com.github.projetoleaf.controllers;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -15,14 +14,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import com.github.projetoleaf.beans.Cliente;
 import com.github.projetoleaf.beans.ClienteCategoria;
-import com.github.projetoleaf.beans.ClienteTipoRefeicao;
+import com.github.projetoleaf.beans.ClienteCurso;
 import com.github.projetoleaf.beans.PrimeiroAcesso;
 import com.github.projetoleaf.beans.UsuarioDetails;
 import com.github.projetoleaf.repositories.CategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
-import com.github.projetoleaf.repositories.ClienteTipoRefeicaoRepository;
-import com.github.projetoleaf.repositories.TipoRefeicaoRepository;
+import com.github.projetoleaf.repositories.CursoRepository;
+import com.github.projetoleaf.repositories.ClienteCursoRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -33,16 +32,16 @@ public class PrimeiroAcessoController {
 	private ClienteRepository clienteRepository;
 	
 	@Autowired
-	private TipoRefeicaoRepository tipoRefeicaoRepository;
-	
-	@Autowired
-	private ClienteTipoRefeicaoRepository clienteTipoRefeicaoRepository;
+	private ClienteCursoRepository clienteCursoRepository;
 	
 	@Autowired
 	private ClienteCategoriaRepository clienteCategoriaRepository;
 	
 	@Autowired
 	private CategoriaRepository categoriaRepository;
+	
+	@Autowired
+	private CursoRepository cursoRepository;
 	
 	@Autowired
     private MessageSource config;
@@ -65,7 +64,7 @@ public class PrimeiroAcessoController {
 		    } else {
 		    	model.addAttribute("primeiroAcesso", new PrimeiroAcesso());
 		    	model.addAttribute("categoria", categoriaRepository.findAll());
-				model.addAttribute("tipoRefeicao", tipoRefeicaoRepository.findAll());
+				model.addAttribute("curso", cursoRepository.findAll());
 		    	retorno = abrirPrimeiroAcesso(model); 
 		    }
 		}
@@ -89,39 +88,32 @@ public class PrimeiroAcessoController {
         			
         		    String nome = usuarioAtual.getNome();
         		    String cpf = usuarioAtual.getCpf();
-        		    String identificacao = authentication.getName();	
-        		    BigDecimal creditos = new BigDecimal(0.00);
+        		    String identificacao = authentication.getName();
         		    Timestamp timestamp = new Timestamp(System.currentTimeMillis()); //Data e hora atual	    
-        		    
-        		    Cliente cliente = new Cliente();
-        		    
-        		    System.out.println("Primeiro acesso bugado" + primeiroAcesso.getDataNascimento());
         		    
         		    Cliente clienteAtualizado = new Cliente();
         		    clienteAtualizado.setIdentificacao(identificacao);
-        		    clienteAtualizado.setCpf(cliente.imprimeCPF(cpf));
+        		    clienteAtualizado.setCpf(clienteAtualizado.imprimeCPF(cpf));
         		    clienteAtualizado.setNome(nome);
-        		    clienteAtualizado.setDataNascimento(primeiroAcesso.getDataNascimento());
-        		    clienteAtualizado.setDataCriado(timestamp);
-        		    clienteAtualizado.setCreditos(creditos);
         		    clienteAtualizado.setBiometria("N");
+        		    clienteAtualizado.setDataCriado(timestamp);        		    
         		    
         		    clienteRepository.save(clienteAtualizado);
         		    
-        		    ClienteTipoRefeicao clienteTipoRefeicao = new ClienteTipoRefeicao();
-        		    clienteTipoRefeicao.setCliente(clienteAtualizado);
-        		    clienteTipoRefeicao.setTipoRefeicao(primeiroAcesso.getTipoRefeicao());
-        		    clienteTipoRefeicao.setAtivo(true);
+        		    ClienteCurso clienteCurso = new ClienteCurso();
+        		    clienteCurso.setCliente(clienteAtualizado);
+        		    clienteCurso.setCurso(primeiroAcesso.getCurso());
+        		    clienteCurso.setDataInicio(timestamp);
+        		    clienteCurso.setDataFim(null);
         		    
-        		    clienteTipoRefeicaoRepository.save(clienteTipoRefeicao);
+        		    clienteCursoRepository.save(clienteCurso);
         		    
         		    ClienteCategoria clienteCategoria = new ClienteCategoria();
         		    clienteCategoria.setCliente(clienteAtualizado);
         		    clienteCategoria.setCategoria(primeiroAcesso.getCategoria());
-        		    Timestamp timestamp2 = new Timestamp(System.currentTimeMillis()); //Data e hora atual	    
-        		    clienteCategoria.setDataInicio(timestamp2); 
-        		    clienteCategoria.setDataFim(null);
-        		    clienteCategoria.setMatricula(11111111);
+        		    clienteCategoria.setRaMatricula(primeiroAcesso.getRaMatricula());    
+        		    clienteCategoria.setDataInicio(timestamp); 
+        		    clienteCategoria.setDataFim(null);        		    
         		    
         		    clienteCategoriaRepository.save(clienteCategoria);
                     

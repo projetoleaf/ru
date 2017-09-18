@@ -73,6 +73,11 @@ public class SistemaController {
 		return "creditos";
 	}
 	
+	@GetMapping("/extrato")
+	public String extrato() {
+		return "extrato";
+	}
+	
 	@GetMapping("/semanaAtual")
 	public String semanaAtual() {
 		return "semanaAtual";

@@ -10,11 +10,9 @@ CREATE TABLE cliente
   id SERIAL NOT NULL,
   identificacao CHARACTER VARYING(50) NULL,
   cpf CHARACTER VARYING(14) NOT NULL,
-  nome CHARACTER VARYING(100) NOT NULL,
-  data_nascimento DATE NOT NULL,
-  data_criado TIMESTAMP NOT NULL,
-  creditos numeric(15,2) NOT NULL,
+  nome CHARACTER VARYING(100) NOT NULL,  
   biometria CHARACTER VARYING(100) NOT NULL,
+  data_criado TIMESTAMP NOT NULL,
 
   PRIMARY KEY(id)
 );
@@ -29,8 +27,7 @@ CREATE TABLE tipo_refeicao
 );
 
 /* Tabela com os cursos e seus periodos,
-Pode haver uma mesma descrição mas diferente período,
-Esta tabela existirá em nosso banco? Por enquanto NÃO
+Pode haver uma mesma descrição mas diferente período */
 CREATE TABLE curso
 (
   id SERIAL NOT NULL,
@@ -38,7 +35,7 @@ CREATE TABLE curso
   periodo CHARACTER VARYING(50),
 
   PRIMARY KEY(id)
-);*/
+);
 
 /* Tabela referente aos status que as refeições podem ter antes de serem consumidas (pago, solicitado, expirado/não pago????, transferido, transferente, consuimida) */
 CREATE TABLE status
@@ -49,23 +46,32 @@ CREATE TABLE status
   PRIMARY KEY(id)
 );
 
-/* Tabela referente aos itens do cardápio
-Será responsável pelas datas das refeições? 
-PROBLEM */
+/* Tabela referente aos períodos que as refeições podem ter ao ser atrelado na tabela cardapio
+(Café da manhã, almoço e janta) */
+CREATE TABLE periodo_refeicao
+(
+  id SERIAL NOT NULL,
+  descricao CHARACTER VARYING(50),
+
+  PRIMARY KEY(id)
+);
+
+/* Tabela referente aos itens do cardápio */
 CREATE TABLE cardapio
 (
   id SERIAL NOT NULL,
   data DATE NOT NULL,
   prato_base varchar(50) NOT NULL,
-  prato_principal varchar(100) NOT NULL,
+  prato_tradicional varchar(100) NOT NULL,
+  prato_vegetariano varchar(100) NOT NULL,
   guarnicao varchar(100) NOT NULL,
   salada varchar(50) NOT NULL,
   sobremesa varchar(50) NOT NULL,
   suco varchar(50) NOT NULL,
-  id_tipo_refeicao INTEGER NOT NULL,
+  id_periodo_refeicao INTEGER NOT NULL,
 
   PRIMARY KEY (id),
-  CONSTRAINT fk_id_tipo_refeicao FOREIGN KEY(id_tipo_refeicao)REFERENCES tipo_refeicao(id)
+  CONSTRAINT fk_id_periodo_refeicao FOREIGN KEY(id_periodo_refeicao) REFERENCES periodo_refeicao(id)
 );
 
 /* Tabela para identificar se a reserva foi feita com o valor sem ou com subsídio
@@ -110,13 +116,26 @@ CREATE TABLE feriado
   PRIMARY KEY(id)
 );
 
+/* Tabela extrato -> transacao: + Entrada - Saída (saída -> registra em reserva_item) */
+CREATE TABLE extrato
+(
+  id SERIAL NOT NULL,
+  id_cliente INTEGER NOT NULL,
+  transacao numeric(15,2) NOT NULL,
+  data_transacao TIMESTAMP NOT NULL,
+  saldo numeric(15,2) NOT NULL,
+  
+  PRIMARY KEY(id),
+  CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id)
+);
+
 /* Tabela responsável por associar a reserva com um cliente e o tipo do valor da refeição (com ou sem subsídio). */
 CREATE TABLE reserva
 (
   id SERIAL NOT NULL,
   id_cliente INTEGER NOT NULL,
   id_tipo_valor INTEGER NOT NULL,
-  data_hora TIMESTAMP NOT NULL,
+  data_reserva TIMESTAMP NOT NULL,
 
   PRIMARY KEY(id),
   CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
@@ -131,11 +150,15 @@ CREATE TABLE reserva_item
   id_reserva INTEGER NOT NULL,
   id_cardapio INTEGER NOT NULL,
   id_status INTEGER NOT NULL,
+  id_tipo_refeicao INTEGER NOT NULL,
+  id_extrato INTEGER,
   
   PRIMARY KEY(id),
   CONSTRAINT fk_id_reserva FOREIGN KEY(id_reserva) REFERENCES reserva(id),
   CONSTRAINT fk_id_cardapio FOREIGN KEY(id_cardapio) REFERENCES cardapio(id),
-  CONSTRAINT fk_id_status FOREIGN KEY(id_status) REFERENCES status(id)
+  CONSTRAINT fk_id_status FOREIGN KEY(id_status) REFERENCES status(id),
+  CONSTRAINT fk_id_tipo_refeicao FOREIGN KEY(id_tipo_refeicao) REFERENCES tipo_refeicao(id),
+  CONSTRAINT fk_id_extrato FOREIGN KEY(id_extrato) REFERENCES extrato(id)
 );
 
 /* VER COMO É MELHOR ??
@@ -164,48 +187,31 @@ CREATE TABLE reserva_item_temp
 ); */
 
 /* Tabela que relaciona o cliente com sua categoria e mantém em histórico através de Triggers (UPDATE) e campos para data_inicio e data_fim.
-Usuário pode até pertencer a duas categorias, mas deve escolher uma.
-Terá uma tela para ele escolher ? */
+Usuário pode até pertencer a duas categorias, mas deve escolher uma. */
 CREATE TABLE cliente_categoria
 (
   id SERIAL NOT NULL,
   id_cliente INTEGER NOT NULL,
   id_categoria INTEGER NOT NULL,
+  ra_matricula INTEGER NOT NULL, /* Terá ? Por enquanto sim */
   data_inicio TIMESTAMP NOT NULL,
   data_fim TIMESTAMP, /* Pode ser NULL ->saber atual(ais) */
-  matricula INTEGER NOT NULL, /* Terá ? Por enquanto sim */
-  /* id_curso INTEGER */ /* Terá ? -> Por enquanoto NÃO */
 
   PRIMARY KEY(id),
   CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
-  /*CONSTRAINT fk_id_curso FOREIGN KEY(id_curso) REFERENCES curso(id),*/
   CONSTRAINT fk_id_categoria FOREIGN KEY(id_categoria) REFERENCES categoria(id)
 );
 
-/* Tabela que relaciona o cliente com seu tipo de refeição e mantém em histórico através de Triggers (UPDATE) e campos para data_inicio e data_fim.
-Usuário pode até pertencer a duas categorias, mas deve escolher uma.
-Terá uma tela para ele escolher ? */
-CREATE TABLE cliente_tipo_refeicao
+/* Tabela que relaciona o cliente com seu curso e mantém em histórico através de Triggers (UPDATE) e campos para data_inicio e data_fim.*/
+CREATE TABLE cliente_curso
 (
   id SERIAL NOT NULL,
   id_cliente INTEGER NOT NULL,
-  id_tipo_refeicao INTEGER NOT NULL,
-  ativo BOOLEAN NOT NULL,
+  id_curso INTEGER NOT NULL,
+  data_inicio TIMESTAMP NOT NULL,
+  data_fim TIMESTAMP, /* Pode ser NULL ->saber atual(ais) */
 
   PRIMARY KEY(id),
   CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
-  CONSTRAINT fk_id_tipo_refeicao FOREIGN KEY(id_tipo_refeicao) REFERENCES tipo_refeicao(id)
-);
-
-/* Tabela extrato -> Fazer posteriormente 1.Entrada 2.Saída */
-CREATE TABLE extrato
-(
-  id SERIAL NOT NULL,
-  id_cliente INTEGER NOT NULL,
-  transacao BOOLEAN NOT NULL,
-  data_hora TIMESTAMP NOT NULL,
-  saldo numeric(15,2) NOT NULL,
-  
-  PRIMARY KEY(id),
-  CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id)
+  CONSTRAINT fk_id_curso FOREIGN KEY(id_curso) REFERENCES curso(id)
 );

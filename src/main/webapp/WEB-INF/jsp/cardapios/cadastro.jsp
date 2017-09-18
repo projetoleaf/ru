@@ -20,9 +20,10 @@
 		     var formValidator = $("#cardapio").validate({
 		         rules : {
 		        	 data : { required : true },
-		             tipoRefeicao : { required : true },
+		             periodoRefeicao : { required : true },
 		             pratoBase : { required : true, maxlength : 50 },
-		             pratoPrincipal : { required : true, maxlength : 100 },
+		             pratoTradicional : { required : true, maxlength : 100 },
+		             pratoVegetariano : { required : true, maxlength : 100 },
 		             guarnicao : { required : true, maxlength : 100 },
 		             salada : { required : true, maxlength : 50 },
 		             sobremesa : { required : true, maxlength : 50 },
@@ -56,12 +57,12 @@
 		          </div>
 	            </div>
 	          </spring:bind>
-	          <spring:bind path="tipoRefeicao">
+	          <spring:bind path="periodoRefeicao">
 	            <div class="form-group col-xs-12 col-md-6">
-	              <label for="tipoRefeicao" class="control-label">Refeição</label>
-		          <form:select path="tipoRefeicao" class="form-control">
-				  	<form:option value="" label="----- Selecione uma refeição -----"/>
-                      <form:options items="${tipoRefeicao}" itemLabel="descricao" itemValue="id" />
+	              <label for="periodoRefeicao" class="control-label">Período</label>
+		          <form:select path="periodoRefeicao" class="form-control">
+				  	<form:option value="" label="----- Selecione um período -----"/>
+                      <form:options items="${periodoRefeicao}" itemLabel="descricao" itemValue="id" />
 				  </form:select>
 				</div>
 			  </spring:bind>
@@ -74,22 +75,31 @@
 	              <span class="has-error"><form:errors path="pratoBase" class="help-block"/></span>
 	            </div>
 	          </spring:bind>
-	          <spring:bind path="pratoPrincipal">
+	          <spring:bind path="pratoTradicional">
 	            <div class="form-group col-xs-12 col-md-6 ${status.error ? 'has-error' : ''}">
-	              <label for="pratoPrincipal" class="control-label">Prato Principal</label>
-	              <form:input path="pratoPrincipal" class="form-control" placeholder="Digite o prato principal"/>
-	              <span class="has-error"><form:errors path="pratoPrincipal" class="help-block"/></span>
+	              <label for="pratoTradicional" class="control-label">Prato Tradicional</label>
+	              <form:input path="pratoTradicional" class="form-control" placeholder="Digite o prato tradicional"/>
+	              <span class="has-error"><form:errors path="pratoTradicional" class="help-block"/></span>
 	            </div>
 	          </spring:bind>
 	        </div>
 	        <div class="row">
+	        <spring:bind path="pratoVegetariano">
+	            <div class="form-group col-xs-12 col-md-6 ${status.error ? 'has-error' : ''}">
+	              <label for="pratoVegetariano" class="control-label">Prato Vegetariano</label>
+	              <form:input path="pratoVegetariano" class="form-control" placeholder="Digite o prato vegetariano"/>
+	              <span class="has-error"><form:errors path="pratoVegetariano" class="help-block"/></span>
+	            </div>
+	          </spring:bind>
 	          <spring:bind path="guarnicao">
 	            <div class="form-group col-xs-12 col-md-6 ${status.error ? 'has-error' : ''}">
 	              <label for="guarnicao" class="control-label">Guarnição</label>
 	              <form:input path="guarnicao" class="form-control" placeholder="Digite a guarnição"/>
 	              <span class="has-error"><form:errors path="guarnicao" class="help-block"/></span>
 	            </div>
-	          </spring:bind>
+	          </spring:bind>	         
+	        </div>
+	        <div class="row">
 	          <spring:bind path="salada">
 	            <div class="form-group col-xs-12 col-md-6 ${status.error ? 'has-error' : ''}">
 	              <label for="salada" class="control-label">Salada</label>
@@ -97,15 +107,15 @@
 	              <span class="has-error"><form:errors path="salada" class="help-block"/></span>
 	            </div>
 	          </spring:bind>
-	        </div>
-	        <div class="row">
 	          <spring:bind path="sobremesa">
 	            <div class="form-group col-xs-12 col-md-6 ${status.error ? 'has-error' : ''}">
 	              <label for="sobremesa" class="control-label">Sobremesa</label>
 	              <form:input path="sobremesa" class="form-control" placeholder="Digite a sobremesa"/>
 	              <span class="has-error"><form:errors path="sobremesa" class="help-block"/></span>
 	            </div>
-	          </spring:bind>
+	          </spring:bind>	          
+	        </div>
+	        <div class="row">
 	          <spring:bind path="suco">
 	            <div class="form-group col-xs-12 col-md-6 ${status.error ? 'has-error' : ''}">
 	              <label for="suco" class="control-label">Suco</label>

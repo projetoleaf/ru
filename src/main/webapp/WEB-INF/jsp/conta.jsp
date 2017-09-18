@@ -21,17 +21,13 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<h4>Dados Pessoais</h4>
-				<div class="col-sm-3">
+				<div class="col-sm-6">
 					<p><b>CPF</b></p>
 					<p>${cliente.cpf}</p>
 				</div>
-				<div class="col-sm-5">
+				<div class="col-sm-6">
 					<p><b>Nome</b></p>
 					<p>${cliente.nome}</p>
-				</div>
-				<div class="col-sm-4">
-					<p><b>Data de nascimento</b></p>
-					<p>${dtnasc}</p>
 				</div>	
 			</div>
 		</div>
@@ -39,26 +35,22 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<h4>Dados Acadêmicos</h4>
-				<div class="col-sm-4">
+				<div class="col-sm-6">
 					<p><b>RA / Matricula</b></p>
-					<p>${categoria.matricula}</p>
+					<p>${categoria.raMatricula}</p>
 				</div>
-				<div class="col-sm-4">
-					<p><b>Categoria</b></p>
+				<div class="col-sm-6">
+					<p><b>Categoria(s)</b></p>
 					<p>${categoria.categoria.descricao}</p>
 				</div>
-				<div class="col-sm-4">
-					<p><b>Refeição</b></p>
-					<p>${tipo}  <a href="#" title="Editar"> <span class="fa fa-pencil-square-o"></span></a></p>
-				</div>	
-				<!-- <div class="col-sm-4">
+				<div class="col-sm-6">
 					<p><b>Curso</b></p>
-					<p>Ciência da Computação</p>
+					<p>${curso.curso.descricao}</p>
 				</div>
-				<div class="col-sm-8">
+				<div class="col-sm-6">
 					<p><b>Período</b></p>
-					<p>Integral</p>
-				</div> -->						
+					<p>${curso.curso.periodo}</p>
+				</div>					
 			</div>
 		</div>
 		<hr />
@@ -67,7 +59,7 @@
 				<h4>Dados Financeiros</h4>
 				<div class="col-sm-6">
 					<p><b>Créditos</b></p>
-					<p>${creditos}</p>
+					<p></p>
 				</div>
 				<div class="col-sm-6">
 					<p><b>Última reserva</b></p>

@@ -19,10 +19,10 @@
 		});
 	</script>
 	<datatables:table data="${listagemClientes}" row="clienteCategoria" id="GridDatatable">
-		<datatables:column title="CPF" property="cliente.cpf" cssCellClass="text-center" />
-		<datatables:column title="Nome" property="cliente.nome" cssCellClass="text-center" />
-		<datatables:column title="Categoria" property="categoria.descricao" cssCellClass="text-center" />
-		<datatables:column title="Biometria" property="cliente.biometria" cssCellClass="text-center" />
+		<datatables:column title="CPF" property="cliente.cpf" />
+		<datatables:column title="Nome" property="cliente.nome" />
+		<datatables:column title="Categoria" property="categoria.descricao" />
+		<datatables:column title="Biometria" property="cliente.biometria" />
 		<datatables:column title="Operações" filterable="false"	searchable="false" cssCellClass="text-center" >
 			<a href="${linkController}/editarCategoria/${clienteCategoria.id}"
 				class="btn btn-default btn-xs" data-toggle="tooltip"

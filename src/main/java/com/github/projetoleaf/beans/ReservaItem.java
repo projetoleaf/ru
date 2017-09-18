@@ -16,8 +16,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = { "reserva", "cardapio", "status" })
-@ToString(of = { "reserva", "cardapio", "status" })
+@EqualsAndHashCode(of = { "reserva", "cardapio", "status", "tipoRefeicao", "extrato" })
+@ToString(of = { "reserva", "cardapio", "status", "tipoRefeicao", "extrato" })
 @Entity
 @Table(name = "reserva_item")
 public class ReservaItem implements Serializable {
@@ -44,4 +44,13 @@ public class ReservaItem implements Serializable {
     @ManyToOne
     @JoinColumn(name = "id_status", referencedColumnName = "id")
     private Status status;
+	
+	@NotNull
+    @ManyToOne
+    @JoinColumn(name = "id_tipo_refeicao", referencedColumnName = "id")
+    private TipoRefeicao tipoRefeicao;
+	
+    @ManyToOne
+    @JoinColumn(name = "id_extrato", referencedColumnName = "id")
+    private Extrato extrato;
 }

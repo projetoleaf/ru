@@ -6,6 +6,6 @@ import com.github.projetoleaf.beans.TipoRefeicao;
 
 @Repository
 public interface TipoRefeicaoRepository extends JpaRepository<TipoRefeicao, Long> {
-	
-	TipoRefeicao findByDescricao(String descricao);
+
+	TipoRefeicao findByDescricao(String descricao);	
 }

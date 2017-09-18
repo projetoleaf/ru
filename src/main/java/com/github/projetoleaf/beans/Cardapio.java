@@ -2,8 +2,6 @@ package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,8 +21,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = { "data", "pratoBase", "pratoPrincipal", "guarnicao", "salada", "sobremesa", "suco" })
-@ToString(of = { "data", "pratoBase", "pratoPrincipal", "guarnicao", "salada", "sobremesa", "suco" })
+@EqualsAndHashCode(of = { "data", "pratoBase", "pratoTradicional", "pratoVegetariano", "guarnicao", "salada", "sobremesa", "suco", "periodoRefeicao" })
+@ToString(of = { "data", "pratoBase", "pratoTradicional", "pratoVegetariano", "guarnicao", "salada", "sobremesa", "suco", "periodoRefeicao" })
 @Entity
 @Table(name = "cardapio")
 public class Cardapio implements Serializable {
@@ -49,8 +46,12 @@ public class Cardapio implements Serializable {
 	private String pratoBase;
 	
 	@NotBlank
-	@Column(name = "prato_principal")
-	private String pratoPrincipal;
+	@Column(name = "prato_tradicional")
+	private String pratoTradicional;
+	
+	@NotBlank
+	@Column(name = "prato_vegetariano")
+	private String pratoVegetariano;
 	
 	@NotBlank
 	@Column(name = "guarnicao")
@@ -70,9 +71,6 @@ public class Cardapio implements Serializable {
 	
 	@NotNull
 	@ManyToOne
-    @JoinColumn(name = "id_tipo_refeicao", referencedColumnName = "id")
-	private TipoRefeicao tipoRefeicao;
-	
-	@OneToMany(mappedBy="cardapio", cascade=CascadeType.ALL)
-	private List<ReservaItem> reservasItems;
+    @JoinColumn(name = "id_periodo_refeicao", referencedColumnName = "id")
+	private PeriodoRefeicao periodoRefeicao;
 }

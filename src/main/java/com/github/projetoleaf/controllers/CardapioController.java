@@ -1,7 +1,5 @@
 package com.github.projetoleaf.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -16,9 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.github.projetoleaf.beans.Cardapio;
-import com.github.projetoleaf.beans.TipoRefeicao;
 import com.github.projetoleaf.repositories.CardapioRepository;
-import com.github.projetoleaf.repositories.TipoRefeicaoRepository;
+import com.github.projetoleaf.repositories.PeriodoRefeicaoRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -30,7 +27,7 @@ public class CardapioController {
 	private CardapioRepository cardapioRepository;
 	
 	@Autowired
-	private TipoRefeicaoRepository tipoRefeicaoRepository;
+	private PeriodoRefeicaoRepository periodoRefeicaoRepository;
 	
 	@Autowired
     private MessageSource config;
@@ -42,16 +39,9 @@ public class CardapioController {
 	}
 	
 	@GetMapping("/incluir")
-	public String incluirCardapio(Model model) {
-		TipoRefeicao trad = tipoRefeicaoRepository.findByDescricao("Tradicional");
-		TipoRefeicao veget = tipoRefeicaoRepository.findByDescricao("Vegetariano");
-		List<TipoRefeicao> tipoRefeicao = new ArrayList<TipoRefeicao>();
-    	
-    	tipoRefeicao.add(trad);
-    	tipoRefeicao.add(veget);
-    	
+	public String incluirCardapio(Model model) {    	
     	model.addAttribute("cardapio", new Cardapio());
-		model.addAttribute("tipoRefeicao", tipoRefeicao);
+		model.addAttribute("periodoRefeicao", periodoRefeicaoRepository.findAll());
 		
 		return abrirCadastroCardapio(model);
 	}
@@ -59,16 +49,9 @@ public class CardapioController {
 	@GetMapping("/editar/{id}")
     public String editarCardapio(@PathVariable Long id, Model model) {
 		Cardapio cardapio = cardapioRepository.findOne(id);
-        
-        TipoRefeicao trad = tipoRefeicaoRepository.findByDescricao("Tradicional");
-		TipoRefeicao veget = tipoRefeicaoRepository.findByDescricao("Vegetariano");
-		List<TipoRefeicao> tipoRefeicao = new ArrayList<TipoRefeicao>();
-    	
-    	tipoRefeicao.add(trad);
-    	tipoRefeicao.add(veget);
     	
         model.addAttribute("cardapio", cardapio);
-        model.addAttribute("tipoRefeicao", tipoRefeicao);
+        model.addAttribute("periodoRefeicao", periodoRefeicaoRepository.findAll());
         
         return abrirCadastroCardapio(model);
     }

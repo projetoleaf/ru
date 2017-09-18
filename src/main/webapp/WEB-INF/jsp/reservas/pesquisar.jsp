@@ -16,13 +16,13 @@
 </head>
 <body>
 	<datatables:table data="${listagemReservas}" row="reserva" id="GridDatatable">
-		<datatables:column title="Nome" property="nome" cssCellClass="text-center" />
-		<datatables:column title="Créditos" property="creditos" cssCellClass="text-center" />
-		<datatables:column title="${segunda}" property="segundaStatus" cssCellClass="text-center" />
-		<datatables:column title="${terca}" property="tercaStatus" cssCellClass="text-center" />
-		<datatables:column title="${quarta}" property="quartaStatus" cssCellClass="text-center" />
-		<datatables:column title="${quinta}" property="quintaStatus" cssCellClass="text-center" />
-		<datatables:column title="${sexta}" property="sextaStatus" cssCellClass="text-center" />
+		<datatables:column title="Nome" property="nome" />
+		<!-- <datatables:column title="Créditos" property="creditos" /> -->
+		<datatables:column title="${segunda}" property="segundaStatus" />
+		<datatables:column title="${terca}" property="tercaStatus" />
+		<datatables:column title="${quarta}" property="quartaStatus"/>
+		<datatables:column title="${quinta}" property="quintaStatus" />
+		<datatables:column title="${sexta}" property="sextaStatus"/>
 		<datatables:column title="Operações" filterable="falseStatus"	searchable="false" cssCellClass="text-center" >
 			<a href="${linkController}/pagamento/${reserva.nome}"
 				class="btn btn-success btn-xs" data-toggle="tooltip"

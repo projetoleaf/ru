@@ -2,8 +2,6 @@ package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -22,8 +19,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = { "cliente", "tipoValor", "dataHora" })
-@ToString(of = { "cliente", "tipoValor", "dataHora" })
+@EqualsAndHashCode(of = { "cliente", "tipoValor", "dataReserva" })
+@ToString(of = { "cliente", "tipoValor", "dataReserva" })
 @Entity
 @Table(name = "reserva")
 public class Reserva implements Serializable {
@@ -48,9 +45,6 @@ public class Reserva implements Serializable {
 	
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "data_hora")	
-	private Date dataHora;
-	
-	@OneToMany(mappedBy="reserva", cascade=CascadeType.ALL, orphanRemoval = true)
-	private List<ReservaItem> reservasItems;
+	@Column(name = "data_reserva")	
+	private Date dataReserva;
 }

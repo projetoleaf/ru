@@ -4,7 +4,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<dandelion:bundle includes="jquery.validation,jquery.inputmask,jquery.datetimepicker" />
+<dandelion:bundle includes="jquery.validation,jquery.inputmask" />
 
 <html>
 <head>
@@ -16,13 +16,10 @@
 	  $(document).ready(function() {
 	      var formValidator = $("#transferencia").validate({
 	          rules : {
-	        	  cpf : { required : true },
-	              dataNascimento : { required : true }
+	        	  cpf : { required : true }
 	          }
 	      });
 	      $("#cpf").focus();
-	      $("#div-data-nascimento").datetimepicker({locale: "pt-br", format: "DD/MM/YYYY"});
-	      $("#dataNascimento").inputmask("99/99/9999");
 	      $("#cpf").inputmask("999.999.999-99");
 	  });
 	</script>
@@ -52,17 +49,6 @@
 				<div class="col-sm-5 control-label"><label for="cpf">CPF</label></div>
 				<div class="col-sm-3">
 					<input type="text" class="form-control" id="cpf">
-				</div>
-			</div>
-			<div class="form-group">
-				<div class="control-label col-sm-5"><label for="dataNascimento">Data de Nascimento</label></div>
-				<div class="col-sm-3">
-					<div class="input-group date" id="div-data-nascimento">
-			          	<input type="text" class="form-control" id="dataNascimento">
-			            <span class="input-group-addon">
-			                <span class="glyphicon glyphicon-calendar"></span>
-			            </span>
-			          </div>					
 				</div>
 			</div>
 			<br>

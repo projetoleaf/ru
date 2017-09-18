@@ -1,6 +1,7 @@
 package com.github.projetoleaf.controllers;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class ReservaAdminController {
 			
         	reservasAdmin.setId(Long.valueOf(z));
         	reservasAdmin.setNome(todosOsClientesDoBD.get(z).getNome());
-        	reservasAdmin.setCreditos(todosOsClientesDoBD.get(z).getCreditos());
+        	reservasAdmin.setCreditos(new BigDecimal(0.00));
         
 	        for (int i = 0; i < 5; i++) {	     	
 	        	

@@ -26,8 +26,8 @@
         <li class="divider"></li>
         <li><a href="<c:url value="/categorias"/>"><span class="fa fa-cog"></span> Categorias</a></li>
         <li class="divider"></li>
-        <!--  <li><a href="<c:url value="/cursos"/>"><span class="fa fa-cog"></span> Cursos</a></li>
-        <li class="divider"></li>-->
+        <li><a href="<c:url value="/cursos"/>"><span class="fa fa-cog"></span> Cursos</a></li>
+        <li class="divider"></li>
         <li><a href="<c:url value="/feriados"/>"><span class="fa fa-cog"></span> Feriados</a></li>
         <li class="divider"></li>
         <li><a href="<c:url value="/status"/>"><span class="fa fa-cog"></span> Status</a></li>
@@ -46,7 +46,7 @@
 	<li><a href="<c:url value="/transferencias"/>"><span class="fa fa-exchange"></span> Transferências</a></li>
 	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-money"></span> Comprar</a></li>
 	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-feed"></span> Remanescentes</a></li>
-	<li><a href="<c:url value="/reservas"/>"><span class="fa fa-bank"></span> Extrato</a></li>
+	<li><a href="<c:url value="/extrato"/>"><span class="fa fa-bank"></span> Extrato</a></li>
 </sec:authorize>
 
 <sec:authorize access="isAuthenticated()">

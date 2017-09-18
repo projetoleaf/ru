@@ -25,10 +25,11 @@
 	<a href="${linkController}/incluir" class="float-button"><i	class="fa fa-plus"></i></a>
 	
 	<datatables:table data="${listagemCardapios}" row="cardapio" id="GridDatatable">
-		<datatables:column title="Data" property="data"	format="{0,date,dd/MM/yyyy}" sortType="date-uk" cssCellClass="text-center" />
-		<datatables:column title="Refeição" property="tipoRefeicao.descricao" />
+		<datatables:column title="Data" property="data"	format="{0,date,dd/MM/yyyy}" sortType="date-uk" />
+		<datatables:column title="Período" property="periodoRefeicao.descricao" />
 		<datatables:column title="Prato Base" property="pratoBase" />
-		<datatables:column title="Prato Principal" property="pratoPrincipal" />
+		<datatables:column title="Prato Tradicional" property="pratoTradicional" />
+		<datatables:column title="Prato Vegetariano" property="pratoVegetariano" />
 		<datatables:column title="Guarnição" property="guarnicao" />
 		<datatables:column title="Salada" property="salada" />
 		<datatables:column title="Sobremesa" property="sobremesa" />

@@ -25,12 +25,14 @@ import com.github.projetoleaf.beans.Cardapio;
 import com.github.projetoleaf.beans.Reserva;
 import com.github.projetoleaf.beans.ReservaItem;
 import com.github.projetoleaf.beans.Status;
+import com.github.projetoleaf.beans.TipoRefeicao;
 import com.github.projetoleaf.beans.Cliente;
 import com.github.projetoleaf.beans.TipoValor;
 import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ReservaRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
+import com.github.projetoleaf.repositories.TipoRefeicaoRepository;
 import com.github.projetoleaf.repositories.TipoValorRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
 
@@ -55,6 +57,9 @@ public class ReservaClienteController {
 	@Autowired
 	private StatusRepository statusRepository;
 	
+	@Autowired
+	private TipoRefeicaoRepository tipoRefeicaoRepository;
+	
 	@GetMapping("/reserva")
 	public String reservaRefeicoes(Model model) throws JsonGenerationException, JsonMappingException, IOException, ParseException {
 		
@@ -68,7 +73,7 @@ public class ReservaClienteController {
 		int count = 0;
 		
 		for(int c = 0; c < todasAsReservasDoBD.size(); c++) {
-			String dataHoraBanco = formatoDesejado.format(todasAsReservasDoBD.get(c).getDataHora());
+			String dataHoraBanco = formatoDesejado.format(todasAsReservasDoBD.get(c).getDataReserva());
 			String dataDeHoje = formatoDesejado.format(dataAtual.getTime());
 			
 			if(dataHoraBanco.equals(dataDeHoje)) {
@@ -101,9 +106,10 @@ public class ReservaClienteController {
 	        	dataAtual.add(Calendar.DAY_OF_MONTH, 1);	            
 	        }
 		}        
-        
+		
 		model.addAttribute("datas", new Cardapio());
 		model.addAttribute("todasAsDatas", cardapio);
+		model.addAttribute("todosOsTipos", tipoRefeicaoRepository.findAll());
 		
 		//List<Cardapio> teste = new ArrayList<Cardapio>();
 		
@@ -115,7 +121,7 @@ public class ReservaClienteController {
 	}
 	
 	@PostMapping("/reserva/salvar")
-	public String salvarReservaRefeicoes(@RequestParam("data") String[] idsCardapios) {
+	public String salvarReservaRefeicoes(@RequestParam("data") String[] idsCardapios, @RequestParam("tipoRefeicao") Integer[] idsTipoRefeicao) {
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();			
 		
@@ -132,7 +138,7 @@ public class ReservaClienteController {
 		    reserva.setCliente(cliente); 
 		    reserva.setTipoValor(tipoValor); //Definir como subsidiada caso seja umas das 360 primeiras refeições
 		    Timestamp timestamp = new Timestamp(System.currentTimeMillis()); //Data e hora atual	    
-		    reserva.setDataHora(timestamp);
+		    reserva.setDataReserva(timestamp);
 		    
 		    reservaRepository.save(reserva);		
 		    
@@ -149,6 +155,16 @@ public class ReservaClienteController {
 		    }
 		    
 		    System.out.println("Vamos ver se funciona o ultimo ID Reserva de acordo com o cliente " + id);
+		    
+		    List<Integer> idsTeste = new ArrayList<Integer>();
+		    
+		    for (int z = 0; z < idsTipoRefeicao.length; z++) {
+		    	System.out.println(idsTipoRefeicao[z]);
+		    	
+		    	if(idsTipoRefeicao[z] != null) {
+		    		idsTeste.add(idsTipoRefeicao[z]);
+		    	}
+		    }
 			
 		    for (int x = 0; x <= idsCardapios.length -1; x++) {
 			   
@@ -156,13 +172,21 @@ public class ReservaClienteController {
 			   Reserva r = new Reserva();
 			   Cardapio c = new Cardapio();
 			   Status s = statusRepository.findByDescricao("Solicitado");
+			   TipoRefeicao t = null;			   
 			   
+			   if(idsTeste.get(x) % 2 == 0) {
+				   t = tipoRefeicaoRepository.findByDescricao("Vegetariano");  
+			   } else {
+				   t = tipoRefeicaoRepository.findByDescricao("Tradicional"); 
+			   } 
+				   
 			   r.setId(id);
 			   c.setId(Long.parseLong((idsCardapios[x])));
 			   
 			   reservaItem.setReserva(r);
 			   reservaItem.setCardapio(c);
 			   reservaItem.setStatus(s);	   
+			   reservaItem.setTipoRefeicao(t);
 			   
 			   reservaItemRepository.save(reservaItem);
 		    }

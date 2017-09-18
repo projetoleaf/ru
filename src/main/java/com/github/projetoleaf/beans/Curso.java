@@ -1,4 +1,4 @@
-/*package com.github.projetoleaf.beans;
+package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -36,4 +36,3 @@ public class Curso implements Serializable {
 	@Column(name = "periodo")
 	private String periodo;	
 }
-*/

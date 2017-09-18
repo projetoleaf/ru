@@ -1,14 +1,11 @@
 package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import org.hibernate.validator.constraints.NotBlank;
@@ -34,7 +31,4 @@ public class Status implements Serializable {
 	@NotBlank
 	@Column(name = "descricao")
 	private String descricao;
-	
-	@OneToMany(mappedBy="status", cascade=CascadeType.ALL)
-	private List<ReservaItem> reservasItems;
 }

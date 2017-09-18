@@ -14,7 +14,7 @@
 	<script>	
 		var cardapioObject = ${objectJSON};
 	
-		$( document ).ready(function() {		
+		$( document ).ready(function() {	
 			
 			$('#reservaIndisponivel').hide();	
 			$('#reservaDisponivel').hide();		    
@@ -27,6 +27,38 @@
 			{
 				$('#reservaIndisponivel').show();
 			}			
+			
+			$('input:checkbox[name="data"]').css("marginTop","5%");
+			
+			$('select').css("margin","0 0 7% 0");
+			
+			var todasAsDatas = $("input[type='checkbox']");		
+			
+			var str;
+			
+			var trad = "${todosOsTipos[0].descricao}";
+			var veg = "${todosOsTipos[1].descricao}";
+			
+			var lista = [];
+			lista.push(trad);
+			lista.push(veg);	
+			
+			var val = 1;
+			
+			for (var x = 1; x <= todasAsDatas.length; x++) {	 
+				
+				str += '<select id="tipoRefeicao' + x + '" name="tipoRefeicao" class="form-control">';	 
+				str += '<option value="" label="- Selecione uma refeição -"> </option>';				
+				
+				for (var z = 0; z < lista.length; z++) {										
+					str += '<option value="' + val + '" label="' + lista[z] + '"> </option>';					
+					val+=1;
+				}
+				
+				str += '</select>';
+	    	}
+			
+			$("#reservaDisponivel .selectList").append(str); 
 		});	
 		
 		function reservar() {
@@ -83,10 +115,12 @@
 			<br/> 
 			
 			<form:form method="POST" action="${actionSalvar}" modelAttribute="datas">
-				<div class="row">				
-					<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4 text-center">
-						<form:checkboxes items="${todasAsDatas}" path="data" itemLabel="data" itemValue="id" delimiter="<br>" />
-					</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-4 text-center">
+						<form:checkboxes items="${todasAsDatas}" path="data" itemLabel="data" itemValue="id" delimiter="<br>"/>
+					</div>	
+					<div class="col-xs-12 col-sm-4 text-center selectList">	
+					</div>					
 				</div>
 				
 				<div class="text-center">

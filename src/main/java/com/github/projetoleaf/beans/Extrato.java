@@ -21,8 +21,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = { "cliente", "transacao", "dataHora", "saldo" })
-@ToString(of = { "cliente", "transacao", "dataHora", "saldo" })
+@EqualsAndHashCode(of = { "cliente", "transacao", "dataTransacao", "saldo" })
+@ToString(of = { "cliente", "transacao", "dataTransacao", "saldo" })
 @Entity
 @Table(name = "extrato")
 public class Extrato implements Serializable {
@@ -41,13 +41,14 @@ public class Extrato implements Serializable {
 	private Cliente cliente;
 	
 	@NotNull
-	@Column(name = "transacao")	
-	private Boolean transacao;
+	@NumberFormat(pattern = "#,##0.00")
+	@Column(name = "transacao")
+	private BigDecimal transacao;
 	
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "data_hora")	
-	private Date dataHora;
+	@Column(name = "data_transacao")	
+	private Date dataTransacao;
 	
 	@NotNull
 	@NumberFormat(pattern = "#,##0.00")
