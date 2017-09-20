@@ -18,6 +18,7 @@
       </ul>
     </li>
 </sec:authorize>
+
 <sec:authorize access="hasRole('ROLE_FC.UNESP.RU_ADMIN') || hasRole('ROLE_FC.UNESP.RU_STN')">
     <li><a href="<c:url value="/clientes"/>"><span class="fa fa-users"></span> Clientes</a></li>
     <li class="dropdown"><a href="#" class="dropdown-togle" data-toggle="dropdown"><span class="fa fa-wrench"></span> Manuten��o</a>
@@ -30,11 +31,15 @@
         <li class="divider"></li>
         <li><a href="<c:url value="/feriados"/>"><span class="fa fa-cog"></span> Feriados</a></li>
         <li class="divider"></li>
+        <li><a href="<c:url value="/periodosRefeicoes"/>"><span class="fa fa-cog"></span> Períodos de Refeições</a></li>
+        <li class="divider"></li>
+        <li><a href="<c:url value="/quantidadesRefeicoes"/>"><span class="fa fa-cog"></span> Quantidades de Refeições</a></li>
+        <li class="divider"></li>
         <li><a href="<c:url value="/status"/>"><span class="fa fa-cog"></span> Status</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/tiposRefeicoes"/>"><span class="fa fa-cog"></span> Tipos Refeições</a></li>
+        <li><a href="<c:url value="/tiposRefeicoes"/>"><span class="fa fa-cog"></span> Tipos de Refeições</a></li>
         <li class="divider"></li>
-        <li><a href="<c:url value="/tiposValores"/>"><span class="fa fa-cog"></span> Tipos Valores</a></li>
+        <li><a href="<c:url value="/tiposValores"/>"><span class="fa fa-cog"></span> Tipos de Valores</a></li>
       </ul>
     </li>
 </sec:authorize>

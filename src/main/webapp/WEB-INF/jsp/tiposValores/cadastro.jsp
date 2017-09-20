@@ -32,7 +32,7 @@
 	        <div class="page-header" style="margin-top: 10px;">
 	          <jsp:include page="/layouts/modal-mensagens.jsp"><jsp:param name="model" value="tipoValor"/></jsp:include>
 	          <h3>
-	            <strong>Tipos de Valores</strong>
+	            <strong>Tipo de Valor</strong>
 	          </h3>
 	        </div>
 	        <div class="row">
