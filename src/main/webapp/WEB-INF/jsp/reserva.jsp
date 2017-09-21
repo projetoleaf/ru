@@ -15,14 +15,13 @@
 		$( document ).ready(function() {	
 			
 			var cardapioObject = ${objectJSON};
-			var todasAsDatas = $("input[type='checkbox']");					
-			var str;			
+			var todasAsDatas = $("input[type='checkbox']");							
 			var trad = "${todosOsTipos[0].descricao}";
 			var veg = "${todosOsTipos[1].descricao}";
 			var val = 1;				   
+			var str = "";
 			
-			$("input[type='checkbox']").css("marginTop","5%");			
-			$('select').css("margin","0 0 7% 0");
+			$("input[type='checkbox']").css("marginTop","7%");	
 			
 			if(cardapioObject.length != 0) {				
 				$('#reservaDisponivel').show();		
@@ -39,75 +38,80 @@
 			for (var x = 1; x <= todasAsDatas.length; x++) {	
 				
 				str += '<select id="tipoRefeicao' + x + '" name="tipoRefeicao" class="form-control">';	 
-				str += '<option value="" label="- Selecione uma refeição -"> </option>';				
+				str += '<option value="0" label="- Selecione uma refeição -"> </option>';				
 				
 				for (var z = 0; z < lista.length; z++) {										
-					str += '<option value="' + val + '" label="' + lista[z] + '"> </option>';					
-					val += 1;
+					str += '<option value="' + (z+1) + '" label="' + lista[z] + '"> </option>';		
 				}
 				
 				str += '</select>';
 	    	}
 			
 			$("#reservaDisponivel .selectList").append(str);			
-			$("select").prop('disabled',true);
+			$("select").prop('disabled',true);		
 			
-			$("input[type='checkbox'").change(function(){		
+			$("select").css("marginBottom","5%");
+			
+			$("input[type='checkbox']").change(function(){
 				
-				if(todasAsDatas.is(":checked")) {			
+				var $checkboxes = $(this).closest('form').find(':checkbox');				
+				var count = 1;
+				
+				$checkboxes.each(function(){
 					
-					for (var a = 1; a <= todasAsDatas.length; a++) {	
-						if (todasAsDatas[a].checked) {		
-							alert(todasAsDatas[a].checked);
-		 					$("select#tipoRefeicao" + a).prop('disabled',false);
-					    } else {
-							$("select#tipoRefeicao" + a).prop('disabled',true);	
-					  	}
-			    	}
-				}
+					if ($(this).is(":checked")) {		
+						$("select#tipoRefeicao" + count).prop('disabled',false);
+					} else {
+						$("select#tipoRefeicao" + count).prop('disabled',true);	
+						$("select#tipoRefeicao" + count).prop('selectedIndex',0);
+				  	}
+					
+					count++;
+				});
 			});
 			
 			$("#reservar").click(function() {
-				var selects = $("select");
+				var $checkboxes = $(this).closest('form').find(':checkbox');
 			    var txt = "";
 			    var txt2 = "";
-			    var base;
 			    var minhaDataFormatada;
+			    var selects = $("select").length;
+			    var count = 0;
+			    var count2 = 0;
 			    
-			    if(todasAsDatas.is(":checked")) {	
+			    if($checkboxes.is(":checked")) {
 			    	
-			    	if (!$("select").val() == 0) {		
+			    	for(var a = 1; a <= selects; a++) {
 			    		
-					    $("#modalConfirmarReserva .modal-body").append("<p>Confirme os dias da sua reserva e o seu tipo de refeição...</p>");	
-					    
-					    for (var i = 0; i < todasAsDatas.length; i++) {		
-					    	
-					       if (todasAsDatas[i].checked) {				
-					    	   
-					    	   for (var x = 0; x < cardapioObject.length; x++) {	 
-					    		   
-					    		   if(String(cardapioObject[x].id) === todasAsDatas[i].value) {
-					    			   
-					    			   for (var y = 1; y <= selects.length; y++) {	 
-				    					   $("select#tipoRefeicao" + y + " option:selected").map(function() { txt2 = $(this).val(); }).get();
-				    					   txt2 = (txt2 % 2 ? "Tradicional" : "Vegetariano");			   
-					   		    	   }
-					    			   
-					    			   base = cardapioObject[x].data;		    		   
-					    			   minhaDataFormatada = new Date(base);
-					    			   txt = txt + "<p>&#10004 " + minhaDataFormatada.toLocaleDateString('en-GB')  + " - " + txt2 + "</p>";		    		   
-					    		   }
-					    	   }
-					       }
-					    }
-					    
-					    $("#modalConfirmarReserva .modal-body").append(txt);				    
-					    $('#modalConfirmarReserva').modal('show');		   
-				    
-			    	} else {
-			    		$("#modalNaoSelecionado .modal-body").append("<p>Selecione uma refeição!</p>");		
-				    	$('#modalNaoSelecionado').modal('show');
+			    		if($('#data' + a).is(":checked")) {
+			    			
+			    			for(var b = 0; b < cardapioObject.length; b++) {	
+			    				
+			    				if(String(cardapioObject[b].id) === $('#data' + a).val()) {
+			    					
+			    					if ($("select#tipoRefeicao" + a).val() != 0) {
+			    						
+			    						txt2 = ($("select#tipoRefeicao" + a).val() % 2 ? "Tradicional" : "Vegetariano");	 		   
+						    			minhaDataFormatada = new Date(cardapioObject[b].data);
+						    			txt = txt + "<p>&#10004 " + minhaDataFormatada.toLocaleDateString('en-GB')  + " - " + txt2 + "</p>";	
+						    			
+						    			count++;
+			    					} else {
+			    						count2++;
+			    					}				    	    		
+				    	    	}					    			
+				    		}  			
+			    		} 	    		    		
 			    	}
+			    	
+			    	if(count != 0 && count2 == 0) {			    		
+			    		$("#modalConfirmarReserva .modal-body").append("<p>Confirme os dias da sua reserva e o seu tipo de refeição...</p>");			    		
+			    		$("#modalConfirmarReserva .modal-body").append(txt);				    
+						$('#modalConfirmarReserva').modal('show');	
+			    	} else {			    		
+			    		$("#modalNaoSelecionado .modal-body").append("<p>Selecione uma refeição!</p>");		
+   				    	$('#modalNaoSelecionado').modal('show');
+			    	}			 			   
 				} else {
 			    	$("#modalNaoSelecionado .modal-body").append("<p>Selecione pelo menos um dia!</p>");		
 			    	$('#modalNaoSelecionado').modal('show');
