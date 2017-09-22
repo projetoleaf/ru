@@ -14,16 +14,18 @@
 	<script>	
 		$( document ).ready(function() {	
 			
-			var cardapioObject = ${objectJSON};
+			var situacao = ${situacao};
+			var datasDoCardapio = ${objectJSON};			
+			var diasDaSemanaReservados = "${diasDaSemanaReservados}";
 			var todasAsDatas = $("input[type='checkbox']");							
 			var trad = "${todosOsTipos[0].descricao}";
-			var veg = "${todosOsTipos[1].descricao}";
-			var val = 1;				   
+			var veg = "${todosOsTipos[1].descricao}";			
 			var str = "";
+			var val = 1;	
 			
 			$("input[type='checkbox']").css("marginTop","7%");	
 			
-			if(cardapioObject.length != 0) {				
+			if(datasDoCardapio.length != 0) {				
 				$('#reservaDisponivel').show();		
 				$('#reservaIndisponivel').hide();	
 			} else {
@@ -85,14 +87,14 @@
 			    		
 			    		if($('#data' + a).is(":checked")) {
 			    			
-			    			for(var b = 0; b < cardapioObject.length; b++) {	
+			    			for(var b = 0; b < datasDoCardapio.length; b++) {	
 			    				
-			    				if(String(cardapioObject[b].id) === $('#data' + a).val()) {
+			    				if(String(datasDoCardapio[b].id) === $('#data' + a).val()) {
 			    					
 			    					if ($("select#tipoRefeicao" + a).val() != 0) {
 			    						
 			    						txt2 = ($("select#tipoRefeicao" + a).val() % 2 ? "Tradicional" : "Vegetariano");	 		   
-						    			minhaDataFormatada = new Date(cardapioObject[b].data);
+						    			minhaDataFormatada = new Date(datasDoCardapio[b].data);
 						    			txt = txt + "<p>&#10004 " + minhaDataFormatada.toLocaleDateString('en-GB')  + " - " + txt2 + "</p>";	
 						    			
 						    			count++;
@@ -148,7 +150,7 @@
 				</div>
 				
 				<div class="text-center">
-					<br/> <br/>
+					<br/>
 					<button type="button" id="reservar" class="btn btn-primary">
 					 	<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> Reservar
 					</button>

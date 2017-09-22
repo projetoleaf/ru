@@ -1,6 +1,7 @@
 package com.github.projetoleaf.controllers;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,7 +13,6 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,9 +27,11 @@ import com.github.projetoleaf.beans.ReservaItem;
 import com.github.projetoleaf.beans.Status;
 import com.github.projetoleaf.beans.TipoRefeicao;
 import com.github.projetoleaf.beans.Cliente;
+import com.github.projetoleaf.beans.Extrato;
 import com.github.projetoleaf.beans.TipoValor;
 import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
+import com.github.projetoleaf.repositories.ExtratoRepository;
 import com.github.projetoleaf.repositories.ReservaRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
 import com.github.projetoleaf.repositories.TipoRefeicaoRepository;
@@ -60,30 +62,38 @@ public class ReservaClienteController {
 	@Autowired
 	private TipoRefeicaoRepository tipoRefeicaoRepository;
 	
+	@Autowired
+	private ExtratoRepository extratoRepository;
+	
+	
 	@GetMapping("/reserva")
 	public String reservaRefeicoes(Model model) throws JsonGenerationException, JsonMappingException, IOException, ParseException {
 		
-		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();		
 		
-		List<Cardapio> cardapio = new ArrayList<Cardapio>();				
-		List<Reserva> todasAsReservasDoBD = reservaRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
+		List<Cardapio> cardapio = new ArrayList<Cardapio>();
+		List<String> diasDaSemanaReservados = new ArrayList<String>();
 		
-		Calendar dataAtual = Calendar.getInstance();		
+		int situacao = 0; //Se for zero, não há nenhuma data no banco. Se for um, limite de datas atingidos. Se for dois, fora do período de reservas
 		
-		int count = 0;
-		
-		for(int c = 0; c < todasAsReservasDoBD.size(); c++) {
-			String dataHoraBanco = formatoDesejado.format(todasAsReservasDoBD.get(c).getDataReserva());
-			String dataDeHoje = formatoDesejado.format(dataAtual.getTime());
+		if (!(authentication instanceof AnonymousAuthenticationToken)) {	
 			
-			if(dataHoraBanco.equals(dataDeHoje)) {
-				count++;
-			}
-		}	
+		    String identificacao = authentication.getName();			    
+		    
+		    Cliente cliente = clienteRepository.buscarCliente(identificacao); //Pega o id da pessoa logada
 		
-		System.out.println("Contador = " + count);
-		
-		if(count < 360) {
+			SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");	
+			List<Date> todasAsReservasDoCliente = reservaItemRepository.todasAsReservasDoCliente(cliente.getId());		
+				
+			Calendar dataAtual = Calendar.getInstance();		
+			
+			int countSegunda = 0;
+			int countTerca = 0;
+			int countQuarta = 0;
+			int countQuinta = 0;
+			int countSexta = 0;			
+			int count = 0;
+			
 			dataAtual = verificarData(dataAtual);   
 			
 			for (int i = 0; i < 5; i++) {
@@ -91,27 +101,95 @@ public class ReservaClienteController {
 	        	Cardapio c = new Cardapio();        	
 	        	List<Object[]> dataDoBanco = cardapioRepository.verificarSeDataExisteNoBD(dataAtual.getTime());
 	        	
-	        	for(Object[] linhaDoBanco : dataDoBanco){
-	        		
-	        		String dataFormatada = formatoDesejado.format((Date)linhaDoBanco[1]);
-	                Date dataVar = formatoDesejado.parse(dataFormatada);
+	        	for(Object[] linhaDoBanco : dataDoBanco) {  		
 	                
-	                c.setId((Long)linhaDoBanco[0]);
-	                c.setData(dataVar);
-	            	
-	            	if(formatoDesejado.format(c.getData()).equals(formatoDesejado.format(dataAtual.getTime())))
-	                	cardapio.add(c);
-	            }       	
+	                Calendar cal = Calendar.getInstance();
+					cal.setTime((Date)linhaDoBanco[1]);
+					
+					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
+					{
+						countSegunda = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
+					}
+					
+					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
+					{
+						countTerca = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
+					}
+					
+					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
+					{
+						countQuarta = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
+					}
+					
+					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
+					{
+						countQuinta = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
+					}
+					
+					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
+					{
+						countSexta = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
+					}
+					
+					if(countSegunda < 360 && countTerca < 360 && countQuarta < 360 && countQuinta < 360 && countSexta < 360) {
+						
+						String dataFormatada = formatoDesejado.format((Date)linhaDoBanco[1]);
+		                Date dataVar = formatoDesejado.parse(dataFormatada);
+		                
+		                c.setId((Long)linhaDoBanco[0]);
+		                c.setData(dataVar);
+		                
+		                for(int a = 0; a < todasAsReservasDoCliente.size(); a++) {          	
+		                	
+		                	if(formatoDesejado.format(c.getData()).equals(formatoDesejado.format(todasAsReservasDoCliente.get(a)))) {
+		                		
+		                		if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
+		    					{
+		    						diasDaSemanaReservados.add("seg");
+		    					}
+		    					
+		    					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
+		    					{
+		    						diasDaSemanaReservados.add("ter");
+		    					}
+		    					
+		    					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
+		    					{
+		    						diasDaSemanaReservados.add("qua");
+		    					}
+		    					
+		    					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
+		    					{
+		    						diasDaSemanaReservados.add("qui");
+		    					}
+		    					
+		    					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
+		    					{
+		    						diasDaSemanaReservados.add("sex");
+		    					}
+		                	}
+		                	
+		                	if(formatoDesejado.format(c.getData()).equals(formatoDesejado.format(dataAtual.getTime())) && count == 0) {
+		                		cardapio.add(c);
+		                		count = 1;
+		                	}        	
+		                }  	
+		                
+		                count = 0;
+					} else {
+						situacao = 1;
+					}
+	            }    
 	        	
 	        	dataAtual.add(Calendar.DAY_OF_MONTH, 1);	            
-	        }
-		}        
-		
+	        }     			
+		}
+			
 		model.addAttribute("datas", new Cardapio());
+		model.addAttribute("situacao", situacao);
 		model.addAttribute("todasAsDatas", cardapio);
-		model.addAttribute("todosOsTipos", tipoRefeicaoRepository.findAll());
-		
-		//List<Cardapio> teste = new ArrayList<Cardapio>();
+		model.addAttribute("todosOsTipos", tipoRefeicaoRepository.findAll());		
+		model.addAttribute("diasDaSemanaReservados", diasDaSemanaReservados);
 		
 		ObjectMapper mapper = new ObjectMapper();// jackson lib for converting to json
         String objectJSON = mapper.writeValueAsString(cardapio);// json string
@@ -134,6 +212,8 @@ public class ReservaClienteController {
 			TipoValor tipoValor = tipoValorRepository.findByDescricao("Subsidiada");
 			
 			Reserva reserva = new Reserva();
+			
+			Extrato extrato = new Extrato();
 			
 		    reserva.setCliente(cliente); 
 		    reserva.setTipoValor(tipoValor); //Definir como subsidiada caso seja umas das 360 primeiras refeições
@@ -159,12 +239,18 @@ public class ReservaClienteController {
 		    List<Integer> idsTeste = new ArrayList<Integer>();
 		    
 		    for (int z = 0; z < idsTipoRefeicao.length; z++) {
-		    	System.out.println(idsTipoRefeicao[z]);
 		    	
 		    	if(idsTipoRefeicao[z] != null) {
 		    		idsTeste.add(idsTipoRefeicao[z]);
 		    	}
 		    }
+		    
+		    extrato.setCliente(cliente);
+			extrato.setDataTransacao(timestamp);
+			extrato.setSaldo(new BigDecimal(0.00));
+			extrato.setTransacao(new BigDecimal(0.00));
+			
+			extratoRepository.save(extrato);
 			
 		    for (int x = 0; x <= idsCardapios.length -1; x++) {
 			   
@@ -181,12 +267,13 @@ public class ReservaClienteController {
 			   } 
 				   
 			   r.setId(id);
-			   c.setId(Long.parseLong((idsCardapios[x])));
+			   c.setId(Long.parseLong((idsCardapios[x])));			   
 			   
 			   reservaItem.setReserva(r);
 			   reservaItem.setCardapio(c);
 			   reservaItem.setStatus(s);	   
 			   reservaItem.setTipoRefeicao(t);
+			   reservaItem.setExtrato(extrato);
 			   
 			   reservaItemRepository.save(reservaItem);
 		    }
