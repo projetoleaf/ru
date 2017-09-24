@@ -59,7 +59,7 @@
 				<h4>Dados Financeiros</h4>
 				<div class="col-sm-6">
 					<p><b>Créditos</b></p>
-					<p></p>
+					<p>${creditos}</p>
 				</div>
 				<div class="col-sm-6">
 					<p><b>Última reserva</b></p>

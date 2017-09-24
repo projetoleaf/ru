@@ -12,4 +12,7 @@ public interface CardapioRepository extends JpaRepository<Cardapio, Long> {
 
 	@Query("select c.id, c.data from Cardapio c where c.data = ?1")
 	List<Object[]> verificarSeDataExisteNoBD(Date data);
+	
+	@Query("select c.data from Cardapio c where c.data between ?1 and ?2")
+	List<Date> todasAsDatasDaProximaSemana(Date segunda, Date sexta);
 }

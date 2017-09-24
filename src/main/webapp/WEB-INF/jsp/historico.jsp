@@ -64,8 +64,8 @@
 			<br />
 
 			<datatables:table data="${listagemHistorico}" id="GridDatatable">
-				<datatables:column title="Data" property="cardapio.data" sortInitDirection="desc" format="{0,date,dd/MM/yyyy}" sortType="date-uk" cssCellClass="text-center" />
-				<datatables:column title="Status" property="status.descricao" cssCellClass="text-center" />
+				<datatables:column title="Data" property="cardapio.data" sortInitDirection="desc" format="{0,date,dd/MM/yyyy}" sortType="date-uk" />
+				<datatables:column title="Status" property="status.descricao" />
 		
 				<datatables:extraJs bundles="datatables.extended.config" placeholder="before_start_document_ready" />
 			</datatables:table>

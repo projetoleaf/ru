@@ -13,6 +13,9 @@ public interface ReservaItemRepository extends JpaRepository<ReservaItem, Long> 
 	@Query("SELECT COUNT(cardapio.data) FROM ReservaItem r WHERE r.cardapio.data = ?1")
 	Integer qtdeDeReservasPorData(Date data);
 	
-	@Query("SELECT r.cardapio.data FROM ReservaItem r WHERE r.reserva.cliente.id = ?1")
-	List<Date> todasAsReservasDoCliente(Long idCliente);
+	@Query("SELECT r.id FROM ReservaItem r WHERE r.reserva.cliente.id = ?1 AND r.cardapio.data = ?2")
+	Long verificarSeReservaExiste(Long idCliente, Date data);
+
+	@Query("SELECT DISTINCT r.reserva, r.extrato FROM ReservaItem r WHERE r.reserva.cliente.id = ?1")
+	List<Object[]> todasAsReservasDoCliente(Long idCliente);
 }

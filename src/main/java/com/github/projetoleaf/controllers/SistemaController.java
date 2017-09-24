@@ -68,16 +68,6 @@ public class SistemaController {
 		return "remanescentes";
 	}
 	
-	@GetMapping("/creditos")
-	public String creditos() {
-		return "creditos";
-	}
-	
-	@GetMapping("/extrato")
-	public String extrato() {
-		return "extrato";
-	}
-	
 	@GetMapping("/semanaAtual")
 	public String semanaAtual() {
 		return "semanaAtual";

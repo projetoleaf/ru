@@ -1,5 +1,6 @@
 package com.github.projetoleaf.controllers;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.github.projetoleaf.beans.Cliente;
 import com.github.projetoleaf.beans.ClienteCategoria;
 import com.github.projetoleaf.beans.ClienteCurso;
+import com.github.projetoleaf.beans.Extrato;
 import com.github.projetoleaf.beans.Reserva;
 import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
+import com.github.projetoleaf.repositories.ExtratoRepository;
 import com.github.projetoleaf.repositories.ClienteCursoRepository;
 import com.github.projetoleaf.repositories.ReservaRepository;
 
@@ -35,6 +38,9 @@ public class ContaController {
 	@Autowired
 	private ReservaRepository reservaRepository;
 	
+	@Autowired
+	private ExtratoRepository extratoRepository;
+	
 	@GetMapping("/conta")
 	public String conta(Model model) throws ParseException {
 		
@@ -47,7 +53,7 @@ public class ContaController {
 		    Cliente cliente = clienteRepository.buscarCliente(identificacao);		    
 		    
 		    SimpleDateFormat formatoDataHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
-		    //NumberFormat nf = NumberFormat.getCurrencyInstance(); 
+		    NumberFormat nf = NumberFormat.getCurrencyInstance(); 
 		    
 		    List<ClienteCategoria> todosOsClientesCategorias = clienteCategoriaRepository.findAll();
 		    
@@ -84,13 +90,23 @@ public class ContaController {
 		    		ultimaReserva = formatoDataHora.format(reservasDoCliente.get(reservasDoCliente.size() - 1).getDataReserva());
 		    	}
 		    }
-		    //String creditosFormatado = nf.format (cliente.getCreditos());
+		    
+		    List<Extrato> ultimoRegistroDoCliente = extratoRepository.buscarUltimoRegistroDoCliente(cliente.getId());
+			
+			BigDecimal saldo = null;
+			
+			if(!ultimoRegistroDoCliente.isEmpty()) {
+			 	saldo = ultimoRegistroDoCliente.get(0).getSaldo();
+			} else {
+				saldo = new BigDecimal(0.00);
+			}   
+		    String creditosFormatado = nf.format(saldo);
 		    
 		    model.addAttribute("cliente", cliente);		   
 		    model.addAttribute("categoria", categoria);
 		    model.addAttribute("ultimaReserva", ultimaReserva);
 		    model.addAttribute("curso", curso);
-		    //model.addAttribute("creditos", creditosFormatado);
+		    model.addAttribute("creditos", creditosFormatado);
 		}
 		
 		return "conta";
