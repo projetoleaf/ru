@@ -34,6 +34,7 @@ import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ExtratoRepository;
+import com.github.projetoleaf.repositories.FeriadoRepository;
 import com.github.projetoleaf.repositories.ReservaRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
 import com.github.projetoleaf.repositories.TipoRefeicaoRepository;
@@ -56,6 +57,9 @@ public class ReservaClienteController {
 	private ExtratoRepository extratoRepository;
 	
 	@Autowired
+	private FeriadoRepository feriadoRepository;
+	
+	@Autowired
 	private CardapioRepository cardapioRepository;
 	
 	@Autowired
@@ -75,9 +79,9 @@ public class ReservaClienteController {
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();		
 		
-		List<Cardapio> cardapio = new ArrayList<Cardapio>();
 		BigDecimal saldo = new BigDecimal(0.00);
-		ClienteCategoria clienteCategoria = new ClienteCategoria();
+		List<Cardapio> cardapio = new ArrayList<Cardapio>();		
+		ClienteCategoria clienteCategoria = new ClienteCategoria();		
 		
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {	
 			
@@ -88,6 +92,7 @@ public class ReservaClienteController {
 			int countSexta = 0;	
 			
 			SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");	
+			SimpleDateFormat formatoHora = new SimpleDateFormat("HH");	
 			
 		    String identificacao = authentication.getName();			    
 		    
@@ -104,17 +109,51 @@ public class ReservaClienteController {
 			Calendar dataAtual = Calendar.getInstance();					
 			dataAtual = verificarData(dataAtual);   
 			
-			Calendar dataSemana = Calendar.getInstance();			
-			dataSemana.setTime(dataAtual.getTime());			
-			dataSemana.add(Calendar.DATE, 4);
+			Calendar penultimoDiaUtil = Calendar.getInstance();			
+			penultimoDiaUtil.setTime(dataAtual.getTime());			
+			penultimoDiaUtil.add(Calendar.DATE, 4);
 			
-			List<Date> todasAsDatasDaProximaSemana = cardapioRepository.todasAsDatasDaProximaSemana(dataAtual.getTime(), dataSemana.getTime());
-			dataSemana.setTime(todasAsDatasDaProximaSemana.get(todasAsDatasDaProximaSemana.size() - 2));
+			List<Date> todasAsDatasDaProximaSemana = cardapioRepository.todasAsDatasDaProximaSemana(dataAtual.getTime(), penultimoDiaUtil.getTime());
+			penultimoDiaUtil.setTime(todasAsDatasDaProximaSemana.get(todasAsDatasDaProximaSemana.size() - 2));
 			
-			Calendar dataHoje = Calendar.getInstance();
+			Calendar primeiroDiaUtil = Calendar.getInstance();
+			primeiroDiaUtil.setTime(todasAsDatasDaProximaSemana.get(0));
 			
+			Calendar dataHoje = Calendar.getInstance();			
+			Calendar diaDaSemana = Calendar.getInstance();
+			
+			Calendar seg = Calendar.getInstance();
+			Calendar ter = Calendar.getInstance();
+			Calendar qua = Calendar.getInstance();
+			Calendar qui = Calendar.getInstance();			
+			
+			seg.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+			ter.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+			qua.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
+			qui.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);	
+			
+			if(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY && feriadoRepository.findByData(dataHoje.getTime()) == null) {
+				diaDaSemana.setTime(seg.getTime());
+			} 
+			else if (dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY && feriadoRepository.findByData(seg.getTime()) != null) {
+				diaDaSemana.setTime(ter.getTime());
+			} 
+			else if (dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY && feriadoRepository.findByData(ter.getTime()) != null) {
+				diaDaSemana.setTime(qua.getTime());
+			} 
+			else if (dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY && feriadoRepository.findByData(qua.getTime()) != null) {
+				diaDaSemana.setTime(qui.getTime());
+			} 
+			else {
+				diaDaSemana.setTime(seg.getTime());
+			}
+			
+			Integer horaDeHoje = Integer.parseInt(formatoHora.format(dataHoje.getTime()));
+			
+			
+			//Consistências dos finais de semana. Não apague \/ 
 			//if(!(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) && !(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) && (dataHoje.get(Calendar.DAY_OF_WEEK) <= dataSemana.get(Calendar.DAY_OF_WEEK))) {
-			if(dataHoje.get(Calendar.DAY_OF_WEEK) <= dataSemana.get(Calendar.DAY_OF_WEEK)) {
+			if(dataHoje.getTime().equals(diaDaSemana.getTime()) && horaDeHoje >= 7  && dataHoje.get(Calendar.DAY_OF_WEEK) <= penultimoDiaUtil.get(Calendar.DAY_OF_WEEK)) {			
 				
 				for (int i = 0; i < 5; i++) {
 		        	
@@ -129,7 +168,7 @@ public class ReservaClienteController {
 						if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
 						{
 							countSegunda = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
-						}
+						} 
 						
 						if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
 						{
@@ -173,8 +212,69 @@ public class ReservaClienteController {
 		            }    
 		        	
 		        	dataAtual.add(Calendar.DAY_OF_MONTH, 1);	            
-		        } 
-			}			    
+		        } 		
+				
+			} else if (!dataHoje.getTime().equals(diaDaSemana.getTime()) && dataHoje.get(Calendar.DAY_OF_WEEK) <= penultimoDiaUtil.get(Calendar.DAY_OF_WEEK)) {			
+				
+				for (int i = 0; i < 5; i++) {
+		        	
+		        	Cardapio c = new Cardapio();        	
+		        	List<Object[]> dataDoBanco = cardapioRepository.verificarSeDataExisteNoBD(dataAtual.getTime());
+		        	
+		        	for(Object[] linhaDoBanco : dataDoBanco) {  		
+		                
+		                Calendar cal = Calendar.getInstance();
+						cal.setTime((Date)linhaDoBanco[1]);
+						
+						if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
+						{
+							countSegunda = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
+						} 
+						
+						if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
+						{
+							countTerca = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
+						}
+						
+						if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
+						{
+							countQuarta = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
+						}
+						
+						if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
+						{
+							countQuinta = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
+						}
+						
+						if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
+						{
+							countSexta = reservaItemRepository.qtdeDeReservasPorData((Date)linhaDoBanco[1]);
+						}
+						
+						if(countSegunda < 360 || countTerca < 360 || countQuarta < 360 || countQuinta < 360 || countSexta < 360) {
+							
+							String dataFormatada = formatoDesejado.format((Date)linhaDoBanco[1]);
+			                Date dataVar = formatoDesejado.parse(dataFormatada);
+			                
+			                c.setId((Long)linhaDoBanco[0]);
+			                c.setData(dataVar);
+			                
+			                if(!(todasAsReservasDoCliente.isEmpty())) {       
+			                	
+			                	if(reservaItemRepository.verificarSeReservaExiste(cliente.getId(), (Date)linhaDoBanco[1]) == null && formatoDesejado.format(c.getData()).equals(formatoDesejado.format(dataAtual.getTime()))) {
+			                		cardapio.add(c);
+			                	}    		                	
+			                } else {		                	
+			                	if(formatoDesejado.format(c.getData()).equals(formatoDesejado.format(dataAtual.getTime()))) {
+			                		cardapio.add(c);
+			                	}  
+			                }   		                
+						}
+		            }    
+		        	
+		        	dataAtual.add(Calendar.DAY_OF_MONTH, 1);	            
+		        } 		
+			}
 			
 			clienteCategoria = clienteCategoriaRepository.findByCliente(cliente);
 		}
@@ -234,12 +334,12 @@ public class ReservaClienteController {
 		    	}
 		    }
 		    
-		    List<Integer> idsTeste = new ArrayList<Integer>();
+		    List<Integer> tiposRefeicoesSelecionados = new ArrayList<Integer>();
 		    
 		    for (int z = 0; z < idsTipoRefeicao.length; z++) {
 		    	
 		    	if(idsTipoRefeicao[z] != null) {
-		    		idsTeste.add(idsTipoRefeicao[z]);
+		    		tiposRefeicoesSelecionados.add(idsTipoRefeicao[z]);
 		    	}
 		    }
 		    
@@ -265,14 +365,20 @@ public class ReservaClienteController {
 			   ReservaItem reservaItem = new ReservaItem();		
 			   Reserva r = new Reserva();
 			   Cardapio c = new Cardapio();
-			   Status s = statusRepository.findByDescricao("Solicitado");
+			   Status s = new Status();
 			   TipoRefeicao t = null;			   
 			   
-			   if(idsTeste.get(x) % 2 == 0) {
+			   if(tiposRefeicoesSelecionados.get(x) % 2 == 0) {
 				   t = tipoRefeicaoRepository.findByDescricao("Vegetariano");  
 			   } else {
 				   t = tipoRefeicaoRepository.findByDescricao("Tradicional"); 
 			   } 
+			   
+			   if(pag.equals("1")) { //Créditos				
+					s = statusRepository.findByDescricao("Pago");
+				} else if(pag.equals("2")) {  //Dinheiro
+					s = statusRepository.findByDescricao("Solicitado");
+				}
 				   
 			   r.setId(id);
 			   c.setId(Long.parseLong((idsCardapios[x])));			   
