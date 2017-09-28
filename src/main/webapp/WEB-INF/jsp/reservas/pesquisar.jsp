@@ -17,7 +17,7 @@
 <body>
 	<datatables:table data="${listagemReservas}" row="reserva" id="GridDatatable">
 		<datatables:column title="Nome" property="nome" />
-		<!-- <datatables:column title="Créditos" property="creditos" /> -->
+		<datatables:column title="Saldo" property="creditos" /> 
 		<datatables:column title="${segunda}" property="segundaStatus" />
 		<datatables:column title="${terca}" property="tercaStatus" />
 		<datatables:column title="${quarta}" property="quartaStatus"/>

@@ -2,6 +2,7 @@ package com.github.projetoleaf.controllers;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,15 +63,18 @@ public class CreditosController {
 		Cliente cliente = clienteRepository.findByNome(nome);		
 		List<Extrato> ultimoRegistroDoCliente = extratoRepository.buscarUltimoRegistroDoCliente(cliente.getId());
 		
+		NumberFormat nf = NumberFormat.getCurrencyInstance();
+		
 		BigDecimal saldo = null;
 		
 		if(!ultimoRegistroDoCliente.isEmpty()) {
 		 	saldo = ultimoRegistroDoCliente.get(0).getSaldo();
 		} else {
 			saldo = new BigDecimal(0.00);
-		}   
+		}
+		String saldoFormatado = nf.format(saldo);
 		
-	    model.addAttribute("saldo", saldo);	    
+	    model.addAttribute("saldo", saldoFormatado);	    
 	    model.addAttribute("creditos", new Creditos());
 	    model.addAttribute(nome);
 	    

@@ -31,6 +31,29 @@
 		          decimal: ",",
 		          thousands: "."
 		     });
+			
+			$("#valor").keyup(function () {
+				$("#recarga").val($(this).val());
+			});
+			
+			$("#recarga").keyup(function () {
+				
+				var valor = $("#valor").val().replace(/,/g, '.');
+				var recarga = $(this).val().replace(/,/g, '.');
+				
+				if(parseFloat(valor) < parseFloat(recarga)) {
+					$("#erro").addClass("has-error");
+					$("#confirmarRecarga").addClass("disabled");
+					$("#troco").val("");
+				}
+				else {
+					$("#erro").removeClass("has-error");
+					$("#confirmarRecarga").removeClass("disabled");
+					var resultado = valor - recarga;				
+					var resultadoFormatado = resultado.toFixed(2);
+					$("#troco").val(resultadoFormatado.replace(/\./g, ','));
+				}
+			});			
 		});
 	</script>
 	
@@ -59,16 +82,17 @@
 					<label for="valor">Valor dado</label> 
 					<input type="text" id="valor" class="form-control" >
 				</div>
-				<div class="col-sm-3 form-group">
+				<div id="erro" class="col-sm-3 form-group">
 					<label for="recarga">Recarga</label> 
 					<form:input path="recarga" class="form-control" />
 				</div>
-				<div class="col-sm-3 form-group" style="margin-top: 2px">
+				<div class="col-sm-3 form-group">
 					<label for="troco">Troco</label> 
-					<input type="text" class="form-control" id="troco">
+					<input type="text" class="form-control" id="troco" readonly>
 				</div>
-				<div class="col-sm-3 form-group" style="margin-top: 27px">
-					<button type="submit" class="btn btn-primary">Confirmar recarga</button>
+				<div class="col-sm-3 form-group">
+					<label for="troco">&nbsp;</label> 
+					<button type="submit" id="confirmarRecarga" class="btn btn-primary disabled">Confirmar recarga</button>
 				</div>
 			</div>			
 	      </div>

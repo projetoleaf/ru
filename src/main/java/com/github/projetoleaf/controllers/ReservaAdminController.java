@@ -19,11 +19,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.github.projetoleaf.beans.Cliente;
+import com.github.projetoleaf.beans.Extrato;
 import com.github.projetoleaf.beans.ReservaItem;
 import com.github.projetoleaf.beans.ReservasAdmin;
 import com.github.projetoleaf.beans.Status;
 import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
+import com.github.projetoleaf.repositories.ExtratoRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
 
@@ -42,6 +44,9 @@ public class ReservaAdminController {
 	
 	@Autowired
 	private StatusRepository statusRepository;
+	
+	@Autowired
+	private ExtratoRepository extratoRepository;
 	
 	@GetMapping
 	public String pesquisarReserva(Model model) throws ParseException {
@@ -69,7 +74,12 @@ public class ReservaAdminController {
 			
         	reservasAdmin.setId(Long.valueOf(z));
         	reservasAdmin.setNome(todosOsClientesDoBD.get(z).getNome());
-        	reservasAdmin.setCreditos(new BigDecimal(0.00));
+        	
+        	List<Extrato> ultimoRegistroDoCliente = extratoRepository.buscarUltimoRegistroDoCliente(todosOsClientesDoBD.get(z).getId());		    
+		    
+		    if(!ultimoRegistroDoCliente.isEmpty()) {
+		    	reservasAdmin.setCreditos(ultimoRegistroDoCliente.get(0).getSaldo());
+		    }	
         
 	        for (int i = 0; i < 5; i++) {	     	
 	        	
@@ -179,6 +189,14 @@ public class ReservaAdminController {
 		
 		Cliente cliente = clienteRepository.findByNome(nome);
 		
+		List<Extrato> ultimoRegistroDoCliente = extratoRepository.buscarUltimoRegistroDoCliente(cliente.getId());		    
+	    
+		BigDecimal saldo = new BigDecimal(0.00);
+		
+	    if(!ultimoRegistroDoCliente.isEmpty()) {
+	    	saldo = ultimoRegistroDoCliente.get(0).getSaldo();
+	    }
+		
 		List<String> datasDasReservas = new ArrayList<String>();
 		
 		ReservasAdmin reservasAdmin = new ReservasAdmin();
@@ -282,6 +300,7 @@ public class ReservaAdminController {
 	    model.addAttribute("datasReservas", datasDasReservas);	    
 	    model.addAttribute("reserva", new ReservasAdmin());
 	    model.addAttribute(cliente);
+	    model.addAttribute(saldo);
 	    
 		return "/reservas/pagamento";
 	}

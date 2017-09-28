@@ -118,7 +118,7 @@
 	            </div>
 	            <div class="form-group col-xs-6 col-md-6">
 	              <label for="creditos" class="control-label">Créditos</label>
-	              <!-- <input class="form-control" id="creditos" value="${cliente.creditos}" readonly="true"/>	 -->
+	              <input class="form-control" id="creditos" value="${saldo}" readonly/>
 	            </div>	            
 	        </div>
 	        <br>
