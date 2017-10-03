@@ -18,7 +18,9 @@
 	<script type="text/javascript">
 		$(document).ready(function() {	 
 			
+			var valorRefeicao = ${valorRefeicao};
 			var caiu = 0;
+			var zero = 0;
 			
 			$("#utilizarCreditos").prop('disabled',true);
 			$("#refeicoes").prop('disabled',true);
@@ -27,23 +29,36 @@
 			$("#recargas").prop('disabled',true);
 			$("#troco").prop('disabled',true);		
 			
-			$('input:checkbox[name="datas"]').change(function(){
+			$("#valor").val(zero.toFixed(2).replace(/\./g, ','));					
+			$("#troco").val(zero.toFixed(2).replace(/\./g, ','));
+			$("#recargas").val(zero.toFixed(2).replace(/\./g, ','));
+			$("#refeicoes").val(zero.toFixed(2).replace(/\./g, ','));
+			
+			$('input:checkbox[name="datas"]').change(function(){			
+				
+				var qtdeChecks = $("input:checkbox[name='datas']:checked").length;
 				
 				if($(this).prop("checked")) {					
 					$("#valor").prop('disabled',false);
-					$("#habilitarRecargas").prop('disabled',false);
-					$("#troco").prop('disabled',false);
 					$('#valor').focus();
 					
 					if($('#creditos').val() != 0.00)
 						$("#utilizarCreditos").prop('disabled',false);
 					
-			  	} else {
-			  		$("#utilizarCreditos").prop('disabled',true);
-					$("#valor").prop('disabled',true);
-					$("#habilitarRecargas").prop('disabled',true);
-					$("#troco").prop('disabled',true);		
-			  	}
+					var valor = parseFloat(valorRefeicao) * qtdeChecks;
+					var valorFormatado = valor.toFixed(2);
+					
+					$("#refeicoes").val(valorFormatado.replace(/\./g, ','));	
+					
+			  	} else if (qtdeChecks == 0){			  		
+					$("#valor").prop('disabled',true);					
+					$("#utilizarCreditos").prop('disabled',true);				
+					$("#utilizarCreditos").prop("checked", false)
+					
+					$("#valor").val(qtdeChecks.toFixed(2).replace(/\./g, ','));					
+					$("#troco").val(qtdeChecks.toFixed(2).replace(/\./g, ','));
+					$("#recargas").val(qtdeChecks.toFixed(2).replace(/\./g, ','));
+			  	}		
 			});
 			
 			$('#habilitarRecargas').change(function(){
@@ -52,8 +67,158 @@
 					$("#recargas").prop('disabled',false);
 			  	} else {
 			  		$("#recargas").prop('disabled',true);
+			  		$("#recargas").val(zero.toFixed(2).replace(/\./g, ','));
 			  	}
 			});
+			
+			$('#utilizarCreditos').change(function(){
+				
+				if($(this).prop("checked")) {					
+					
+					var base = $('#creditos').val().replace(/,/g, '.');
+					var creditos = base.replace(/[^\d.-]/g, '');
+					var refeicoes = $("#refeicoes").val().replace(/,/g, '.');
+					
+					if(creditos >=  refeicoes) {
+						
+						$("#valor").val(zero.toFixed(2).replace(/\./g, ','));
+						$("#recargas").val(zero.toFixed(2).replace(/\./g, ','));
+						$("#troco").val(zero.toFixed(2).replace(/\./g, ','));	
+						
+						$("#valor").prop('disabled',true);					
+					} else {
+						$("#valor").prop('disabled',false);
+						$('#valor').focus();
+					}					
+			  	} else {
+			  		$("#valor").prop('disabled',false);
+			  		$("#valor").val(zero.toFixed(2).replace(/\./g, ','));
+			  		$('#valor').focus();
+			  		$("#habilitarRecargas").prop('checked',false);
+			  		$("#habilitarRecargas").prop('disabled',true);
+			  		$("#recargas").prop('disabled',true);
+			  		$("#recargas").val(zero.toFixed(2).replace(/\./g, ','));
+			  		$("#troco").val(zero.toFixed(2).replace(/\./g, ','));
+			  	}
+			});
+			
+			$("#valor").keyup(function () {				
+				
+				var valor = $(this).val().replace(/,/g, '.');
+				var refeicoes = $("#refeicoes").val().replace(/,/g, '.');
+				var base = $('#creditos').val().replace(/,/g, '.');
+				var creditos = base.replace(/[^\d.-]/g, '');
+				
+				if($("#utilizarCreditos").prop("checked")) {		
+					$("#habilitarRecargas").prop("checked", true);
+					
+					var resultado = parseFloat(creditos) - parseFloat(refeicoes);
+					resultado += parseFloat(valor);
+					
+					var recarga = 0;
+					
+					if(resultado == 0) {
+						recarga = valor;
+					}					
+					
+					var resultadoFormatado = resultado.toFixed(2);	
+					
+					$("#troco").val(resultadoFormatado.replace(/\./g, ','));
+					
+					if(recarga != 0){
+						$("#recargas").prop('disabled',false);
+						$("#recargas").val(parseFloat(recarga).toFixed(2).replace(/\./g, ','));
+					}			
+					
+					if(resultadoFormatado < 0) {					
+						$("#valor").addClass("has-error");
+						$("#confirmarPagamento").addClass("disabled");
+						
+						$("#habilitarRecargas").prop('disabled',true);		
+						$("#recargas").prop('disabled',true);		
+						$("#recargas").val(zero.toFixed(2).replace(/\./g, ','));
+						$("#habilitarRecargas").prop("checked", false);
+					} else {				
+						$("#valor").removeClass("has-error");
+						$("#confirmarPagamento").removeClass("disabled");
+						
+						$("#habilitarRecargas").prop('disabled',false);
+						$("#recargas").prop('disabled',false);		
+					}
+				} else {
+					var resultado = valor - refeicoes;				
+					var resultadoFormatado = resultado.toFixed(2);		
+					
+					$("#troco").val(resultadoFormatado.replace(/\./g, ','));				
+					
+					if(resultadoFormatado < 0) {					
+						$("#valor").addClass("has-error");
+						$("#confirmarPagamento").addClass("disabled");
+						
+						$("#habilitarRecargas").prop('disabled',true);
+					} else {				
+						$("#valor").removeClass("has-error");
+						$("#confirmarPagamento").removeClass("disabled");
+						
+						$("#habilitarRecargas").prop('disabled',false);
+					}
+				}
+			});
+			
+			$("#recargas").keyup(function () {
+				
+				var valor = $("#valor").val().replace(/,/g, '.');
+				var recarga = $(this).val().replace(/,/g, '.');
+				var refeicoes = $("#refeicoes").val().replace(/,/g, '.');
+				var base = $('#creditos').val().replace(/,/g, '.');
+				var creditos = base.replace(/[^\d.-]/g, '');
+				
+				if($("#utilizarCreditos").prop("checked")) {						
+					var resultado = parseFloat(creditos) - parseFloat(refeicoes) + parseFloat(valor);	
+					
+					var recargaACompletar = parseFloat(valor) - resultado;
+					
+					resultado -= parseFloat(recarga);
+					resultado += recargaACompletar;
+					
+					var resultadoFormatado = resultado.toFixed(2);	
+					
+					if(parseFloat(valor) < parseFloat(recarga) || resultadoFormatado < 0) {
+						$("#recargas").addClass("has-error");
+						$("#confirmarPagamento").addClass("disabled");
+						$("#troco").val(zero.toFixed(2).replace(/\./g, ','));
+					}
+					else if(parseFloat(valor) == parseFloat(recarga)) {
+						$("#troco").val(zero.toFixed(2).replace(/\./g, ','));
+						$("#recargas").removeClass("has-error");
+						$("#confirmarPagamento").removeClass("disabled");		
+					}
+					else if(parseFloat(recarga) == 0) {
+						$("#recargas").val(recargaACompletar.toFixed(2).replace(/\./g, ","));
+					}
+					else {
+						$("#recargas").removeClass("has-error");
+						$("#confirmarPagamento").removeClass("disabled");			
+						
+						$("#troco").val(resultadoFormatado.replace(/\./g, ','));
+					}		
+				} else {
+					var resultado = (valor - refeicoes) - recarga;				
+					var resultadoFormatado = resultado.toFixed(2);
+					
+					if(parseFloat(valor) < parseFloat(recarga) || resultadoFormatado < 0) {
+						$("#recargas").addClass("has-error");
+						$("#confirmarPagamento").addClass("disabled");
+						$("#troco").val(zero.toFixed(2).replace(/\./g, ','));
+					}
+					else {
+						$("#recargas").removeClass("has-error");
+						$("#confirmarPagamento").removeClass("disabled");			
+						
+						$("#troco").val(resultadoFormatado.replace(/\./g, ','));
+					}		
+				}
+			});		
 			
 			$('#confirmarPagamento').click(function () {
 				var todosOsStatus = $("input:checkbox[name='datas']");
@@ -118,19 +283,19 @@
 	            </div>
 	            <div class="form-group col-xs-6 col-md-6">
 	              <label for="creditos" class="control-label">Créditos</label>
-	              <input class="form-control" id="creditos" value="${saldo}" readonly/>
+	              <form:input path="creditos" class="form-control" value="${reservasAdmin.creditos}" readonly="true"/>
 	            </div>	            
 	        </div>
 	        <br>
 	        <div class="row">
 	        	<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4 text-center">
-	        		<form:checkboxes items="${datasReservas}" path="datas" delimiter="<br>" />
+	        		<form:checkboxes items="${datasReservas}" path="data" delimiter="<br>" />
 	        	</div>
 	        </div>
 	        <br>
 			<div class="row">
 				<div class="col-sm-12 form-group">
-					<input type="checkbox" id="utilizarCreditos"> Utilizar créditos
+					<form:input type="checkbox" path="utilizarCreditos"/> Utilizar créditos
 				</div>
 			</div>
 			<div class="row">
@@ -146,7 +311,7 @@
 				</div>
 				<div class="col-sm-3 form-group">
 					<label for="recargas"> <input type="checkbox" id="habilitarRecargas"> Recargas</label> 
-					<input type="text" class="form-control" id="recargas">
+					<form:input path="recargas" class="form-control"/>
 				</div>
 				<div class="col-sm-3 form-group" style="margin-top: 2px">
 					<label for="troco">Troco</label> 
