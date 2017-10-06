@@ -28,7 +28,7 @@
 <c:if test="${not empty mensagemInfo}">
   <script type="text/javascript">
       $(document).ready(function() {
-          swal('Mensagem', '${mensagemInfo}','info');
+          swal('Informação', '${mensagemInfo}','info');
       });
   </script>
 </c:if>
