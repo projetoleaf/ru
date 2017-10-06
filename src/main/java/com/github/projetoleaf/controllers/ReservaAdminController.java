@@ -30,6 +30,7 @@ import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ExtratoRepository;
+import com.github.projetoleaf.repositories.FeriadoRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
 
@@ -38,19 +39,22 @@ import com.github.projetoleaf.repositories.StatusRepository;
 public class ReservaAdminController {
 	
 	@Autowired
-	private CardapioRepository cardapioRepository;
+	private StatusRepository statusRepository;	
 	
 	@Autowired
 	private ClienteRepository clienteRepository;
 	
 	@Autowired
+	private ExtratoRepository extratoRepository;	
+	
+	@Autowired
+	private FeriadoRepository feriadoRepository;
+	
+	@Autowired
+	private CardapioRepository cardapioRepository;
+	
+	@Autowired
 	private ReservaItemRepository reservaItemRepository;
-	
-	@Autowired
-	private StatusRepository statusRepository;
-	
-	@Autowired
-	private ExtratoRepository extratoRepository;
 	
 	@Autowired
 	private ClienteCategoriaRepository clienteCategoriaRepository;
@@ -58,15 +62,7 @@ public class ReservaAdminController {
 	@GetMapping
 	public String pesquisarReserva(Model model) throws ParseException {
 		
-		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
-		NumberFormat nf = NumberFormat.getCurrencyInstance(); 
-		
-		List<ReservaItem> reservasItensDoBD = reservaItemRepository.findAll();		
-		List<Cliente> todosOsClientesDoBD = clienteRepository.findAll();
-		
-		List<ReservasAdmin> todasAsReservas = new ArrayList<ReservasAdmin>();
-		
-		BigDecimal saldo = new BigDecimal(0.00);
+		int count = 0;
 		
 		Date segunda = new Date();
 		Date terca = new Date();
@@ -74,141 +70,156 @@ public class ReservaAdminController {
 		Date quinta = new Date();
 		Date sexta = new Date();
 		
-		for (int z = 0; z < todosOsClientesDoBD.size(); z++) {
-			
-			Calendar dataAtual = Calendar.getInstance();		
-			dataAtual = verificarData(dataAtual);   
-			
-			ReservasAdmin reservasAdmin = new ReservasAdmin();
-			
-        	reservasAdmin.setId(Long.valueOf(z));
-        	reservasAdmin.setNome(todosOsClientesDoBD.get(z).getNome());
-        	
-        	List<Extrato> ultimoRegistroDoCliente = extratoRepository.buscarUltimoRegistroDoCliente(todosOsClientesDoBD.get(z).getId());		    
-		    
-		    if(!ultimoRegistroDoCliente.isEmpty()) {
-		    	saldo = ultimoRegistroDoCliente.get(0).getSaldo();
-		    }	
-        
-		    reservasAdmin.setCreditos(nf.format(saldo));
-		    
-	        for (int i = 0; i < 5; i++) {	     	
-	        	
-	        	List<Object[]> dataDoBanco = cardapioRepository.verificarSeDataExisteNoBD(dataAtual.getTime()); 	
-	        		
-        		for(Object[] linhaDoBanco : dataDoBanco) {
-	        		
-	        		String dataFormatada = formatoDesejado.format((Date) linhaDoBanco[1]);
-	        		
-	        		Date dataVar = null;
-	        		dataVar = formatoDesejado.parse(dataFormatada);    
-	                	
-                	for(int x = 0; x < reservasItensDoBD.size(); x++) 
-            		{
-                		if(todosOsClientesDoBD.get(z).getNome() == reservasItensDoBD.get(x).getReserva().getCliente().getNome()) 
-                		{
-                			if(formatoDesejado.format(dataVar).equals(formatoDesejado.format(dataAtual.getTime())) && formatoDesejado.format(dataVar).equals(formatoDesejado.format(reservasItensDoBD.get(x).getCardapio().getData())))
-                        	{    
-            					Calendar cal = Calendar.getInstance();
-                				cal.setTime(reservasItensDoBD.get(x).getCardapio().getData());
-                					
-            					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
-                				{
-                					reservasAdmin.setSegundaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
-                				}
-                				
-                				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
-                				{
-                					reservasAdmin.setTercaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
-                				}
-                				
-                				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
-                				{
-                					reservasAdmin.setQuartaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
-                				}
-                				
-                				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
-                				{
-                					reservasAdmin.setQuintaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
-                				}
-                				
-                				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
-                				{
-                					reservasAdmin.setSextaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
-                				}
-                        	}
-                		}      			
-            		}	         			
-                } 
-        		
-        		if(!dataDoBanco.isEmpty()) {
-        				        		
-	        		if(reservasAdmin.getSegundaStatus() == null) {
-	    	        	reservasAdmin.setSegundaStatus("Não reservado");
-	    	        }        
-	    	        
-	    	        if(reservasAdmin.getTercaStatus() == null) {
-	    	        	reservasAdmin.setTercaStatus("Não reservado");
-	    	        }
-	    	        
-	    	        if(reservasAdmin.getQuartaStatus() == null) {
-	    	        	reservasAdmin.setQuartaStatus("Não reservado");
-	    	        }
-	    	        
-	    	        if(reservasAdmin.getQuintaStatus() == null) {
-	    	        	reservasAdmin.setQuintaStatus("Não reservado");
-	    	        }
-	    	        
-	    	        if(reservasAdmin.getSextaStatus() == null) {
-	    	        	reservasAdmin.setSextaStatus("Não reservado");
-	    	        }
-        		} else {
-        		
-        			Calendar cal = Calendar.getInstance();
-    				cal.setTime(dataAtual.getTime());
-        			
-	        		if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
-	    	        	reservasAdmin.setSegundaStatus("Dia indisponível");
-	    	        }        
-	    	        
-	    	        if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
-	    	        	reservasAdmin.setTercaStatus("Dia indisponível");
-	    	        }
-	    	        
-	    	        if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
-	    	        	reservasAdmin.setQuartaStatus("Dia indisponível");
-	    	        }
-	    	        
-	    	        if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
-	    	        	reservasAdmin.setQuintaStatus("Dia indisponível");
-	    	        }
-	    	        
-	    	        if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
-	    	        	reservasAdmin.setSextaStatus("Dia indisponível");
-	    	        }
-	        	} 	      	
-	        	
-	        	switch(i) 
-	        	{
-	        		case 0:
-	        			segunda = dataAtual.getTime();
-	        		case 1:
-	        			terca = dataAtual.getTime();
-	        		case 2:
-	        			quarta = dataAtual.getTime();
-	        		case 3:
-	        			quinta = dataAtual.getTime();
-	        		case 4:
-	        			sexta = dataAtual.getTime();
-	        	}
-	        	
-	        	dataAtual.add(Calendar.DAY_OF_MONTH, 1);	
-	        }
-	        
-	        if(!(reservasAdmin.getSegundaStatus() == "Não reservado" && reservasAdmin.getSegundaStatus() == "Dia indisponível" && reservasAdmin.getTercaStatus() == "Não reservado" && reservasAdmin.getTercaStatus() == "Dia indisponível" && reservasAdmin.getQuartaStatus() == "Não reservado" && reservasAdmin.getQuartaStatus() == "Dia indisponível" && reservasAdmin.getQuintaStatus() == "Não reservado" && reservasAdmin.getQuintaStatus() == "Dia indisponível" && reservasAdmin.getSextaStatus() == "Não reservado" && reservasAdmin.getSextaStatus() == "Dia indisponível")) {
-	        	todasAsReservas.add(reservasAdmin);
-	        }	        
-        }        
+		BigDecimal saldo = new BigDecimal(0.00);
+		
+		Calendar dataHoje = Calendar.getInstance();	
+		
+		NumberFormat nf = NumberFormat.getCurrencyInstance();
+		List<ReservasAdmin> todasAsReservas = new ArrayList<ReservasAdmin>();
+		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");				
+		
+		List<Cliente> todosOsClientesDoBD = clienteRepository.findAll();
+		List<ReservaItem> reservasItensDoBD = reservaItemRepository.findAll();				
+		
+		if(!(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) && !(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) && feriadoRepository.findByData(dataHoje.getTime()) == null) {
+		
+			for (int z = 0; z < todosOsClientesDoBD.size(); z++) {
+				
+				Calendar dataAtual = Calendar.getInstance();		
+				dataAtual = verificarData(dataAtual);   
+				
+				List<Extrato> ultimoRegistroDoCliente = extratoRepository.buscarUltimoRegistroDoCliente(todosOsClientesDoBD.get(z).getId());		    
+			    
+			    if(!ultimoRegistroDoCliente.isEmpty()) {
+			    	saldo = ultimoRegistroDoCliente.get(0).getSaldo();
+			    }
+				
+				ReservasAdmin reservasAdmin = new ReservasAdmin();			
+		    	reservasAdmin.setId(Long.valueOf(z));
+		    	reservasAdmin.setNome(todosOsClientesDoBD.get(z).getNome());  
+			    reservasAdmin.setCreditos(nf.format(saldo));
+			    
+		        for (int i = 0; i < 5; i++) {	     	
+		        	
+		        	List<Object[]> dataDoBanco = cardapioRepository.verificarSeDataExisteNoBD(dataAtual.getTime()); 	
+		        		
+		    		for(Object[] linhaDoBanco : dataDoBanco) {
+		        		
+		        		String dataFormatada = formatoDesejado.format((Date) linhaDoBanco[1]);
+		        		
+		        		Date dataVar = null;
+		        		dataVar = formatoDesejado.parse(dataFormatada);    
+		                	
+		            	for(int x = 0; x < reservasItensDoBD.size(); x++) 
+		        		{
+		            		if(todosOsClientesDoBD.get(z).getNome() == reservasItensDoBD.get(x).getReserva().getCliente().getNome()) 
+		            		{
+		            			if(formatoDesejado.format(dataVar).equals(formatoDesejado.format(dataAtual.getTime())) && formatoDesejado.format(dataVar).equals(formatoDesejado.format(reservasItensDoBD.get(x).getCardapio().getData())))
+		                    	{    
+		        					Calendar cal = Calendar.getInstance();
+		            				cal.setTime(reservasItensDoBD.get(x).getCardapio().getData());
+		            					
+		        					if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
+		            				{
+		            					reservasAdmin.setSegundaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
+		            				}
+		            				
+		            				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
+		            				{
+		            					reservasAdmin.setTercaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
+		            				}
+		            				
+		            				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
+		            				{
+		            					reservasAdmin.setQuartaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
+		            				}
+		            				
+		            				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
+		            				{
+		            					reservasAdmin.setQuintaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
+		            				}
+		            				
+		            				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
+		            				{
+		            					reservasAdmin.setSextaStatus(reservasItensDoBD.get(x).getStatus().getDescricao());
+		            				}
+		                    	}
+		            		}      			
+		        		}	         			
+		            } 
+		    		
+		    		if(!dataDoBanco.isEmpty()) {
+		    				        		
+		        		if(reservasAdmin.getSegundaStatus() == null) {
+		    	        	reservasAdmin.setSegundaStatus("Não reservado");
+		    	        }        
+		    	        
+		    	        if(reservasAdmin.getTercaStatus() == null) {
+		    	        	reservasAdmin.setTercaStatus("Não reservado");
+		    	        }
+		    	        
+		    	        if(reservasAdmin.getQuartaStatus() == null) {
+		    	        	reservasAdmin.setQuartaStatus("Não reservado");
+		    	        }
+		    	        
+		    	        if(reservasAdmin.getQuintaStatus() == null) {
+		    	        	reservasAdmin.setQuintaStatus("Não reservado");
+		    	        }
+		    	        
+		    	        if(reservasAdmin.getSextaStatus() == null) {
+		    	        	reservasAdmin.setSextaStatus("Não reservado");
+		    	        }
+		    		} else {
+		    		
+		    			Calendar cal = Calendar.getInstance();
+						cal.setTime(dataAtual.getTime());
+		    			
+		        		if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
+		    	        	reservasAdmin.setSegundaStatus("Dia indisponível");
+		    	        }        
+		    	        
+		    	        if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
+		    	        	reservasAdmin.setTercaStatus("Dia indisponível");
+		    	        }
+		    	        
+		    	        if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
+		    	        	reservasAdmin.setQuartaStatus("Dia indisponível");
+		    	        }
+		    	        
+		    	        if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
+		    	        	reservasAdmin.setQuintaStatus("Dia indisponível");
+		    	        }
+		    	        
+		    	        if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
+		    	        	reservasAdmin.setSextaStatus("Dia indisponível");
+		    	        }
+		        	} 	      	
+		        	
+		        	switch(i) 
+		        	{
+		        		case 0:
+		        			segunda = dataAtual.getTime();
+		        		case 1:
+		        			terca = dataAtual.getTime();
+		        		case 2:
+		        			quarta = dataAtual.getTime();
+		        		case 3:
+		        			quinta = dataAtual.getTime();
+		        		case 4:
+		        			sexta = dataAtual.getTime();
+		        	}
+		        	
+		        	dataAtual.add(Calendar.DAY_OF_MONTH, 1);	
+		        }
+		        
+		        if(!(reservasAdmin.getSegundaStatus() == "Não reservado" && reservasAdmin.getSegundaStatus() == "Dia indisponível" && reservasAdmin.getTercaStatus() == "Não reservado" && reservasAdmin.getTercaStatus() == "Dia indisponível" && reservasAdmin.getQuartaStatus() == "Não reservado" && reservasAdmin.getQuartaStatus() == "Dia indisponível" && reservasAdmin.getQuintaStatus() == "Não reservado" && reservasAdmin.getQuintaStatus() == "Dia indisponível" && reservasAdmin.getSextaStatus() == "Não reservado" && reservasAdmin.getSextaStatus() == "Dia indisponível")) {
+		        	todasAsReservas.add(reservasAdmin);
+		        }	        
+		    }        
+		
+		} else {
+			count = 1;
+		}
         
 		model.addAttribute("listagemReservas", todasAsReservas);
 		model.addAttribute("segunda", formatoDesejado.format(segunda));
@@ -216,6 +227,7 @@ public class ReservaAdminController {
 		model.addAttribute("quarta", formatoDesejado.format(quarta));
 		model.addAttribute("quinta", formatoDesejado.format(quinta));
 		model.addAttribute("sexta", formatoDesejado.format(sexta));
+		model.addAttribute("holiday", count);
 		
 		return "/reservas/pesquisar";
 	}
@@ -227,16 +239,15 @@ public class ReservaAdminController {
 		Date terca = new Date();
 		Date quarta = new Date();
 		Date quinta = new Date();
-		Date sexta = new Date();
+		Date sexta = new Date();		
 		
-		BigDecimal creditos = new BigDecimal(0.00);
+		BigDecimal creditos = new BigDecimal(0.00);			
+		NumberFormat nf = NumberFormat.getCurrencyInstance(); 
+		List<String> datasDasReservas = new ArrayList<String>();
+		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
 		
 		ReservasAdmin reservasAdmin = new ReservasAdmin();
 		ClienteCategoria clienteCategoria = new ClienteCategoria();
-		
-		List<String> datasDasReservas = new ArrayList<String>();
-		NumberFormat nf = NumberFormat.getCurrencyInstance(); 
-		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
 		
 		Cliente cliente = clienteRepository.findByNome(nome);
 		List<ReservaItem> reservasItensDoBD = reservaItemRepository.findAll();		
@@ -244,7 +255,7 @@ public class ReservaAdminController {
 		
 		if(!ultimoRegistroDoCliente.isEmpty()) {
 	    	creditos = ultimoRegistroDoCliente.get(0).getSaldo();
-	    }		
+	    }	
 		
 		reservasAdmin.setCreditos(nf.format(creditos));
 		
@@ -350,21 +361,16 @@ public class ReservaAdminController {
 	}
 	
 	@PostMapping("/salvar")
-	public String salvarReservas(@RequestParam("nome") String nome, @RequestParam("data") String[] datasSelecionadas, @RequestParam("valor") String valor, @RequestParam("recargas") String recargas, @RequestParam("utilizarCreditos") Boolean creditos) {
+	public String salvarReservas(@RequestParam("nome") String nome, @RequestParam("data") String[] datasSelecionadas, @RequestParam(value = "valor", required = false) String valor, @RequestParam(value = "recargas", required = false) String recargas, @RequestParam(value = "utilizarCreditos", required = false) Boolean creditos) {
 		
-		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
-		
+		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");		
 		List<ReservaItem> reservasItensDoBD = reservaItemRepository.findAll();
 		
-		System.out.println(recargas);
-		System.out.println(valor);
-		System.out.println(creditos);
-		
-		if(!creditos) {
+		if(creditos == null) {
 			
-			if(recargas == "0,00") {
-				System.out.println("caiu");
-				/*for(int z = 0; z < datasSelecionadas.length; z++) {
+			if(recargas == null) {
+				
+				for(int z = 0; z < datasSelecionadas.length; z++) {
 				
 					for(int x = 0; x < reservasItensDoBD.size(); x++) {
 						
@@ -380,7 +386,7 @@ public class ReservaAdminController {
 							}
 						}
 					}
-				}*/	
+				}
 			} else {
 				Cliente cliente = clienteRepository.findByNome(nome);
 				List<Extrato> ultimoRegistroDoCliente = extratoRepository.buscarUltimoRegistroDoCliente(cliente.getId());
@@ -402,9 +408,9 @@ public class ReservaAdminController {
 				
 				extratoRepository.save(extrato);
 				
-				/*for(int z = 0; z < datasSelecionadas.length; z++) {
+				for(int x = 0; x < reservasItensDoBD.size(); x++) {					
 				
-					for(int x = 0; x < reservasItensDoBD.size(); x++) {
+					for(int z = 0; z < datasSelecionadas.length; z++) {
 						
 						if(reservasItensDoBD.get(x).getReserva().getCliente().getNome().equals(nome)) {
 							
@@ -418,31 +424,66 @@ public class ReservaAdminController {
 							}
 						}
 					}
-				}*/	
+				}
 			}
 		} else {
+				
+			Cliente cliente = clienteRepository.findByNome(nome);
+			List<Extrato> ultimoRegistroDoCliente = extratoRepository.buscarUltimoRegistroDoCliente(cliente.getId());
 			
-			if(recargas == "0,00") {
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis()); //Data e hora atual			
+			BigDecimal saldo = null;
+			
+			if(!ultimoRegistroDoCliente.isEmpty()) {
+			 	saldo = ultimoRegistroDoCliente.get(0).getSaldo();
+			} else {
+				saldo = new BigDecimal(0.00);
+			}
+			
+			Extrato extrato = new Extrato();
+			extrato.setCliente(cliente);
+			extrato.setTransacao(new BigDecimal(recargas.replaceAll(",",".")));
+			extrato.setDataTransacao(timestamp);
+			extrato.setSaldo(saldo.add(new BigDecimal(recargas.replaceAll(",","."))));
+			
+			extratoRepository.save(extrato);
+			
+			ClienteCategoria clienteCategoria = clienteCategoriaRepository.findByCliente(cliente);
+			
+			List<Extrato> ultimoSaldoAtualizado = extratoRepository.buscarUltimoRegistroDoCliente(cliente.getId());	
+			BigDecimal saldoAtualizado = new BigDecimal(0.00);
+		    
+		    if(!ultimoSaldoAtualizado.isEmpty()) {
+		    	saldoAtualizado = ultimoSaldoAtualizado.get(0).getSaldo();
+		    }	
+			
+			Extrato debitoNoSaldo = new Extrato();			
+			debitoNoSaldo.setCliente(cliente);
+			debitoNoSaldo.setDataTransacao(timestamp);
+			
+			BigDecimal transacao = BigDecimal.valueOf(datasSelecionadas.length).multiply(clienteCategoria.getCategoria().getValorComSubsidio());
+			
+			debitoNoSaldo.setSaldo(saldoAtualizado.subtract(transacao));
+			debitoNoSaldo.setTransacao(transacao.negate());			
+			
+			extratoRepository.save(debitoNoSaldo);
+			
+			for(int z = 0; z < datasSelecionadas.length; z++) {
 				
-				Cliente cliente = clienteRepository.findByNome(nome);
-				List<Extrato> ultimoRegistroDoCliente = extratoRepository.buscarUltimoRegistroDoCliente(cliente.getId());
-				
-				Timestamp timestamp = new Timestamp(System.currentTimeMillis()); //Data e hora atual			
-				BigDecimal saldo = null;
-				
-				if(!ultimoRegistroDoCliente.isEmpty()) {
-				 	saldo = ultimoRegistroDoCliente.get(0).getSaldo();
-				} else {
-					saldo = new BigDecimal(0.00);
+				for(int x = 0; x < reservasItensDoBD.size(); x++) {
+					
+					if(reservasItensDoBD.get(x).getReserva().getCliente().getNome().equals(nome)) {
+						
+						if(formatoDesejado.format(reservasItensDoBD.get(x).getCardapio().getData()).equals(datasSelecionadas[z])) {
+							
+							Status status = statusRepository.findByDescricao("Pago");						
+							reservasItensDoBD.get(x).setStatus(status);						
+							reservaItemRepository.save(reservasItensDoBD.get(x));
+							
+							z++;
+						}
+					}
 				}
-				
-				Extrato extrato = new Extrato();
-				extrato.setCliente(cliente);
-				extrato.setTransacao(new BigDecimal(recargas.replaceAll(",",".")));
-				extrato.setDataTransacao(timestamp);
-				extrato.setSaldo(saldo.add(new BigDecimal(recargas.replaceAll(",","."))));
-				
-				extratoRepository.save(extrato);
 			}
 		}		
 				

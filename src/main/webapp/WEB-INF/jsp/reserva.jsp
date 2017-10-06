@@ -27,12 +27,10 @@
 			$("input:checkbox[name='data']").css("marginTop","7%");	
 			
 			if(datasDoCardapio.length != 0) {				
-				$('#reservaDisponivel').show();		
-				$('#reservaIndisponivel').hide();	
+				document.getElementById('reservaDisponivel').style.display = "block";
 			} else {
-				$('#reservaIndisponivel').show();
-				$('#reservaDisponivel').hide();	
-			}			
+				document.getElementById('reservaIndisponivel').style.display = "block";
+			}	
 			
 			var lista = [];
 			lista.push(trad);
@@ -193,7 +191,7 @@
           </h3>
         </div>
         
-        <div id="reservaDisponivel">
+        <div id="reservaDisponivel" style="display: none;">
         
 			<h4>Selecione o(s) dia(s) que deseja reservar:</h4>
 			
@@ -276,7 +274,7 @@
 		
 		</div>
 		
-		<div id="reservaIndisponivel">
+		<div id="reservaIndisponivel" style="display: none;">
 			
 			<div class="alert alert-danger text-center" role="alert">
 				<p><strong>Atenção!</strong> Fora do período de reservas!</p>

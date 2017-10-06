@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = { "nome", "creditos", "segundaStatus", "tercaStatus", "quartaStatus", "quintaStatus", "sextaStatus", "recargas", "valor", "data" })
-@ToString(of = { "nome", "creditos", "segundaStatus", "tercaStatus", "quartaStatus", "quintaStatus", "sextaStatus", "recargas", "valor", "data" })
+@EqualsAndHashCode(of = { "nome", "creditos", "segundaStatus", "tercaStatus", "quartaStatus", "quintaStatus", "sextaStatus", "recargas", "valor", "data", "utilizarCreditos" })
+@ToString(of = { "nome", "creditos", "segundaStatus", "tercaStatus", "quartaStatus", "quintaStatus", "sextaStatus", "recargas", "valor", "data", "utilizarCreditos" })
 public class ReservasAdmin {
 	
 	private Long id;
@@ -31,4 +31,6 @@ public class ReservasAdmin {
 	private BigDecimal valor;
 	
 	private String data;
+	
+	private boolean utilizarCreditos;
 }

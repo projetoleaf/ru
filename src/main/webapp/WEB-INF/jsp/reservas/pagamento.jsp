@@ -22,7 +22,7 @@
 			var caiu = 0;
 			var zero = 0;
 			
-			$("#utilizarCreditos").prop('disabled',true);
+			$("#utilizarCreditos1").prop('disabled',true);
 			$("#refeicoes").prop('disabled',true);
 			$("#valor").prop('disabled',true);
 			$("#habilitarRecargas").prop('disabled',true);
@@ -34,16 +34,16 @@
 			$("#recargas").val(zero.toFixed(2).replace(/\./g, ','));
 			$("#refeicoes").val(zero.toFixed(2).replace(/\./g, ','));
 			
-			$('input:checkbox[name="datas"]').change(function(){			
+			$('input:checkbox[name="data"]').change(function(){			
 				
-				var qtdeChecks = $("input:checkbox[name='datas']:checked").length;
+				var qtdeChecks = $("input:checkbox[name='data']:checked").length;
 				
 				if($(this).prop("checked")) {					
 					$("#valor").prop('disabled',false);
 					$('#valor').focus();
 					
 					if($('#creditos').val() != 0.00)
-						$("#utilizarCreditos").prop('disabled',false);
+						$("#utilizarCreditos1").prop('disabled',false);
 					
 					var valor = parseFloat(valorRefeicao) * qtdeChecks;
 					var valorFormatado = valor.toFixed(2);
@@ -52,8 +52,8 @@
 					
 			  	} else if (qtdeChecks == 0){			  		
 					$("#valor").prop('disabled',true);					
-					$("#utilizarCreditos").prop('disabled',true);				
-					$("#utilizarCreditos").prop("checked", false)
+					$("#utilizarCreditos1").prop('disabled',true);				
+					$("#utilizarCreditos1").prop("checked", false)
 					
 					$("#valor").val(qtdeChecks.toFixed(2).replace(/\./g, ','));					
 					$("#troco").val(qtdeChecks.toFixed(2).replace(/\./g, ','));
@@ -71,7 +71,7 @@
 			  	}
 			});
 			
-			$('#utilizarCreditos').change(function(){
+			$('#utilizarCreditos1').change(function(){
 				
 				if($(this).prop("checked")) {					
 					
@@ -109,7 +109,7 @@
 				var base = $('#creditos').val().replace(/,/g, '.');
 				var creditos = base.replace(/[^\d.-]/g, '');
 				
-				if($("#utilizarCreditos").prop("checked")) {		
+				if($("#utilizarCreditos1").prop("checked")) {		
 					$("#habilitarRecargas").prop("checked", true);
 					
 					var resultado = parseFloat(creditos) - parseFloat(refeicoes);
@@ -173,7 +173,7 @@
 				var base = $('#creditos').val().replace(/,/g, '.');
 				var creditos = base.replace(/[^\d.-]/g, '');
 				
-				if($("#utilizarCreditos").prop("checked")) {						
+				if($("#utilizarCreditos1").prop("checked")) {						
 					var resultado = parseFloat(creditos) - parseFloat(refeicoes) + parseFloat(valor);	
 					
 					var recargaACompletar = parseFloat(valor) - resultado;
@@ -221,7 +221,7 @@
 			});		
 			
 			$('#confirmarPagamento').click(function () {
-				var todosOsStatus = $("input:checkbox[name='datas']");
+				var todosOsStatus = $("input:checkbox[name='data']");
 			    
 			    if(!todosOsStatus.is(":checked")) {			
 			    	$("#modalErro .modal-body").append("<p>Selecione pelo menos um dia!</p>");
@@ -295,7 +295,7 @@
 	        <br>
 			<div class="row">
 				<div class="col-sm-12 form-group">
-					<form:input type="checkbox" path="utilizarCreditos"/> Utilizar créditos
+					<form:checkbox path="utilizarCreditos"/> Utilizar créditos
 				</div>
 			</div>
 			<div class="row">

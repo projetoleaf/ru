@@ -154,7 +154,7 @@ public class ReservaClienteController {
 			//Consistências dos finais de semana. Não apague \/ 
 			//if(!(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) && !(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) && (dataHoje.get(Calendar.DAY_OF_WEEK) <= dataSemana.get(Calendar.DAY_OF_WEEK))) {
 			if(dataHoje.getTime().equals(diaDaSemana.getTime()) && horaDeHoje >= 7  && dataHoje.get(Calendar.DAY_OF_WEEK) <= penultimoDiaUtil.get(Calendar.DAY_OF_WEEK)) {			
-				
+				System.out.println("1");
 				for (int i = 0; i < 5; i++) {
 		        	
 		        	Cardapio c = new Cardapio();        	
@@ -215,7 +215,7 @@ public class ReservaClienteController {
 		        } 		
 				
 			} else if (!dataHoje.getTime().equals(diaDaSemana.getTime()) && dataHoje.get(Calendar.DAY_OF_WEEK) <= penultimoDiaUtil.get(Calendar.DAY_OF_WEEK)) {			
-				
+				System.out.println("2");
 				for (int i = 0; i < 5; i++) {
 		        	
 		        	Cardapio c = new Cardapio();        	

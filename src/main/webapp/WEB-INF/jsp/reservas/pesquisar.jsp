@@ -15,8 +15,16 @@
 <title>Reservas</title>
 </head>
 <body>
-	<script type="text/javascript">
-		$(document).ready(function() {	
+	<script type="text/javascript">			
+		$(document).ready(function() {				
+			var feriado = ${holiday};		
+			
+			if(feriado == 0) {				
+				document.getElementById('reservaDisponivel').style.display = "block";
+			} else {
+				document.getElementById('reservaIndisponivel').style.display = "block";
+			}
+			
 			var linhasDaTabela = $('#GridDatatable tr:has(td)').map(function(i, v) {
 			    var $td =  $('td', this);
 			        return {
@@ -42,22 +50,34 @@
 		});
 	</script>
 	
-	<datatables:table data="${listagemReservas}" row="reserva" id="GridDatatable">
-		<datatables:column title="Nome" property="nome" />
-		<datatables:column title="Créditos" property="creditos" /> 
-		<datatables:column title="${segunda}" property="segundaStatus" />
-		<datatables:column title="${terca}" property="tercaStatus" />
-		<datatables:column title="${quarta}" property="quartaStatus"/>
-		<datatables:column title="${quinta}" property="quintaStatus" />
-		<datatables:column title="${sexta}" property="sextaStatus"/>
-		<datatables:column title="Operações" filterable="falseStatus" searchable="false" cssCellClass="text-center" >
-			<a href="${linkController}/pagamento/${reserva.nome}"
-				class="btn btn-success btn-xs" data-toggle="tooltip"
-				title="Efetivar pagamento"> <span class='fa fa-usd'></span>
-			</a>
-		</datatables:column>
-		<datatables:extraJs bundles="datatables.extended.config" placeholder="before_start_document_ready" />
-	</datatables:table>
+	<div id="reservaDisponivel" style="display: none;">
+	
+		<datatables:table data="${listagemReservas}" row="reserva" id="GridDatatable">
+			<datatables:column title="Nome" property="nome" />
+			<datatables:column title="Créditos" property="creditos" /> 
+			<datatables:column title="${segunda}" property="segundaStatus" />
+			<datatables:column title="${terca}" property="tercaStatus" />
+			<datatables:column title="${quarta}" property="quartaStatus"/>
+			<datatables:column title="${quinta}" property="quintaStatus" />
+			<datatables:column title="${sexta}" property="sextaStatus"/>
+			<datatables:column title="Operações" filterable="falseStatus" searchable="false" cssCellClass="text-center" >
+				<a href="${linkController}/pagamento/${reserva.nome}"
+					class="btn btn-success btn-xs" data-toggle="tooltip"
+					title="Efetivar pagamento"> <span class='fa fa-usd'></span>
+				</a>
+			</datatables:column>
+			<datatables:extraJs bundles="datatables.extended.config" placeholder="before_start_document_ready" />
+		</datatables:table>
+	
+	</div>
+	
+	<div id="reservaIndisponivel" style="display: none;">
+			
+		<div class="alert alert-danger text-center" role="alert">
+			<p><strong>Atenção!</strong> Fora do período de reservas!</p>
+		</div>
+		
+	</div>
 	
 	<br />
 	<br />
