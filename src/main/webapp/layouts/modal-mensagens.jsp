@@ -1,37 +1,57 @@
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://github.com/dandelion" prefix="dandelion"%>
 
+<dandelion:bundle includes="sweetalert2" />
 
-<c:if test="${not empty mensagemErro || not empty mensagemInfo}">
+<%-- Mensagem de Erro --%>
+<c:if test="${not empty mensagemErro}">
   <script type="text/javascript">
-    $(document).ready(function() {
-        $('#janela-mensagens-modal').modal('show');
-    });
+      $(document).ready(function() {
+          swal('Erro!', '${mensagemErro}','error');
+      });
   </script>
-
-  <div class="modal fade" id="janela-mensagens-modal" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <div class="modal-title">
-            <c:if test="${not empty mensagemErro}">
-              <h4>${mensagemErro}</h4>
-            </c:if>
-            <c:if test="${not empty mensagemInfo}">
-              <h4>${mensagemInfo}</h4>
-            </c:if>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </c:if>
 
-<%-- Erros de valida��o --%>
+<%-- Mensagem de Sucesso --%>
+<c:if test="${not empty mensagemSucesso}">
+  <script type="text/javascript">
+      $(document).ready(function() {
+          swal('Sucesso', '${mensagemSucesso}','success');
+      });
+  </script>
+</c:if>
+
+<%-- Mensagem de Informação --%>
+<c:if test="${not empty mensagemInfo}">
+  <script type="text/javascript">
+      $(document).ready(function() {
+          swal('Mensagem', '${mensagemInfo}','info');
+      });
+  </script>
+</c:if>
+
+<%-- Mensagem de Pergunta --%>
+<c:if test="${not empty mensagemPergunta}">
+  <script type="text/javascript">
+      $(document).ready(function() {
+          swal('Responda', '${mensagemPergunta}','question');
+      });
+  </script>
+</c:if>
+
+<%-- Mensagem de Atenção --%>
+<c:if test="${not empty mensagemAtencao}">
+  <script type="text/javascript">
+      $(document).ready(function() {
+          swal('Atenção', '${mensagemAtencao}','warning');
+      });
+  </script>
+</c:if>
+
+<%-- Mensagem de erros de validação --%>
 <spring:hasBindErrors name="${param.model}">
   <div class="alert alert-danger alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
