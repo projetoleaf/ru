@@ -1,0 +1,124 @@
+﻿################# DIAGRAMA DE CONTEXTO ################################
+
+info categorias = descricao + valor_sem_subsidio + valor_com_subsidio
+
+info cursos = descricao + periodo
+
+info tipos = descricao
+
+info feriados = descricao + data
+
+info extrato = @fk id_cliente + transacao + data_transacao + saldo
+
+info status = descricao
+
+dados status = @id_status + info status
+
+dados categorias = @pk id_categoria + info categorias
+
+dados cursos = @pk id_curso + info cursos 
+
+dados feriados = @pk id_feriado + info feriados 
+
+dados extrato = @ id_extrato + info extrato
+
+status reserva = @id_status + info status
+
+dados cadastrais = @pk id_cliente + cpf + nome + identificação + data_criado + biometria
+
+info tipos = @pk id_tipo + descricao
+
+info tipo refeição = @pk id_tipo_refeicao + descricao
+
+solicitação de reserva = @pk id_reserva + @fk id_tipo_valor + @fk id_cliente + data_hora
+
+solicitação de trans = solicitação de reserva
+
+dados reserva = solicitacao de reserva + status reserva
+
+dados tipo valor = @pk id_tipo_valor+descrição
+
+dados tipo_refeição = @pk id + descricao
+
+reserva item atualizado = @id_reserva_item + @fk id_reserva + @fk id_cardapio + @fk id_status + @fk id_tipo_refeicao + @fk id_extrato
+
+info qtde de refeições = @id_info_qtde_refeicoes + subsidiada + custo
+
+info cardápio = @id_cardapio + data + prato_base + prato_tradicional + guarnicao + salada + sobremesa + suco + prato_vegetariano
+
+status reserva atualizado = status reserva
+
+1º via relatório de reserva = @fk data + @fk id_tipo + @fk id_categoria + quantidade + valor
+
+2º via relatório de reserva = 1° via relatório de reserva
+
+1° via relatório de transferencia = @fk data + @fk id_transferido + @fk id_transferente + @fk id_categoria + @fk id_tipo + quantidade + valor
+
+2° via relatório de transferencia = 1°via relatório de transferência
+
+*dias_reserva - array de data_refeicao
+
+
+
+####################### NIVEL 0 #######################################
+
+dados usuarios = @pk id_usuario + dados cadastrais 
+
+dados reserva = @id_reserva + cod_reserva + data_refeicao + @fk id_usuario + status reserva
+
+status reserva atualizado = dados reserva
+
+dados qtde refeições = @pk id_refeicao + info qtde de refeições
+
+dados cardápio = @pk id_cardapio + info cardápio
+
+dados transferencia = dados reserva
+
+
+
+depósito categorias = 1 { dados categorias }N
+
+depósito cursos = 1 { dados cursos }N
+
+depósito feriados = 1 { dados feriados }N
+
+depósito extrato = 1 { dados extrato } N
+
+depósito status = 1 { dados status} N
+
+depósito usuario = 1 { dados cadastrais }N
+
+depósito reserva = 1 { dados reserva }N
+
+depósito reserva_item = 1 { status reserva atualizado }N
+
+depósito cardápio = 1 { dados cardápio }N
+
+depósito qtde_refeições = 1 { dados qtde refeições}N
+
+
+
+####################### NIVEL 1 #######################################
+
+depósito tipo_valor = 1 { dados tipo valor} N
+
+depósito tipo_refeicao = 1 {dados tipo_refeição} N
+
+depósito cliente_categoria = 1 { dados usuarios + dados categorias } N
+
+depósito cliente_curso = 1 { dados usuarios + dados cursos } N
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
