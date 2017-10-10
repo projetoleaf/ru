@@ -16,5 +16,7 @@ public class Creditos {
 	
 	private BigDecimal saldo;
 	
+	private String creditos;
+	
 	private BigDecimal recarga;
 }

@@ -14,6 +14,16 @@
 <title>Extrato</title>
 </head>
 <body>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#GridDatatable tr td').each(function(){
+				//var valor = $(this).text().replace(/[.,]/g, '') / 100;
+				//if(valor < 0)
+				if($(this).text().includes("-"))
+			  		$(this).css('color','red');
+			});
+		});
+	</script>
 	<div class="panel panel-primary col-xs-12 col-md-8 col-md-offset-2">
 		<div class="panel-body">
 			<div class="page-header" style="margin-top: 10px;">
@@ -23,12 +33,11 @@
 			</div>
 			<br />
 			<datatables:table data="${listagemExtrato}" id="GridDatatable">
-				<datatables:column title="Data da Reserva" property="reserva.dataReserva" sortInitDirection="desc" format="{0,date,dd/MM/yyyy}" sortType="date-uk" />
-				<datatables:column title="Transação(R$)" property="extrato.transacao" format="{0,number,#,##0.00}"/>
-				<datatables:column title="Data da Transação" property="extrato.dataTransacao" format="{0,date,dd/MM/yyyy HH:MM:SS}" />
-				<datatables:column title="Saldo(R$)" property="extrato.saldo" format="{0,number,#,##0.00}"/>
+				<datatables:column title="Data da Transação" sortInitDirection="desc" property="dataTransacao" format="{0,date,dd/MM/yyyy HH:MM:ss}" />
+				<datatables:column title="Transação(R$)" property="transacao" format="{0,number,#,##0.00}"/>
+				<datatables:column title="Saldo(R$)" property="saldo" format="{0,number,#,##0.00}"/>
 		
-				<datatables:extraJs bundles="datatables.extended.config" placeholder="before_start_document_ready" />
+				<datatables:extraJs bundles="datatables.extended.config" placeholder="after_end_document_ready" />
 			</datatables:table>
 			<br /> 
 		</div>

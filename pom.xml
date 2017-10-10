@@ -97,8 +97,12 @@
            <artifactId>unespfc-core-layout</artifactId>
            <version>1.2</version>
         </dependency>
+        <dependency>
+        	<groupId>org.webjars.npm</groupId>
+        	<artifactId>sweetalert2</artifactId>
+        	<version>6.6.7</version>
+        </dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>

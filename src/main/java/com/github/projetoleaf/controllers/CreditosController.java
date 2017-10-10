@@ -35,6 +35,8 @@ public class CreditosController {
 		List<Cliente> todosOsClientesDoBD = clienteRepository.findAll();		
 		List<Creditos> todosOsCreditos = new ArrayList<Creditos>();
 		
+		NumberFormat nf = NumberFormat.getCurrencyInstance();
+		
 		for (int z = 0; z < todosOsClientesDoBD.size(); z++) {	
 			
 			Creditos creditos = new Creditos();			
@@ -49,6 +51,9 @@ public class CreditosController {
 				creditos.setSaldo(new BigDecimal(0.00));
 			}   
 			
+			String creditosFormatado = nf.format(creditos.getSaldo());
+			
+			creditos.setCreditos(creditosFormatado);
 			todosOsCreditos.add(creditos);
         }        
         
@@ -87,13 +92,14 @@ public class CreditosController {
 		Cliente cliente = clienteRepository.findByNome(nome);
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis()); //Data e hora atual
 		
+		safety = safety.replaceAll("[R$ .]","");
 		BigDecimal saldo = null;
 		
-		if(safety.contains(".")) {
-			saldo = new BigDecimal(safety);
-		} else if(safety.contains(",")) {
-			saldo = new BigDecimal(safety.replaceAll(",", "."));
-		}
+		System.out.println(safety);
+		
+		saldo = new BigDecimal(safety.replaceAll(",", "."));
+		
+		recarga = recarga.replaceAll("\\.", "");
 		
 		Extrato extrato = new Extrato();
 		extrato.setCliente(cliente);

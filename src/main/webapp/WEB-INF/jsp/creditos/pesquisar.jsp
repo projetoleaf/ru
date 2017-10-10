@@ -17,7 +17,7 @@
 <body>
 	<datatables:table data="${listagemCreditos}" row="credito" id="GridDatatable">
 		<datatables:column title="Nome" property="nome" />
-		<datatables:column title="Créditos" property="saldo" />
+		<datatables:column title="Créditos" property="creditos" />
 		<datatables:column title="Operações" filterable="falseStatus" searchable="false" cssCellClass="text-center" >
 			<a href="${linkController}/recarga/${credito.nome}"
 				class="btn btn-success btn-xs" data-toggle="tooltip"

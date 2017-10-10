@@ -11,4 +11,7 @@ public interface ExtratoRepository extends JpaRepository<Extrato, Long> {
 
 	@Query("SELECT e FROM Extrato e WHERE e.cliente.id = ?1 ORDER BY e.id DESC")
 	List<Extrato> buscarUltimoRegistroDoCliente(Long idCliente);
+	
+	@Query("SELECT e FROM Extrato e WHERE e.cliente.id = ?1 ORDER BY e.id DESC")
+	List<Extrato> buscarTodasTransacoesDoCliente(Long idCliente);
 }
