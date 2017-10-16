@@ -5,7 +5,7 @@
 
 <c:set var="linkController"><c:url value="/categorias" /></c:set>
 
-<dandelion:bundle includes="datatables.extended,floating.button,font-awesome" />
+<dandelion:bundle includes="datatables.extended,floating.button,font-awesome,sweetalert2" />
 
 <html>
 <head>

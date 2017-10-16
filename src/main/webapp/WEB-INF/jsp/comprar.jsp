@@ -3,24 +3,25 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<c:set var="actionSalvar"> <c:url value="/remanescentes/salvar"/> </c:set>
+<c:set var="actionSalvar"> <c:url value="/comprar/salvar"/> </c:set>
 
 <html>
 <head>
-<meta name="header" content="Remanescentes" />
-<title>Remanescentes</title>
+<meta name="header" content="Comprar" />
+<title>Comprar</title>
 </head>
 <body>
 	<script>	
 		$( document ).ready(function() {	
 			
 			var datasDoCardapio = ${objectJSON};			
-			var todasAsDatas = $("input:checkbox[name='data']");							
-			var trad = "${todosOsTipos[0].descricao}";
-			var veg = "${todosOsTipos[1].descricao}";		
+			var todasAsDatas = $("input:checkbox[name='data']");		
+			var count = ${count};	
 			var saldo = ${saldo};	
-			var valorRefeicao = ${valorRefeicao};
+			var valorRefeicaoS = ${valorRefeicaoS};
+			var valorRefeicaoC = ${valorRefeicaoC};
 			var str = "";
+			var str2 = "";
 			var val = 1;			
 			
 			$("input:checkbox[name='data']").css("marginTop","7%");	
@@ -31,26 +32,16 @@
 				document.getElementById('reservaIndisponivel').style.display = "block";
 			}	
 			
-			var lista = [];
-			lista.push(trad);
-			lista.push(veg);				
-			
-			for (var x = 1; x <= todasAsDatas.length; x++) {	
-				
-				str += '<select id="tipoRefeicao' + x + '" name="tipoRefeicao" class="form-control">';	 
-				str += '<option value="0" label="- Selecione uma refeição -"> </option>';				
-				
-				for (var z = 0; z < lista.length; z++) {										
-					str += '<option value="' + (z+1) + '" label="' + lista[z] + '"> </option>';		
-				}
-				
-				str += '</select>';
-	    	}
-			
-			$("#reservaDisponivel .selectList").append(str);			
-			$("select").prop('disabled',true);		
-			
+			$("select").prop('disabled',true);					
 			$("select").css("marginBottom","5%");
+			
+			if(count == 1) {
+				$("select#tipoValor").prop('disabled',false);
+				$("select#tipoValor").prop('selectedIndex',0);
+			} else {
+				$("select#tipoValor").prop('disabled',true);
+				$("select#tipoValor").prop('selectedIndex',1);
+			}
 			
 			$("input:checkbox[name='data']").change(function(){
 				
@@ -165,7 +156,7 @@
       <div class="panel-body">
         <div class="page-header" style="margin-top: 10px;">
           <h3>
-            <strong>Remanescentes</strong>
+            <strong>Comprar</strong>
           </h3>
         </div>
         
@@ -175,7 +166,7 @@
 			
 			<br/> 
 			
-			<form:form method="POST" action="${actionSalvar}" modelAttribute="remanescentes">
+			<form:form method="POST" action="${actionSalvar}" modelAttribute="comprar">
 			
 				<div class="row">
 					<div class="col-xs-12 col-sm-4 text-center">
@@ -187,14 +178,24 @@
 					<div class="col-xs-12 col-sm-4 text-center">
 						<form:checkboxes items="${todasAsDatas}" path="data" itemLabel="data" itemValue="id" delimiter="<br>"/>
 					</div>	
-					<div class="col-xs-12 col-sm-4 text-center selectList">	
+					<div class="col-xs-12 col-sm-4 text-center">	
+						<select id="tipoRefeicao" name="tipoRefeicao" class="form-control">
+							<option value="1" label="Tradicional"> </option>
+							<option value="2" label="Vegetariano"> </option>
+						</select>	
+					</div>		
+					<div class="col-xs-12 col-sm-4 text-center">	
+						<select id="tipoValor" name="tipoValor" class="form-control">
+							<option value="1" label="Custo"> </option>
+							<option value="2" label="Subsidiada"> </option>
+						</select>						
 					</div>					
 				</div>
 				
 				<div class="text-center">
 					<br/>
 					<button type="button" id="reservar" class="btn btn-primary">
-					 	<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> Reservar
+					 	<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> Comprar
 					</button>
 				</div>
 				
@@ -204,14 +205,14 @@
 				 		<div class="modal-content">
 				 			<div class="modal-header">
 				 				<button type="button" class="close cancelar" data-dismiss="modal">&times;</button>
-				 				<h3 class="modal-title">Reserva</h3>
+				 				<h3 class="modal-title">Comprar</h3>
 				 			</div>
 				 			<div class="modal-body">
 				 			</div>
 				 			<div class="modal-footer">
 				 				<div class="text-center">
 				 					<button type="button" class="btn btn-default cancelar" data-dismiss="modal">Cancelar</button>
-				 					<button type="submit" class="btn btn-primary">Confirmar reserva</button>
+				 					<button type="submit" class="btn btn-primary">Confirmar compra</button>
 				 				</div>
 				 			</div>
 				 		</div>
@@ -243,7 +244,7 @@
 		<div id="reservaIndisponivel" style="display: none;">
 			
 			<div class="alert alert-danger text-center" role="alert">
-				<p><strong>Atenção!</strong> Fora do período de reservas remanescentes!</p>
+				<p><strong>Atenção!</strong> Fora do período de compras!</p>
 			</div>
 			
 		</div>

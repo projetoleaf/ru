@@ -16,41 +16,40 @@ import org.springframework.web.servlet.view.RedirectView;
 public class SistemaController {
 
 	private String retorno;
-	
+
 	@GetMapping("/")
 	public String index() {
-		
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();		
-		
-		if (!(authentication instanceof AnonymousAuthenticationToken)) {	
-			
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+
 			retorno = "redirect:/boasVindas";
-		}
-		else {
+		} else {
 			retorno = "redirect:/login";
 		}
-		
+
 		return retorno;
 	}
-	
-	@GetMapping("/logout")
-	public RedirectView logoutDo(HttpServletRequest request, HttpServletResponse response){
-		
-		HttpSession session= request.getSession(false);
-	    SecurityContextHolder.clearContext();
-	    session= request.getSession(false);
-	    
-        if(session != null) {
-            session.invalidate();
-        }
-        for(Cookie cookie : request.getCookies()) {
-            cookie.setMaxAge(0);
-        }
-       
-		RedirectView redirectView = new RedirectView();
-	    redirectView.setUrl("https://centraldev.unesp.br/");
 
-        return redirectView;
+	@GetMapping("/logout")
+	public RedirectView logoutDo(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession(false);
+		SecurityContextHolder.clearContext();
+		session = request.getSession(false);
+
+		if (session != null) {
+			session.invalidate();
+		}
+		for (Cookie cookie : request.getCookies()) {
+			cookie.setMaxAge(0);
+		}
+
+		RedirectView redirectView = new RedirectView();
+		redirectView.setUrl("https://centraldev.unesp.br/");
+
+		return redirectView;
 	}
 
 	@GetMapping("/sobre")
@@ -62,22 +61,17 @@ public class SistemaController {
 	public String transferencias() {
 		return "transferencias";
 	}
-	
-	@GetMapping("/remanescentes")
-	public String remanescentes() {
-		return "remanescentes";
-	}
-	
+
 	@GetMapping("/semanaAtual")
 	public String semanaAtual() {
 		return "semanaAtual";
 	}
-	
+
 	@GetMapping("/planilhas")
 	public String planilhas() {
 		return "planilhas";
 	}
-	
+
 	@GetMapping("/graficos")
 	public String graficos() {
 		return "graficos";

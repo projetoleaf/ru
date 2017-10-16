@@ -8,12 +8,12 @@ import lombok.ToString;
 @EqualsAndHashCode(of = { "categoria", "raMatricula", "curso" })
 @ToString(of = { "categoria", "raMatricula", "curso" })
 public class PrimeiroAcesso {
-	
+
 	private Long id;
-	
+
 	private Categoria categoria;
-	
+
 	private Integer raMatricula;
-	
+
 	private Curso curso;
 }

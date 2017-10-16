@@ -2,6 +2,7 @@ package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,8 +13,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -29,14 +32,14 @@ public class Feriado implements Serializable {
 
 	@Id
 	@SequenceGenerator(name = "feriado_id_seq", sequenceName = "feriado_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "feriado_id_seq")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "feriado_id_seq")
 	@Column(name = "id", nullable = false)
 	private Long id;
-	
+
 	@NotBlank
 	@Column(name = "descricao")
 	private String descricao;
-	
+
 	@NotNull
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")

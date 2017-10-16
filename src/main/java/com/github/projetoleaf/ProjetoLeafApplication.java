@@ -1,14 +1,15 @@
 package com.github.projetoleaf;
 
-import com.github.projetoleaf.beans.UsuarioDetails;
 import java.io.IOException;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
@@ -25,6 +26,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.github.projetoleaf.beans.UsuarioDetails;
+
 @SpringBootApplication
 public class ProjetoLeafApplication {
 
@@ -32,58 +35,55 @@ public class ProjetoLeafApplication {
 		SpringApplication.run(ProjetoLeafApplication.class, args);
 	}
 
-    @Configuration
-    @EnableOAuth2Sso
-    @EnableWebSecurity
-    public static class Security extends WebSecurityConfigurerAdapter {
+	@Configuration
+	@EnableOAuth2Sso
+	@EnableWebSecurity
+	public static class Security extends WebSecurityConfigurerAdapter {
 
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http
-                .authorizeRequests()
-                    .antMatchers("/assets/**").permitAll()
-                    .antMatchers("/layouts/**").permitAll()
-                    .antMatchers("/").permitAll()
-                    .anyRequest().authenticated()
-                ;
-        }
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			http.authorizeRequests().antMatchers("/assets/**").permitAll().antMatchers("/layouts/**").permitAll()
+					.antMatchers("/").permitAll().anyRequest().authenticated();
+		}
 
-    }
+	}
 
-    @Component
-    public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+	@Component
+	public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-        private final AuthenticationSuccessHandler authenticationSuccessHandler = new SimpleUrlAuthenticationSuccessHandler("/boasVindas");
+		private final AuthenticationSuccessHandler authenticationSuccessHandler = new SimpleUrlAuthenticationSuccessHandler(
+				"/boasVindas");
 
-        @Resource(name = "springSecurityFilterChain")
-        private FilterChainProxy chainProxy;
+		@Resource(name = "springSecurityFilterChain")
+		private FilterChainProxy chainProxy;
 
-        @PostConstruct
-        public void init() {
-            for (SecurityFilterChain chain : chainProxy.getFilterChains()) {
-                for (Filter filter : chain.getFilters()) {
-                    if (filter instanceof OAuth2ClientAuthenticationProcessingFilter) {
-                        OAuth2ClientAuthenticationProcessingFilter oAuth2ClientAuthenticationProcessingFilter = (OAuth2ClientAuthenticationProcessingFilter) filter;
-                        oAuth2ClientAuthenticationProcessingFilter.setAuthenticationSuccessHandler(this);
-                    }
-                }
-            }
-        }
+		@PostConstruct
+		public void init() {
+			for (SecurityFilterChain chain : chainProxy.getFilterChains()) {
+				for (Filter filter : chain.getFilters()) {
+					if (filter instanceof OAuth2ClientAuthenticationProcessingFilter) {
+						OAuth2ClientAuthenticationProcessingFilter oAuth2ClientAuthenticationProcessingFilter = (OAuth2ClientAuthenticationProcessingFilter) filter;
+						oAuth2ClientAuthenticationProcessingFilter.setAuthenticationSuccessHandler(this);
+					}
+				}
+			}
+		}
 
-        @Override
-        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-            Authentication auth = ((OAuth2Authentication) authentication).getUserAuthentication();
-            Map<String, Object> map = (Map<String, Object>) auth.getDetails();
-            Map<String, Object> mapDetails = (Map<String, Object>) map.get("details");
-            UsuarioDetails details = new UsuarioDetails();
-            details.setNome((String) mapDetails.get("nome"));
-            details.setEmail((String) mapDetails.get("email"));
-            details.setCpf((String) mapDetails.get("cpf"));
-            details.setRemoteAddress((String) mapDetails.get("remoteAddress"));
-            ((OAuth2Authentication) authentication).setDetails(details);
-            authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
-        }
+		@Override
+		public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+				Authentication authentication) throws IOException, ServletException {
+			Authentication auth = ((OAuth2Authentication) authentication).getUserAuthentication();
+			Map<String, Object> map = (Map<String, Object>) auth.getDetails();
+			Map<String, Object> mapDetails = (Map<String, Object>) map.get("details");
+			UsuarioDetails details = new UsuarioDetails();
+			details.setNome((String) mapDetails.get("nome"));
+			details.setEmail((String) mapDetails.get("email"));
+			details.setCpf((String) mapDetails.get("cpf"));
+			details.setRemoteAddress((String) mapDetails.get("remoteAddress"));
+			((OAuth2Authentication) authentication).setDetails(details);
+			authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
+		}
 
-    }
+	}
 
 }

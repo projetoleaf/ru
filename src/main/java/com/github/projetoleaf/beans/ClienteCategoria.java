@@ -2,6 +2,7 @@ package com.github.projetoleaf.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -29,30 +31,30 @@ public class ClienteCategoria implements Serializable {
 
 	@Id
 	@SequenceGenerator(name = "cliente_categoria_id_seq", sequenceName = "cliente_categoria_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cliente_categoria_id_seq")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cliente_categoria_id_seq")
 	@Column(name = "id", nullable = false)
 	private Long id;
-	
+
 	@NotNull
 	@ManyToOne
-    @JoinColumn(name = "id_cliente", referencedColumnName = "id")
+	@JoinColumn(name = "id_cliente", referencedColumnName = "id")
 	private Cliente cliente;
-	
+
 	@NotNull
-    @ManyToOne
-    @JoinColumn(name = "id_categoria", referencedColumnName = "id")
-    private Categoria categoria;
-	
+	@ManyToOne
+	@JoinColumn(name = "id_categoria", referencedColumnName = "id")
+	private Categoria categoria;
+
 	@NotNull
 	@Column(name = "ra_matricula")
 	private Integer raMatricula;
-	
+
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "data_inicio")	
+	@Column(name = "data_inicio")
 	private Date dataInicio;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "data_fim")	
+	@Column(name = "data_fim")
 	private Date dataFim;
 }

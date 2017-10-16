@@ -181,6 +181,10 @@
 					count++;
 				 });
 			});
+			
+			$('#datas').submit(function() {
+				$("#pagamento").prop('disabled',false);
+			});
 		});		
 	</script>
 	<div class="panel panel-primary col-xs-12 col-md-8 col-md-offset-2">

@@ -5,7 +5,7 @@
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib prefix="datatables" uri="http://github.com/dandelion/datatables"%>
 
-<dandelion:bundle includes="datatables.extended,font-awesome" />
+<dandelion:bundle includes="datatables.extended,font-awesome,sweetalert2" />
 
 <c:set var="linkController"> <c:url value="/reservas" /> </c:set>
 
