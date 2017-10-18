@@ -77,9 +77,8 @@ public class ComprarController {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		int count = 0; // Define quantos tipo valores estarão disponíveis na página. Se for 1, serão as
-						// 360 subsidiadas mais a 140 de custo. Se for 2, apenas as de custo.
 		BigDecimal saldo = new BigDecimal(0.00);
+		List<Integer> contadores = new ArrayList<Integer>();
 		List<Cardapio> cardapio = new ArrayList<Cardapio>();
 		ClienteCategoria clienteCategoria = new ClienteCategoria();
 
@@ -89,16 +88,17 @@ public class ComprarController {
 			Cliente cliente = clienteRepository.buscarCliente(identificacao); // Pega todos os dados da pessoa logada
 			clienteCategoria = clienteCategoriaRepository.findByCliente(cliente);
 
+			int count = 0; // Define quantos tipo valores estarão disponíveis na página. Se for 1, apenas
+							// subsidiadas. Ser for 2, apenas de custo. Se for 3, de custo e subsidiada
+
 			List<Extrato> todosOsExtratos = extratoRepository.buscarTodasTransacoesDoCliente(cliente.getId());
-			List<ReservaItem> todasAsReservasDoCliente = reservaItemRepository
-					.todasAsReservasDoCliente(cliente.getId());
 
 			if (!todosOsExtratos.isEmpty()) { // Pega o último saldo do cliente
 				saldo = todosOsExtratos.get(todosOsExtratos.size() - 1).getSaldo();
 			}
 
 			// Verifica se a pessoa possui créditos
-			if (!saldo.equals(new BigDecimal(0.00))) {
+			if (!saldo.equals(new BigDecimal(0))) {
 
 				int countDisponivelSegunda = 0;
 				int countDisponivelTerca = 0;
@@ -133,8 +133,7 @@ public class ComprarController {
 						Calendar cal = Calendar.getInstance();
 						cal.setTime((Date) linhaDoBanco[1]);
 
-						if (!dataHoje.getTime().equals(linhaDoBanco[1])
-								&& !(dataHoje.get(Calendar.DAY_OF_WEEK) < cal.get(Calendar.DAY_OF_WEEK))) {
+						if (dataHoje.get(Calendar.DAY_OF_WEEK) < cal.get(Calendar.DAY_OF_WEEK)) {
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
 								countDisponivelSegunda = reservaItemRepository
@@ -193,22 +192,12 @@ public class ComprarController {
 								c.setId((Long) linhaDoBanco[0]);
 								c.setData(dataVar);
 
-								if (!(todasAsReservasDoCliente.isEmpty())) {
-
-									if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
-											(Date) linhaDoBanco[1]) == null
-											&& formatoDesejado.format(c.getData())
-													.equals(formatoDesejado.format(dataAtual.getTime()))) {
-										cardapio.add(c);
-									}
-								} else {
-									if (formatoDesejado.format(c.getData())
-											.equals(formatoDesejado.format(dataAtual.getTime()))) {
-										cardapio.add(c);
-									}
-								}
-
-								count = 1;
+								if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
+										(Date) linhaDoBanco[1]) == null) {
+									cardapio.add(c);
+									
+									count = 1;
+								}								
 							}
 
 							if (countNãoSubsidiadaSegunda < 140 || countNãoSubsidiadaTerca < 140
@@ -223,25 +212,56 @@ public class ComprarController {
 									c.setId((Long) linhaDoBanco[0]);
 									c.setData(dataVar);
 
-									if (!(todasAsReservasDoCliente.isEmpty())) {
-
-										if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
-												(Date) linhaDoBanco[1]) == null
-												&& formatoDesejado.format(c.getData())
-														.equals(formatoDesejado.format(dataAtual.getTime()))) {
-											cardapio.add(c);
+									if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
+											(Date) linhaDoBanco[1]) == null) {
+										
+										int caiu = 0;
+										
+										for(Cardapio daLista : cardapio) {
+											
+											if(daLista.getData().equals(dataVar)) {
+												caiu = 1;
+											}
 										}
-									} else {
-										if (formatoDesejado.format(c.getData())
-												.equals(formatoDesejado.format(dataAtual.getTime()))) {
+											
+										if(caiu == 0) {
 											cardapio.add(c);
-										}
-									}
+										}										
+										
+										count = 2;						
+									}					
+									
+								} else {
+									
+									String dataFormatada = formatoDesejado.format((Date) linhaDoBanco[1]);
+									Date dataVar = formatoDesejado.parse(dataFormatada);
 
-									count = 2;
+									c.setId((Long) linhaDoBanco[0]);
+									c.setData(dataVar);
+
+									if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
+											(Date) linhaDoBanco[1]) == null) {
+										
+										int caiu = 0;
+										
+										for(Cardapio daLista : cardapio) {
+											
+											if(daLista.getData().equals(dataVar)) {
+												caiu = 1;
+											}
+										}
+											
+										if(caiu == 0) {
+											cardapio.add(c);
+										}	
+										
+										count = 3;
+									}					
 								}
 							}
-						}
+							
+							contadores.add(count);
+						}				
 					}
 
 					dataAtual.add(Calendar.DAY_OF_MONTH, 1);
@@ -249,7 +269,7 @@ public class ComprarController {
 			}
 		}
 
-		model.addAttribute("count", count);
+		model.addAttribute("contadores", contadores);
 		model.addAttribute("saldo", saldo);
 		model.addAttribute("todasAsDatas", cardapio);
 		model.addAttribute("comprar", new Cardapio());

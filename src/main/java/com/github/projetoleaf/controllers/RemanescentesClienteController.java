@@ -81,8 +81,8 @@ public class RemanescentesClienteController {
 	@Autowired
 	private ClienteCategoriaRepository clienteCategoriaRepository;
 
-	@GetMapping("/remanescentes")
-	public String remanescentes(Model model)
+	@GetMapping("/remanescente")
+	public String remanescente(Model model)
 			throws ParseException, JsonGenerationException, JsonMappingException, IOException {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -109,13 +109,9 @@ public class RemanescentesClienteController {
 				saldo = todosOsExtratos.get(todosOsExtratos.size() - 1).getSaldo();
 			}
 
-			System.out.println(saldo + " ?");
-
 			// Verifica se a pessoa é discente e se possui créditos
-			if (!(clienteCategoria.getCategoria() != dGraduacao)
-					|| !(clienteCategoria.getCategoria() != dPosGraduacao) && saldo != new BigDecimal(0)) {
-
-				System.out.println("Entrou");
+			if ((!(clienteCategoria.getCategoria() != dGraduacao)
+					|| !(clienteCategoria.getCategoria() != dPosGraduacao)) && !saldo.equals(new BigDecimal(0))) {
 
 				int countSegunda = 0;
 				int countTerca = 0;
@@ -300,11 +296,11 @@ public class RemanescentesClienteController {
 		String objectJSON = mapper.writeValueAsString(cardapio);// json string
 		model.addAttribute("objectJSON", objectJSON);
 
-		return "remanescentes";
+		return "remanescente";
 	}
 
-	@PostMapping("/remanescentes/salvar")
-	public String salvarRemanescentes(@RequestParam("data") String[] idsCardapios,
+	@PostMapping("/remanescente/salvar")
+	public String salvarRemanescente(@RequestParam("data") String[] idsCardapios,
 			@RequestParam("tipoRefeicao") Integer[] idsTipoRefeicao) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

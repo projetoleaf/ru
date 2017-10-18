@@ -3,7 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<c:set var="actionSalvar"> <c:url value="/remanescentes/salvar"/> </c:set>
+<c:set var="actionSalvar"> <c:url value="/remanescente/salvar"/> </c:set>
 
 <html>
 <head>
@@ -106,24 +106,14 @@
 			    	
 			    	if(count != 0 && count2 == 0) {
 			    		
-			    		if($("#pagamento").val() == 1) {
-			    			
-			    			if(count * valorRefeicao > saldo) {		
-			    				
-				    			$("#modalNaoSelecionado .modal-body").append("<p>Créditos insuficientes para a quantidade de refeições selecionadas!</p>");		
-				    			$("#modalNaoSelecionado .modal-body").append("<p>Diminua a quantidade e tente novamente!</p>");		
-		   				    	$('#modalNaoSelecionado').modal('show');
-				    		} else {
-				    			
-				    			$("#modalConfirmarReserva .modal-body").append("<p>Confirme os dias da sua reserva e o seu tipo de refeição...</p>");			    		
-					    		$("#modalConfirmarReserva .modal-body").append(txt);	
-								$('#modalConfirmarReserva').modal('show');
-				    		}			    			
-			    		} 
-			    		else if($("#pagamento").val() == 2) {
+			    		if(count * valorRefeicao <= saldo) {	
 			    			$("#modalConfirmarReserva .modal-body").append("<p>Confirme os dias da sua reserva e o seu tipo de refeição...</p>");			    		
 				    		$("#modalConfirmarReserva .modal-body").append(txt);	
 							$('#modalConfirmarReserva').modal('show');
+			    		} else {
+			    			$("#modalNaoSelecionado .modal-body").append("<p>Créditos insuficientes para a quantidade de refeições selecionadas!</p>");		
+			    			$("#modalNaoSelecionado .modal-body").append("<p>Diminua a quantidade e tente novamente!</p>");		
+	   				    	$('#modalNaoSelecionado').modal('show');
 			    		} 	
 			    		
 			    	} else {			    		
@@ -149,9 +139,11 @@
 			     
 			    $checkboxes.each(function(){
 						
-					if ($(this).is(":checked")) {		
+					if ($(this).is(":checked")) {	
+						$(this).prop('disabled', true);
 						$("select#tipoRefeicao" + count).prop('disabled',false);
 					} else {
+						$(this).prop('disabled', false);
 						$("select#tipoRefeicao" + count).prop('disabled',true);	
 						$("select#tipoRefeicao" + count).prop('selectedIndex',0);
 				  	}

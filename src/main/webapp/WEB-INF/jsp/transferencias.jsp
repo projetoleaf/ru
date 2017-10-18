@@ -36,11 +36,11 @@
 		<br> 
 		<form action="#" class="form-horizontal" id="transferencia">
 			<div class="row">
-				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Segunda-feira - 20/05 </div>
-				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Terça-feira - 21/05 </div>
-				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input	type="checkbox">&nbsp;Quarta-feira - 22/05 </div>
-				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Quinta-feira - 23/05 </div>
-				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;Sexta-feira - 24/05 </div>
+				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;16/10/17 </div>
+				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;17/10/17 </div>
+				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input	type="checkbox">&nbsp;18/10/17 </div>
+				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;19/10/17 </div>
+				<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4"> <input type="checkbox">&nbsp;20/10/17 </div>
 			</div>
 			<br>
 			<h4>Escreva os dados da pessoa a quem deseja tranferir:</h4>

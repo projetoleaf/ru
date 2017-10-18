@@ -62,11 +62,6 @@ public class SistemaController {
 		return "transferencias";
 	}
 
-	@GetMapping("/semanaAtual")
-	public String semanaAtual() {
-		return "semanaAtual";
-	}
-
 	@GetMapping("/planilhas")
 	public String planilhas() {
 		return "planilhas";

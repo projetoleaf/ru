@@ -54,7 +54,7 @@
 			$("select").css("marginBottom","5%");
 			$("#pagamento").css("marginBottom","0");
 			
-			if(saldo != 0.00) {
+			if(saldo != 0.00 && saldo > valorRefeicao) {
 				$("#pagamento").prop('disabled',false);
 				$("#pagamento").prop('selectedIndex',0);
 				pag = "Créditos";
@@ -172,8 +172,10 @@
 			    $checkboxes.each(function(){
 						
 					if ($(this).is(":checked")) {		
+						$(this).prop('disabled', true);
 						$("select#tipoRefeicao" + count).prop('disabled',false);
 					} else {
+						$(this).prop('disabled', false);
 						$("select#tipoRefeicao" + count).prop('disabled',true);	
 						$("select#tipoRefeicao" + count).prop('selectedIndex',0);
 				  	}

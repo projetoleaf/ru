@@ -34,8 +34,8 @@ import com.github.projetoleaf.repositories.ReservaItemRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
 
 @Controller
-@RequestMapping("/reservas")
-public class ReservaAdminController {
+@RequestMapping("/semanaAtual")
+public class SemanaAtualController {
 
 	@Autowired
 	private StatusRepository statusRepository;
@@ -59,7 +59,7 @@ public class ReservaAdminController {
 	private ClienteCategoriaRepository clienteCategoriaRepository;
 
 	@GetMapping
-	public String pesquisarReserva(Model model) throws ParseException {
+	public String pesquisarSemanaAtual(Model model) throws ParseException {
 
 		int count = 0;
 
@@ -68,7 +68,7 @@ public class ReservaAdminController {
 		Date quarta = new Date();
 		Date quinta = new Date();
 		Date sexta = new Date();
-		
+
 		Calendar dataHoje = Calendar.getInstance();
 
 		NumberFormat nf = NumberFormat.getCurrencyInstance();
@@ -88,7 +88,8 @@ public class ReservaAdminController {
 				BigDecimal saldo = new BigDecimal(0.00);
 				
 				Calendar dataAtual = Calendar.getInstance();
-				dataAtual = verificarData(dataAtual);
+				
+				dataAtual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);// Define o dia segunda-feira desta semana				
 
 				List<Extrato> todosOsExtratos = extratoRepository
 						.buscarTodasTransacoesDoCliente(todosOsClientesDoBD.get(z).getId());
@@ -96,7 +97,7 @@ public class ReservaAdminController {
 				if (!todosOsExtratos.isEmpty()) {
 					saldo = todosOsExtratos.get(todosOsExtratos.size() - 1).getSaldo();
 				}
-				
+
 				ReservasAdmin reservasAdmin = new ReservasAdmin();
 				reservasAdmin.setId(Long.valueOf(z));
 				reservasAdmin.setNome(todosOsClientesDoBD.get(z).getNome());
@@ -112,6 +113,11 @@ public class ReservaAdminController {
 
 						Date dataVar = null;
 						dataVar = formatoDesejado.parse(dataFormatada);
+						
+						Calendar ca = Calendar.getInstance();
+						ca.setTime((Date) linhaDoBanco[1]);
+						
+						if (dataHoje.get(Calendar.DAY_OF_WEEK) <= ca.get(Calendar.DAY_OF_WEEK)) {
 
 						for (int x = 0; x < reservasItensDoBD.size(); x++) {
 							if (todosOsClientesDoBD.get(z).getNome() == reservasItensDoBD.get(x).getReserva()
@@ -149,6 +155,7 @@ public class ReservaAdminController {
 								}
 							}
 						}
+					  }
 					}
 
 					if (!dataDoBanco.isEmpty()) {
@@ -226,13 +233,14 @@ public class ReservaAdminController {
 						&& reservasAdmin.getSextaStatus() == "Dia indisponível")) {
 					todasAsReservas.add(reservasAdmin);
 				}
+			  
 			}
 
 		} else {
 			count = 1;
 		}
 
-		model.addAttribute("listagemReservas", todasAsReservas);
+		model.addAttribute("listagemSemanaAtual", todasAsReservas);
 		model.addAttribute("segunda", formatoDesejado.format(segunda));
 		model.addAttribute("terca", formatoDesejado.format(terca));
 		model.addAttribute("quarta", formatoDesejado.format(quarta));
@@ -240,11 +248,11 @@ public class ReservaAdminController {
 		model.addAttribute("sexta", formatoDesejado.format(sexta));
 		model.addAttribute("holiday", count);
 
-		return "/reservas/pesquisar";
+		return "/semanaAtual/pesquisar";
 	}
 
 	@GetMapping("/pagamento/{nome}")
-	public String efetivarPagamento(@PathVariable String nome, Model model) throws ParseException {
+	public String efetivarPagamentoSemanaAtual(@PathVariable String nome, Model model) throws ParseException {
 
 //		Date segunda = new Date();
 //		Date terca = new Date();
@@ -363,11 +371,11 @@ public class ReservaAdminController {
 //		model.addAttribute("datasReservas", datasDasReservas);
 //		model.addAttribute("valorRefeicao", clienteCategoria.getCategoria().getValorComSubsidio());
 
-		return "/reservas/pagamento";
+		return "/semanaAtual/pagamento";
 	}
 
 	@PostMapping("/salvar")
-	public String salvarReservas(@RequestParam("nome") String nome, @RequestParam("data") String[] datasSelecionadas,
+	public String salvarSemanaAtual(@RequestParam("nome") String nome, @RequestParam("data") String[] datasSelecionadas,
 			@RequestParam(value = "valor", required = false) String valor,
 			@RequestParam(value = "recargas", required = false) String recargas,
 			@RequestParam(value = "utilizarCreditos", required = false) Boolean creditos) {
@@ -502,7 +510,7 @@ public class ReservaAdminController {
 //			}
 //		}
 
-		return "redirect:/reservas";
+		return "redirect:/semanaAtual";
 	}
 
 	public static Calendar verificarData(Calendar data) {

@@ -50,7 +50,7 @@
 	<li><a href="<c:url value="/reserva"/>"><span class="fa fa-cutlery"></span> Reservar</a></li>
 	<li><a href="<c:url value="/transferencias"/>"><span class="fa fa-exchange"></span> Transferências</a></li>
 	<li><a href="<c:url value="/comprar"/>"><span class="fa fa-money"></span> Comprar</a></li>
-	<li><a href="<c:url value="/remanescentes"/>"><span class="fa fa-feed"></span> Remanescentes</a></li>
+	<li><a href="<c:url value="/remanescente"/>"><span class="fa fa-feed"></span> Remanescentes</a></li>
 	<li><a href="<c:url value="/extrato"/>"><span class="fa fa-bank"></span> Extrato</a></li>
 </sec:authorize>
 

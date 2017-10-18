@@ -34,8 +34,8 @@ import com.github.projetoleaf.repositories.ReservaItemRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
 
 @Controller
-@RequestMapping("/reservas")
-public class ReservaAdminController {
+@RequestMapping("/remanescentes")
+public class RemanescentesAdminController {
 
 	@Autowired
 	private StatusRepository statusRepository;
@@ -59,7 +59,7 @@ public class ReservaAdminController {
 	private ClienteCategoriaRepository clienteCategoriaRepository;
 
 	@GetMapping
-	public String pesquisarReserva(Model model) throws ParseException {
+	public String pesquisarRemanescentes(Model model) throws ParseException {
 
 		int count = 0;
 
@@ -68,7 +68,7 @@ public class ReservaAdminController {
 		Date quarta = new Date();
 		Date quinta = new Date();
 		Date sexta = new Date();
-		
+
 		Calendar dataHoje = Calendar.getInstance();
 
 		NumberFormat nf = NumberFormat.getCurrencyInstance();
@@ -96,7 +96,7 @@ public class ReservaAdminController {
 				if (!todosOsExtratos.isEmpty()) {
 					saldo = todosOsExtratos.get(todosOsExtratos.size() - 1).getSaldo();
 				}
-				
+
 				ReservasAdmin reservasAdmin = new ReservasAdmin();
 				reservasAdmin.setId(Long.valueOf(z));
 				reservasAdmin.setNome(todosOsClientesDoBD.get(z).getNome());
@@ -232,7 +232,7 @@ public class ReservaAdminController {
 			count = 1;
 		}
 
-		model.addAttribute("listagemReservas", todasAsReservas);
+		model.addAttribute("listagemRemanescentes", todasAsReservas);
 		model.addAttribute("segunda", formatoDesejado.format(segunda));
 		model.addAttribute("terca", formatoDesejado.format(terca));
 		model.addAttribute("quarta", formatoDesejado.format(quarta));
@@ -240,11 +240,11 @@ public class ReservaAdminController {
 		model.addAttribute("sexta", formatoDesejado.format(sexta));
 		model.addAttribute("holiday", count);
 
-		return "/reservas/pesquisar";
+		return "/remanescentes/pesquisar";
 	}
 
 	@GetMapping("/pagamento/{nome}")
-	public String efetivarPagamento(@PathVariable String nome, Model model) throws ParseException {
+	public String efetivarPagamentoRemanescentes(@PathVariable String nome, Model model) throws ParseException {
 
 //		Date segunda = new Date();
 //		Date terca = new Date();
@@ -363,11 +363,11 @@ public class ReservaAdminController {
 //		model.addAttribute("datasReservas", datasDasReservas);
 //		model.addAttribute("valorRefeicao", clienteCategoria.getCategoria().getValorComSubsidio());
 
-		return "/reservas/pagamento";
+		return "/remanescentes/pagamento";
 	}
 
 	@PostMapping("/salvar")
-	public String salvarReservas(@RequestParam("nome") String nome, @RequestParam("data") String[] datasSelecionadas,
+	public String salvarRemanescentes(@RequestParam("nome") String nome, @RequestParam("data") String[] datasSelecionadas,
 			@RequestParam(value = "valor", required = false) String valor,
 			@RequestParam(value = "recargas", required = false) String recargas,
 			@RequestParam(value = "utilizarCreditos", required = false) Boolean creditos) {
@@ -502,7 +502,7 @@ public class ReservaAdminController {
 //			}
 //		}
 
-		return "redirect:/reservas";
+		return "redirect:/remanescentes";
 	}
 
 	public static Calendar verificarData(Calendar data) {

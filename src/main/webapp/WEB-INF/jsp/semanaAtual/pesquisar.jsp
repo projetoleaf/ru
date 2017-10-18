@@ -7,12 +7,12 @@
 
 <dandelion:bundle includes="datatables.extended,font-awesome,sweetalert2" />
 
-<c:set var="linkController"> <c:url value="/remanescentes" /> </c:set>
+<c:set var="linkController"> <c:url value="/semanaAtual" /> </c:set>
 
 <html>
 <head>
-<meta name="header" content="Remanescentes" />
-<title>Remanescentes</title>
+<meta name="header" content="Semana Atual" />
+<title>Semana Atual</title>
 </head>
 <body>
 	<script type="text/javascript">			
@@ -41,10 +41,10 @@
 			
 			for (let count of linhasDaTabela) {
 			    
-// 			    if(count.seg != "Não reservado" && count.ter != "Não reservado" && count.qua != "Não reservado" && count.qui != "Não reservado" && count.sex != "Não reservado"){
-			    	$("a[href='/ru/remanescentes/pagamento/" + count.nome + "']").addClass('disabled');
+// 			    if(count.seg != "Não comprado" && count.ter != "Não comprado" && count.qua != "Não comprado" && count.qui != "Não comprado" && count.sex != "Não comprado"){
+			    	$("a[href='/ru/semanaAtual/pagamento/" + count.nome + "']").addClass('disabled');
 // 			    } else {
-// 			    	$("a[href='/ru/remanescentes/pagamento/" + count.nome + "']").removeClass('disabled')
+// 			    	$("a[href='/ru/semanaAtual/pagamento/" + count.nome + "']").removeClass('disabled')
 // 			    }
 			}			
 		});
@@ -52,7 +52,7 @@
 	
 	<div id="reservaDisponivel" style="display: none;">
 	
-		<datatables:table data="${listagemRemanescentes}" row="remanescentes" id="GridDatatable">
+		<datatables:table data="${listagemSemanaAtual}" row="semanaAtual" id="GridDatatable">
 			<datatables:column title="Nome" property="nome" />
 			<datatables:column title="Créditos" property="creditos" /> 
 			<datatables:column title="${segunda}" property="segundaStatus" />
@@ -61,7 +61,7 @@
 			<datatables:column title="${quinta}" property="quintaStatus" />
 			<datatables:column title="${sexta}" property="sextaStatus"/>
 			<datatables:column title="Operações" filterable="falseStatus" searchable="false" cssCellClass="text-center" >
-				<a href="${linkController}/pagamento/${remanescentes.nome}"
+				<a href="${linkController}/pagamento/${semanaAtual.nome}"
 					class="btn btn-success btn-xs" data-toggle="tooltip"
 					title="Efetivar pagamento"> <span class='fa fa-usd'></span>
 				</a>
@@ -74,7 +74,7 @@
 	<div id="reservaIndisponivel" style="display: none;">
 			
 		<div class="alert alert-danger text-center" role="alert">
-			<p><strong>Atenção!</strong> Fora do período de reservas remanescentes!</p>
+			<p><strong>Atenção!</strong> Fora do período de vendas da semana atual!</p>
 		</div>
 		
 	</div>

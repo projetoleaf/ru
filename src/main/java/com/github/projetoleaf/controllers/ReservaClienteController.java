@@ -353,8 +353,8 @@ public class ReservaClienteController {
 				extrato.setCliente(cliente);
 				extrato.setDataTransacao(timestamp);
 				extrato.setSaldo(saldo.subtract(transacao));
+				System.out.println(extrato.getSaldo());
 				extrato.setTransacao(transacao.negate());
-				extrato.setSaldo(saldo);
 				extratoRepository.save(extrato);
 			} else if (pag.equals("2")) { // Dinheiro
 				extrato = null;
