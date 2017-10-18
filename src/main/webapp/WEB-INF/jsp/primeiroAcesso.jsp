@@ -19,7 +19,7 @@
 		     var formValidator = $("#primeiroAcesso").validate({
 		         rules : {
 		        	 categoria : { required : true },
-		             matricula : { required : true },
+		             raMatricula : { required : true },
 		             curso : { required : true }
 		         }
 		     });
