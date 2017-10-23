@@ -10,7 +10,7 @@
 <c:if test="${not empty mensagemErro}">
   <script type="text/javascript">
       $(document).ready(function() {
-          swal('Erro!', '${mensagemErro}','error');
+          swal('Erro', '${mensagemErro}','error');
       });
   </script>
 </c:if>

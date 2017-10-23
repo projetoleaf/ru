@@ -17,4 +17,7 @@ public interface CardapioRepository extends JpaRepository<Cardapio, Long> {
 
 	@Query("select c.data from Cardapio c where c.data between ?1 and ?2")
 	List<Date> todasAsDatasDaSemana(Date segunda, Date sexta);
+	
+	@Query("select c.id from Cardapio c where c.data = ?1 and c.periodoRefeicao.id = ?2")
+	Long verificarDataEPeriodoRefeicao(Date data, Long idPeriodoRefeicao);
 }

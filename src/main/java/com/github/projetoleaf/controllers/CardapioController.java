@@ -1,22 +1,22 @@
 package com.github.projetoleaf.controllers;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.projetoleaf.beans.Cardapio;
 import com.github.projetoleaf.repositories.CardapioRepository;
+import com.github.projetoleaf.repositories.FeriadoRepository;
 import com.github.projetoleaf.repositories.PeriodoRefeicaoRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,59 +30,72 @@ public class CardapioController {
 	private MessageSource config;
 
 	@Autowired
+	private FeriadoRepository feriadoRepository;
+
+	@Autowired
 	private CardapioRepository cardapioRepository;
 
 	@Autowired
 	private PeriodoRefeicaoRepository periodoRefeicaoRepository;
+	
+	private int count = 0;
 
 	@GetMapping
 	public String pesquisarCategoria(Model model) {
+		count = 0;
 		model.addAttribute("listagemCardapios", cardapioRepository.findAll(new Sort(Sort.Direction.ASC, "data")));
 		return "/cardapios/pesquisar";
 	}
 
 	@GetMapping("/incluir")
 	public String incluirCardapio(Model model) {
+		count = 0;
 		model.addAttribute("cardapio", new Cardapio());
 		model.addAttribute("periodoRefeicao", periodoRefeicaoRepository.findAll());
-
 		return abrirCadastroCardapio(model);
 	}
 
 	@GetMapping("/editar/{id}")
 	public String editarCardapio(@PathVariable Long id, Model model) {
+		count = 1;
 		Cardapio cardapio = cardapioRepository.findOne(id);
-
 		model.addAttribute("cardapio", cardapio);
 		model.addAttribute("periodoRefeicao", periodoRefeicaoRepository.findAll());
-
 		return abrirCadastroCardapio(model);
 	}
 
 	public String abrirCadastroCardapio(Model model) {
+		model.addAttribute("count", count);
 		return "/cardapios/cadastro";
 	}
-
-	@PostMapping("/salvar")
-	public String salvarCardapio(Model model, @ModelAttribute("cardapio") @Valid Cardapio cardapio,
-			BindingResult result) {
-		try {
-			if (!result.hasErrors()) {
-				Cardapio cardapioAtualizado = cardapioRepository.save(cardapio);
-				log.info(cardapioAtualizado.toString() + " gravado com sucesso");
-				model.addAttribute("mensagemInfo",
-						config.getMessage("gravadoSucesso", new Object[] { "o cardápio" }, null));
+	
+	@PostMapping("/verificar")
+	@ResponseBody
+	public int verificarData(@ModelAttribute("cardapio") Cardapio cardapio, @RequestParam("count") int count) {
+		
+		int retorno = 0;
+		
+		if (cardapioRepository.verificarDataEPeriodoRefeicao(cardapio.getData(),
+				cardapio.getPeriodoRefeicao().getId()) == null) {
+			
+			if (feriadoRepository.findByData(cardapio.getData()) != null) {
+				retorno = 1;
 			}
-		} catch (Exception ex) {
-			log.error("Erro de processamento", ex);
-			model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+		} else {
+			retorno = 2;
 		}
-
-		return "redirect:/cardapios";
+		
+		if(retorno == 0 || count == 1) {
+			retorno = 0;
+			cardapioRepository.save(cardapio);
+		}
+				
+		return retorno;
 	}
 
 	@GetMapping("/excluir/{id}")
 	public String excluirCardapio(RedirectAttributes ra, @PathVariable Long id) {
+		count = 0;
 		try {
 			cardapioRepository.delete(id);
 			log.info("Cardápio #" + id + " excluído com sucesso");
