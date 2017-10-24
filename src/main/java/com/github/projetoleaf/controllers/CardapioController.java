@@ -3,6 +3,8 @@ package com.github.projetoleaf.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,8 @@ import com.github.projetoleaf.repositories.PeriodoRefeicaoRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+@PreAuthorize("hasRole('ROLE_FC.UNESP.RU_ADMIN') or hasRole('ROLE_FC.UNESP.RU_STN')")
 @Slf4j
 @Controller
 @RequestMapping("/cardapios")

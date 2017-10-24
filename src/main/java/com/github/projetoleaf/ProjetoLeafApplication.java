@@ -42,8 +42,13 @@ public class ProjetoLeafApplication {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/assets/**").permitAll().antMatchers("/layouts/**").permitAll()
-					.antMatchers("/").permitAll().anyRequest().authenticated();
+			http.authorizeRequests()
+				.antMatchers("/assets/**").permitAll()
+				.antMatchers("/layouts/**").permitAll()
+				.antMatchers("/").permitAll()
+				.anyRequest().authenticated()
+				.and()
+				.exceptionHandling().accessDeniedPage("/");
 		}
 
 	}

@@ -1,7 +1,6 @@
 package com.github.projetoleaf.controllers;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,11 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.github.projetoleaf.beans.Cliente;
-import com.github.projetoleaf.beans.ClienteCategoria;
 import com.github.projetoleaf.beans.Extrato;
 import com.github.projetoleaf.beans.ReservaItem;
 import com.github.projetoleaf.beans.ReservasAdmin;
-import com.github.projetoleaf.beans.Status;
 import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;

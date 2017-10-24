@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,8 @@ import com.github.projetoleaf.beans.Extrato;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ExtratoRepository;
 
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+@PreAuthorize("hasRole('ROLE_FC.UNESP.RU_ADMIN')")
 @Controller
 @RequestMapping("/creditos")
 public class CreditosController {

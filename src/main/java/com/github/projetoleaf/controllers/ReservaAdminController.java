@@ -1,7 +1,6 @@
 package com.github.projetoleaf.controllers;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,11 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.github.projetoleaf.beans.Cliente;
-import com.github.projetoleaf.beans.ClienteCategoria;
 import com.github.projetoleaf.beans.Extrato;
 import com.github.projetoleaf.beans.ReservaItem;
 import com.github.projetoleaf.beans.ReservasAdmin;
-import com.github.projetoleaf.beans.Status;
 import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
@@ -33,6 +32,8 @@ import com.github.projetoleaf.repositories.FeriadoRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
 
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+@PreAuthorize("hasRole('ROLE_FC.UNESP.RU_ADMIN') or hasRole('ROLE_FC.UNESP.RU_STF')")
 @Controller
 @RequestMapping("/reservas")
 public class ReservaAdminController {
