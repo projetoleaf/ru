@@ -41,11 +41,11 @@
 			
 			for (let count of linhasDaTabela) {
 			    
-// 			    if(count.seg != "Não comprado" && count.ter != "Não comprado" && count.qua != "Não comprado" && count.qui != "Não comprado" && count.sex != "Não comprado"){
+			    if(count.seg != "Não reservado" && count.ter != "Não reservado" && count.qua != "Não reservado" && count.qui != "Não reservado" && count.sex != "Não reservado"){
 			    	$("a[href='/ru/semanaAtual/pagamento/" + count.nome + "']").addClass('disabled');
-// 			    } else {
-// 			    	$("a[href='/ru/semanaAtual/pagamento/" + count.nome + "']").removeClass('disabled')
-// 			    }
+			    } else {
+			    	$("a[href='/ru/semanaAtual/pagamento/" + count.nome + "']").removeClass('disabled')
+			    }
 			}			
 		});
 	</script>

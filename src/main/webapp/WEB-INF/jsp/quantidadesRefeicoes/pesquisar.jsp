@@ -33,7 +33,7 @@
 				<span class='glyphicon glyphicon-pencil'></span>
 			</a>
 			<a href="#" data-href="${linkController}/excluir/${quantidadeRefeicao.id}"
-				data-mensagem-exclusao="Deseja realmente excluir ${quantidadeRefeicao.descricao}?"
+				data-mensagem-exclusao="Deseja realmente excluir registro # ${quantidadeRefeicao.id}?"
 				data-toggle="modal" data-target="#janela-exclusao-modal"
 				class="btn btn-danger btn-xs"> <span
 				class='glyphicon glyphicon-trash' data-toggle="tooltip"

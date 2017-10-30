@@ -18,9 +18,12 @@
 	<script type="text/javascript">
 		$(document).ready(function() {	 
 			
+			var datasDoCardapio = ${objectJSON};	
 			var valorRefeicao = ${valorRefeicao};
+			var todasAsDatas = $("input:checkbox[name='data']");		
 			var caiu = 0;
 			var zero = 0;
+			var str = "";
 			
 			$("#utilizarCreditos1").prop('disabled',true);
 			$("#refeicoes").prop('disabled',true);
@@ -33,6 +36,30 @@
 			$("#troco").val(zero.toFixed(2).replace(/\./g, ','));
 			$("#recargas").val(zero.toFixed(2).replace(/\./g, ','));
 			$("#refeicoes").val(zero.toFixed(2).replace(/\./g, ','));
+			
+			$("input:checkbox[name='data']").css("marginTop","7%");	
+			
+			var lista = [];
+			lista.push("Tradicional");
+			lista.push("Vegetariano");
+			
+			for (var x = 1; x <= todasAsDatas.length; x++) {	
+				
+				str += '<select id="tipoRefeicao' + x + '" name="tipoRefeicao" class="form-control">';	 
+				str += '<option value="0" label="- Selecione uma refeição -"> </option>';				
+				
+				for (var z = 0; z < lista.length; z++) {										
+					str += '<option value="' + (z+1) + '" label="' + lista[z] + '"> </option>';		
+				}
+				
+				str += '</select>';
+	    	}
+			
+			$("#remanescentes .selectList").append(str);			
+			$("select").prop('disabled',true);		
+			
+			$("select").css("marginBottom","5%");
+			$("#pagamento").css("marginBottom","0");
 			
 			$('input:checkbox[name="data"]').change(function(){			
 				
@@ -58,7 +85,22 @@
 					$("#valor").val(qtdeChecks.toFixed(2).replace(/\./g, ','));					
 					$("#troco").val(qtdeChecks.toFixed(2).replace(/\./g, ','));
 					$("#recargas").val(qtdeChecks.toFixed(2).replace(/\./g, ','));
-			  	}		
+			  	}
+				
+				var $checkboxes = $("input:checkbox[name='data']");		
+				var count = 1;
+				
+				$checkboxes.each(function(){
+					
+					if ($(this).is(":checked")) {		
+						$("select#tipoRefeicao" + count).prop('disabled',false);
+					} else {
+						$("select#tipoRefeicao" + count).prop('disabled',true);	
+						$("select#tipoRefeicao" + count).prop('selectedIndex',0);
+				  	}
+					
+					count++;
+				});
 			});
 			
 			$('#habilitarRecargas').change(function(){
@@ -264,7 +306,28 @@
 		          //prefix: "R$ ",
 		          decimal: ",",
 		          thousands: "."
-		     });    	
+		     }); 
+			
+			$("#selecionarTudo").change(function () {
+				$('input:checkbox').not(this).prop('checked', this.checked);
+			     
+			    var $checkboxes = $("input:checkbox[name='data']");		
+		     	var count = 1;
+			     
+			    $checkboxes.each(function(){
+						
+					if ($(this).is(":checked")) {		
+						$(this).prop('disabled', true);
+						$("select#tipoRefeicao" + count).prop('disabled',false);
+					} else {
+						$(this).prop('disabled', false);
+						$("select#tipoRefeicao" + count).prop('disabled',true);	
+						$("select#tipoRefeicao" + count).prop('selectedIndex',0);
+				  	}
+					
+					count++;
+				 });
+			});
 		});
   	</script>
   	<form:form action="${actionSalvar}" modelAttribute="remanescentes">
@@ -279,19 +342,27 @@
 	         <div class="row">
 	            <div class="form-group col-xs-6 col-md-6">
 	              <label class="control-label">Nome</label>
-	              <form:input path="nome" class="form-control" value="${cliente.nome}" readonly="true"/>	              
+	              <form:input path="nome" class="form-control" value="${reservasAdmin.nome}" readonly="true"/>	              
 	            </div>
 	            <div class="form-group col-xs-6 col-md-6">
 	              <label for="creditos" class="control-label">Créditos</label>
-	              <form:input path="creditos" class="form-control" value="${reservasAdmin.creditos}" readonly="true"/>
+	              <input id="creditos" class="form-control" value="${reservasAdmin.creditos}" readonly/>
 	            </div>	            
 	        </div>
 	        <br>
 	        <div class="row">
-	        	<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4 text-center">
-	        		<form:checkboxes items="${datasReservas}" path="data" delimiter="<br>" />
-	        	</div>
-	        </div>
+				<div class="col-xs-12 col-sm-4 text-center">
+					<input type="checkbox" id="selecionarTudo" /> <b>Selecionar todas as datas</b> 
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-xs-12 col-sm-4 text-center">
+					<form:checkboxes items="${datasReservas}" path="data" itemLabel="data" itemValue="id" delimiter="<br>" />
+				</div>	
+				<div class="col-xs-12 col-sm-4 text-center selectList">	
+				</div>					
+			</div>
 	        <br>
 			<div class="row">
 				<div class="col-sm-12 form-group">

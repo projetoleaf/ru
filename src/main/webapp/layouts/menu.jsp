@@ -21,7 +21,7 @@
 
 <sec:authorize access="hasRole('ROLE_FC.UNESP.RU_ADMIN') || hasRole('ROLE_FC.UNESP.RU_STN')">
     <li><a href="<c:url value="/clientes"/>"><span class="fa fa-users"></span> Clientes</a></li>
-    <li class="dropdown"><a href="#" class="dropdown-togle" data-toggle="dropdown"><span class="fa fa-wrench"></span> Manuten��o</a>
+    <li class="dropdown"><a href="#" class="dropdown-togle" data-toggle="dropdown"><span class="fa fa-wrench"></span> Manutenção</a>
       <ul class="dropdown-menu">
         <li><a href="<c:url value="/cardapios"/>"><span class="fa fa-cog"></span> Cardápios</a></li>
         <li class="divider"></li>

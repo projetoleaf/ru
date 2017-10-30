@@ -41,11 +41,11 @@
 			
 			for (let count of linhasDaTabela) {
 			    
-// 			    if(count.seg != "Não reservado" && count.ter != "Não reservado" && count.qua != "Não reservado" && count.qui != "Não reservado" && count.sex != "Não reservado"){
+			    if(count.seg != "Não reservado" && count.ter != "Não reservado" && count.qua != "Não reservado" && count.qui != "Não reservado" && count.sex != "Não reservado"){
 			    	$("a[href='/ru/remanescentes/pagamento/" + count.nome + "']").addClass('disabled');
-// 			    } else {
-// 			    	$("a[href='/ru/remanescentes/pagamento/" + count.nome + "']").removeClass('disabled')
-// 			    }
+			    } else {
+			    	$("a[href='/ru/remanescentes/pagamento/" + count.nome + "']").removeClass('disabled')
+			    }
 			}			
 		});
 	</script>

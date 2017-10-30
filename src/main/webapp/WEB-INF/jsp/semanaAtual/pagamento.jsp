@@ -18,9 +18,16 @@
 	<script type="text/javascript">
 		$(document).ready(function() {	 
 			
-			var valorRefeicao = ${valorRefeicao};
+			var datasDoCardapio = ${objectJSON};	
+			var todasAsDatas = $("input:checkbox[name='data']");	
+			var contadores = ${contadores};	
+			var saldo = "${saldo}";	
+			var valorRefeicaoS = ${valorRefeicaoS};
+			var valorRefeicaoC = ${valorRefeicaoC};
 			var caiu = 0;
 			var zero = 0;
+			var str = "";
+			var str2 = "";
 			
 			$("#utilizarCreditos1").prop('disabled',true);
 			$("#refeicoes").prop('disabled',true);
@@ -34,6 +41,45 @@
 			$("#recargas").val(zero.toFixed(2).replace(/\./g, ','));
 			$("#refeicoes").val(zero.toFixed(2).replace(/\./g, ','));
 			
+			$("input:checkbox[name='data']").css("marginTop","7%");	
+			
+			var lista = [];
+			lista.push("Tradicional");
+			lista.push("Vegetariano");
+			
+			for (var x = 1; x <= todasAsDatas.length; x++) {	
+				
+				str += '<select id="tipoRefeicao' + x + '" name="tipoRefeicao" class="form-control">';	 
+				str += '<option value="0" label="- Selecione uma refeição -"> </option>';				
+				
+				for (var z = 0; z < lista.length; z++) {										
+					str += '<option value="' + (z+1) + '" label="' + lista[z] + '"> </option>';		
+				}
+				
+				str += '</select>';
+	    	}
+			
+			var lista2 = [];
+			lista2.push("Custo");
+			lista2.push("Subsidiada");	
+			
+			for (var x = 1; x <= todasAsDatas.length; x++) {	
+				
+				str2 += '<select id="tipoValor' + x + '" name="tipoValor" class="form-control">';			
+				
+				for (var z = 0; z < lista2.length; z++) {										
+					str2 += '<option value="' + (z+1) + '" label="' + lista2[z] + '"> </option>';		
+				}
+				
+				str2 += '</select>';
+	    	}
+			
+			$("#semanaAtual .selectRefeicao").append(str);		
+			$("#semanaAtual .selectValor").append(str2);	
+			
+			$("select").prop('disabled',true);					
+			$("select").css("marginBottom","5%");
+			
 			$('input:checkbox[name="data"]').change(function(){			
 				
 				var qtdeChecks = $("input:checkbox[name='data']:checked").length;
@@ -45,7 +91,7 @@
 					if($('#creditos').val() != 0.00)
 						$("#utilizarCreditos1").prop('disabled',false);
 					
-					var valor = parseFloat(valorRefeicao) * qtdeChecks;
+					var valor = parseFloat(valorRefeicaoC) * qtdeChecks;
 					var valorFormatado = valor.toFixed(2);
 					
 					$("#refeicoes").val(valorFormatado.replace(/\./g, ','));	
@@ -53,12 +99,42 @@
 			  	} else if (qtdeChecks == 0){			  		
 					$("#valor").prop('disabled',true);					
 					$("#utilizarCreditos1").prop('disabled',true);				
-					$("#utilizarCreditos1").prop("checked", false)
+					$("#utilizarCreditos1").prop("checked", false);
 					
 					$("#valor").val(qtdeChecks.toFixed(2).replace(/\./g, ','));					
 					$("#troco").val(qtdeChecks.toFixed(2).replace(/\./g, ','));
 					$("#recargas").val(qtdeChecks.toFixed(2).replace(/\./g, ','));
-			  	}		
+			  	}
+				
+				var $checkboxes = $("input:checkbox[name='data']");		
+				var count = 1;
+				
+				$checkboxes.each(function(){
+					
+					if ($(this).is(":checked")) {	
+						
+						if(contadores[x] == 3) {
+							$("select#tipoValor" + count).prop('disabled',false);
+							$("select#tipoValor" + count).prop('selectedIndex',0);
+						} else if(contadores[x] == 2) {
+							$("select#tipoValor" + count).prop('disabled',false);
+							$("select#tipoValor" + count).prop('selectedIndex',1);
+						} else if(contadores[x] == 1) {
+							$("select#tipoValor" + count).prop('disabled',false);
+							$("select#tipoValor" + count).prop('selectedIndex',2);
+						}	
+						
+						$("select#tipoRefeicao" + count).prop('disabled',false);
+						
+					} else {
+						$("select#tipoRefeicao" + count).prop('disabled',true);	
+						$("select#tipoRefeicao" + count).prop('selectedIndex',0);
+						$("select#tipoValor" + count).prop('disabled',true);
+						$("select#tipoValor" + count).prop('selectedIndex',0);
+				  	}
+					
+					count++;
+				});
 			});
 			
 			$('#habilitarRecargas').change(function(){
@@ -264,7 +340,48 @@
 		          //prefix: "R$ ",
 		          decimal: ",",
 		          thousands: "."
-		     });    	
+		     }); 
+			
+			$("#selecionarTudo").change(function () {
+				$('input:checkbox').not(this).prop('checked', this.checked);
+			     
+			    var $checkboxes = $("input:checkbox[name='data']");		
+		     	var count = 1;
+			     
+			    $checkboxes.each(function(){
+						
+					for(var x = 0; x < contadores.length; x++) {
+						
+						if ($(this).is(":checked")) {
+							
+							$(this).prop('disabled', true);
+							
+							if(contadores[x] == 3) {
+								$("select#tipoValor" + count).prop('disabled',false);
+								$("select#tipoValor" + count).prop('selectedIndex',0);
+							} else if(contadores[x] == 2) {
+								$("select#tipoValor" + count).prop('disabled',false);
+								$("select#tipoValor" + count).prop('selectedIndex',1);
+							} else if(contadores[x] == 1) {
+								$("select#tipoValor" + count).prop('disabled',false);
+								$("select#tipoValor" + count).prop('selectedIndex',2);
+							}	
+							
+							$("select#tipoRefeicao" + count).prop('disabled',false);
+							
+						} else {
+							$(this).prop('disabled', false);
+							
+							$("select#tipoRefeicao" + count).prop('disabled',true);	
+							$("select#tipoRefeicao" + count).prop('selectedIndex',0);
+							$("select#tipoValor" + count).prop('disabled',true);
+							$("select#tipoValor" + count).prop('selectedIndex',0);
+					  	}
+					}
+					
+					count++;
+				 });
+			});
 		});
   	</script>
   	<form:form action="${actionSalvar}" modelAttribute="semanaAtual">
@@ -279,19 +396,29 @@
 	         <div class="row">
 	            <div class="form-group col-xs-6 col-md-6">
 	              <label class="control-label">Nome</label>
-	              <form:input path="nome" class="form-control" value="${cliente.nome}" readonly="true"/>	              
+	              <form:input path="nome" class="form-control" value="${nome}" readonly="true"/>	              
 	            </div>
 	            <div class="form-group col-xs-6 col-md-6">
 	              <label for="creditos" class="control-label">Créditos</label>
-	              <form:input path="creditos" class="form-control" value="${reservasAdmin.creditos}" readonly="true"/>
+	              <input id="creditos" class="form-control" value="${saldo}" readonly/>
 	            </div>	            
 	        </div>
 	        <br>
 	        <div class="row">
-	        	<div class="col-xs-12 col-offset-xs-0 col-sm-4 col-sm-offset-4 text-center">
-	        		<form:checkboxes items="${datasReservas}" path="data" delimiter="<br>" />
-	        	</div>
-	        </div>
+				<div class="col-xs-12 col-sm-4 text-center">
+					<input type="checkbox" id="selecionarTudo" /> <b>Selecionar todas as datas</b> 
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-xs-12 col-sm-4 text-center">
+					<form:checkboxes items="${todasAsDatas}" path="data" itemLabel="data" itemValue="id" delimiter="<br>" />
+				</div>	
+				<div class="col-xs-12 col-sm-4 text-center selectRefeicao">	
+				</div>		
+				<div class="col-xs-12 col-sm-4 text-center selectValor">	
+				</div>						
+			</div>
 	        <br>
 			<div class="row">
 				<div class="col-sm-12 form-group">
