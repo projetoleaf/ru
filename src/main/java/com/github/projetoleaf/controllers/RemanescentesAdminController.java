@@ -15,6 +15,8 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +43,8 @@ import com.github.projetoleaf.repositories.StatusRepository;
 import com.github.projetoleaf.repositories.TipoRefeicaoRepository;
 import com.github.projetoleaf.repositories.TipoValorRepository;
 
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+@PreAuthorize("hasRole('ROLE_FC.UNESP.RU_ADMIN') or hasRole('ROLE_FC.UNESP.RU_STF')")
 @Controller
 @RequestMapping("/remanescentes")
 public class RemanescentesAdminController {
