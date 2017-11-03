@@ -4,9 +4,8 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<dandelion:bundle includes="font-awesome,jquery.validation,jquery.inputmask,jquery.datetimepicker" />
-
-<c:set var="linkController"> <c:url value="/planilhas" /> </c:set>
+<dandelion:bundle
+	includes="font-awesome,jquery.validation,jquery.inputmask,jquery.datetimepicker" />
 
 <html>
 <head>
@@ -18,7 +17,7 @@
       $(document).ready(function() {
           var formValidator = $("#planilhas").validate({
               rules : {
-                  dataInicial : { required : true }
+                  dataInicial : { required : true },
          		  dataFinal : { required : true }
               }
           });
@@ -36,13 +35,13 @@
           $("#dataF").datetimepicker({locale: "pt-br", format: "DD/MM/YYYY"});
       });
  	</script>
-  
+
 	<div class="col-xs-12 col-md-8 col-md-offset-2">
 
 		<h4>Selecione alguns filtros e monte a sua planilha</h4>
-		
+
 		<br />
-		
+
 		<form name="planilhas" id="planilhas">
 			<%@include file="/layouts/modal-processando.jsp"%>
 			<div class="row">
@@ -55,51 +54,54 @@
 						</span>
 					</div>
 				</div>
-				
+
 				<div class="form-group col-xs-12 col-md-3">
 					<label for="dataFinal" class="control-label">Data Final</label>
 					<div class="input-group date" id="dataF">
 						<input type="text" name="dataFinal" id="dataFinal"
 							class="form-control" /> <span class="input-group-addon">
 							<span class="glyphicon glyphicon-calendar"></span>
-						</span> 
+						</span>
 					</div>
 				</div>
-				
+
 				<div class="form-group col-xs-12 col-md-3" style="margin-top: 25px">
-					<button type="button" class="btn btn-primary" name="btn_pesquisar" id="btn_pesquisar">
+					<button type="button" class="btn btn-primary" name="btn_pesquisar"
+						id="btn_pesquisar">
 						<span class="glyphicon glyphicon-search"></span>
 					</button>
 				</div>
 			</div>
 		</form>
-		
+
 		<br />
-		
-		<div class="page-header" style="margin-top: 10px;">
-        	<h4><i class="fa fa-table" aria-hidden="true"></i> Planilhas</h4>
-        </div>
-		<div class="row">
-			<div class="col-xs-12 col-sm-4"> <input type="checkbox"> Cursos </div>
-			<div class="col-xs-12 col-sm-4"> <input type="checkbox"> Período </div>
-			<div class="col-xs-12 col-sm-4"> <input type="checkbox"> Faculdade </div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-sm-4"> <input type="checkbox"> Refeição </div>
-			<div class="col-xs-12 col-sm-4"> <input type="checkbox"> Idade </div>
-			<div class="col-xs-12 col-sm-4"> <input type="checkbox"> Sexo </div>
-		</div>
-		
-		<br />
-		<br />
-		
-		<div class="text-center">
-			<a href="#" class="btn btn-primary">Gerar planilha</a>
-		</div>
-		
-		<br />
-		<br />
-		
+		<form:form modelAttribute="tiposPlanilhas">
+
+			<div class="page-header" style="margin-top: 10px;">
+				<h4>
+					<i class="fa fa-table" aria-hidden="true"></i> Planilhas
+				</h4>
+			</div>
+			<div class="row">
+				<form:checkboxes items="${planilhas}" path="planilha"
+					delimiter="<br>" />
+			</div>
+
+			<br />
+			<br />
+
+			<div class="text-center">
+				<a href="${pageContext.request.contextPath}/planilhas/gerarXSLX"
+					class="btn btn-primary">Gerar planilha</a> <a
+					href="${pageContext.request.contextPath}/planilhas/gerarPDF"
+					target="_blank" class="btn btn-primary">Gerar PDF</a>
+			</div>
+
+			<br />
+			<br />
+
+		</form:form>
+
 	</div>
 </body>
 </html>

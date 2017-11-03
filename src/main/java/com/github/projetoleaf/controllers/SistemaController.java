@@ -61,14 +61,4 @@ public class SistemaController {
 	public String transferencias() {
 		return "transferencias";
 	}
-
-	@GetMapping("/planilhas")
-	public String planilhas() {
-		return "planilhas";
-	}
-
-	@GetMapping("/graficos")
-	public String graficos() {
-		return "graficos";
-	}
 }
