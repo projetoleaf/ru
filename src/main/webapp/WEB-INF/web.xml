@@ -12,5 +12,10 @@
       <param-value>unespfc-bootstrap3</param-value>
    </context-param>
 
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error.jsp</location>
+	</error-page>
+
    <distributable />
 </web-app>
