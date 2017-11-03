@@ -24,6 +24,7 @@ import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 
 import com.github.projetoleaf.beans.UsuarioDetails;
@@ -48,7 +49,11 @@ public class ProjetoLeafApplication {
 				.antMatchers("/").permitAll()
 				.anyRequest().authenticated()
 				.and()
-				.exceptionHandling().accessDeniedPage("/");
+				.exceptionHandling().accessDeniedPage("/")
+				.and()
+				.logout()
+				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				.logoutSuccessUrl("https://centraldev.unesp.br/");
 		}
 
 	}
