@@ -1,42 +1,39 @@
 package com.github.projetoleaf.controllers;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.projetoleaf.beans.Cardapio;
 import com.github.projetoleaf.beans.Cliente;
-import com.github.projetoleaf.beans.ClienteCategoria;
 import com.github.projetoleaf.beans.Extrato;
 import com.github.projetoleaf.beans.Reserva;
 import com.github.projetoleaf.beans.ReservaItem;
-import com.github.projetoleaf.beans.Status;
 import com.github.projetoleaf.beans.TipoRefeicao;
 import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ExtratoRepository;
+import com.github.projetoleaf.repositories.FeriadoRepository;
+import com.github.projetoleaf.repositories.QuantidadeRefeicaoRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
 import com.github.projetoleaf.repositories.ReservaRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
@@ -59,6 +56,9 @@ public class ComprarController {
 
 	@Autowired
 	private ExtratoRepository extratoRepository;
+	
+	@Autowired
+	private FeriadoRepository feriadoRepository;
 
 	@Autowired
 	private CardapioRepository cardapioRepository;
@@ -73,387 +73,332 @@ public class ComprarController {
 	private TipoRefeicaoRepository tipoRefeicaoRepository;
 
 	@Autowired
+	private QuantidadeRefeicaoRepository qtdeRefeicoesRepository;
+
+	@Autowired
 	private ClienteCategoriaRepository clienteCategoriaRepository;
-
-	@GetMapping("/comprar")
-	public String comprar(Model model)
-			throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-
+	
+	private Cliente cliente;
+	private Calendar dataAtual;
+	private List<String> todasAsDatas;
+	private List<Integer> contadores = new ArrayList<Integer>();
+	private SimpleDateFormat formatar = new SimpleDateFormat("dd/MM/yyyy");
+	
+	@PostMapping("/verificarcomprar")
+	public @ResponseBody String verificarComprar() throws JSONException {
+		todasAsDatas = new ArrayList<String>();
+		return verificar();
+    }
+	
+	public String verificar() throws JSONException {
+		JSONObject json = new JSONObject();
+		
+		if(!verificarSaldo())
+			json.put("erro", "saldo");
+		else if(!verificarDataAtual())
+			json.put("erro", "data");
+		else if(!verificarContagens())
+			json.put("erro", "contagem");
+		else
+			json.put("sucesso", new Boolean(true));
+		
+		return json.toString();
+	}
+	
+	public Boolean verificarSaldo() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		BigDecimal saldo = new BigDecimal(0.00);
-		List<Integer> contadores = new ArrayList<Integer>();
-		List<Cardapio> cardapio = new ArrayList<Cardapio>();
-		ClienteCategoria clienteCategoria = new ClienteCategoria();
-
-		if (!(authentication instanceof AnonymousAuthenticationToken)) { // Verifica se a pessoa está logada
-
-			String identificacao = authentication.getName();
-			Cliente cliente = clienteRepository.buscarCliente(identificacao); // Pega todos os dados da pessoa logada
-			clienteCategoria = clienteCategoriaRepository.findByCliente(cliente);
-
-			int count = 0; // Define quantos tipo valores estarão disponíveis na página. Se for 1, apenas
-							// subsidiadas. Ser for 2, apenas de custo. Se for 3, de custo e subsidiada
-
-			List<Extrato> todosOsExtratos = extratoRepository.buscarTodasTransacoesDoCliente(cliente.getId());
-
-			if (!todosOsExtratos.isEmpty()) { // Pega o último saldo do cliente
-				saldo = todosOsExtratos.get(todosOsExtratos.size() - 1).getSaldo();
-			}
-
-			// Verifica se a pessoa possui créditos
-			if (!saldo.equals(new BigDecimal(0))) {
-
-				int countDisponivelSegunda = 0;
-				int countDisponivelTerca = 0;
-				int countDisponivelQuarta = 0;
-				int countDisponivelQuinta = 0;
-				int countDisponivelSexta = 0;
-				int countExpiradoSegunda = 0;
-				int countExpiradoTerca = 0;
-				int countExpiradoQuarta = 0;
-				int countExpiradoQuinta = 0;
-				int countExpiradoSexta = 0;
-				int countNãoSubsidiadaSegunda = 0;
-				int countNãoSubsidiadaTerca = 0;
-				int countNãoSubsidiadaQuarta = 0;
-				int countNãoSubsidiadaQuinta = 0;
-				int countNãoSubsidiadaSexta = 0;
-
-				Calendar dataAtual = Calendar.getInstance();
-				Calendar dataHoje = Calendar.getInstance();
-
-				SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
-
-				dataAtual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);// Define o dia segunda-feira desta semana
-
-				for (int i = 0; i < 5; i++) {
-
-					Cardapio c = new Cardapio();
-					List<Object[]> dataDoBanco = cardapioRepository.verificarSeDataExisteNoBD(dataAtual.getTime());
-
-					for (Object[] linhaDoBanco : dataDoBanco) {
-
-						Calendar cal = Calendar.getInstance();
-						cal.setTime((Date) linhaDoBanco[1]);
-
-						if (dataHoje.get(Calendar.DAY_OF_WEEK) < cal.get(Calendar.DAY_OF_WEEK)) {
-
-							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
-								countDisponivelSegunda = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
-								countExpiradoSegunda = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
-								countNãoSubsidiadaSegunda = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
-							}
-
-							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
-								countDisponivelTerca = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
-								countExpiradoTerca = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
-								countNãoSubsidiadaTerca = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
-							}
-
-							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
-								countDisponivelQuarta = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
-								countExpiradoQuarta = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
-								countNãoSubsidiadaQuarta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
-							}
-
-							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
-								countDisponivelQuinta = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
-								countExpiradoQuinta = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
-								countNãoSubsidiadaQuinta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
-							}
-
-							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
-								countDisponivelSexta = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
-								countExpiradoSexta = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
-								countNãoSubsidiadaSexta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
-							}
-
-							// Verifica se o count disponível é menor que 360 refeições
-							if (countDisponivelSegunda < 360 || countDisponivelTerca < 360
-									|| countDisponivelQuarta < 360 || countDisponivelQuinta < 360
-									|| countDisponivelSexta < 360 || countExpiradoSegunda > 0 || countExpiradoTerca > 0
-									|| countExpiradoQuarta > 0 || countExpiradoQuinta > 0 || countExpiradoSexta > 0) {
-
-								String dataFormatada = formatoDesejado.format((Date) linhaDoBanco[1]);
-								Date dataVar = formatoDesejado.parse(dataFormatada);
-
-								c.setId((Long) linhaDoBanco[0]);
-								c.setData(dataVar);
-
-								if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
-										(Date) linhaDoBanco[1]) == null) {
-									cardapio.add(c);
-									
-									count = 1;
-								}								
-							}
-
-							if (countNãoSubsidiadaSegunda < 140 || countNãoSubsidiadaTerca < 140
-									|| countNãoSubsidiadaQuarta < 140 || countNãoSubsidiadaQuinta < 140
-									|| countNãoSubsidiadaSexta < 140) {
-
-								if (count == 0) {
-
-									String dataFormatada = formatoDesejado.format((Date) linhaDoBanco[1]);
-									Date dataVar = formatoDesejado.parse(dataFormatada);
-
-									c.setId((Long) linhaDoBanco[0]);
-									c.setData(dataVar);
-
-									if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
-											(Date) linhaDoBanco[1]) == null) {
-										
-										int caiu = 0;
-										
-										for(Cardapio daLista : cardapio) {
-											
-											if(daLista.getData().equals(dataVar)) {
-												caiu = 1;
-											}
-										}
-											
-										if(caiu == 0) {
-											cardapio.add(c);
-										}										
-										
-										count = 2;						
-									}					
-									
-								} else {
-									
-									String dataFormatada = formatoDesejado.format((Date) linhaDoBanco[1]);
-									Date dataVar = formatoDesejado.parse(dataFormatada);
-
-									c.setId((Long) linhaDoBanco[0]);
-									c.setData(dataVar);
-
-									if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
-											(Date) linhaDoBanco[1]) == null) {
-										
-										int caiu = 0;
-										
-										for(Cardapio daLista : cardapio) {
-											
-											if(daLista.getData().equals(dataVar)) {
-												caiu = 1;
-											}
-										}
-											
-										if(caiu == 0) {
-											cardapio.add(c);
-										}	
-										
-										count = 3;
-									}					
-								}
-							}
-							
-							contadores.add(count);
-						}				
+		cliente = clienteRepository.findByIdentificacao(authentication.getName());
+		Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
+		
+		if(ultimoExtrato == null || ultimoExtrato.getSaldo().compareTo(new BigDecimal(4.00)) <= 0)
+			return false;
+		else
+			return true;
+	}
+	
+	public Boolean verificarDataAtual() {
+		dataAtual = Calendar.getInstance();
+		
+		if(feriadoRepository.findByData(dataAtual.getTime()) == null)
+			return true;
+		
+		return false;
+	}
+	
+	public Boolean verificarContagens() {
+		int count = -1;
+		int countCusto;
+		int countExpirado;
+		int countDisponivel;
+		int qtdeCusto = qtdeRefeicoesRepository.findAll().get(qtdeRefeicoesRepository.findAll().size() -1).getCusto();
+		int qtdeSubs = qtdeRefeicoesRepository.findAll().get(qtdeRefeicoesRepository.findAll().size() -1).getSubsidiada();
+		
+		Calendar diasDaSemanaAtual = Calendar.getInstance();		
+		diasDaSemanaAtual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);//Define o dia segunda-feira da semana atual
+		
+		for (int i = 0; i < 5; i++) {
+			Cardapio dataDoBanco = cardapioRepository.findByData(diasDaSemanaAtual.getTime());
+			if (dataDoBanco != null) {
+				if (dataAtual.getTime().compareTo(dataDoBanco.getData()) < 0) {
+					countDisponivel = reservaItemRepository.qtdeDeReservasPorData(dataDoBanco.getData());
+					countExpirado= reservaItemRepository.qtdeDeReservasExpiradasPorData(dataDoBanco.getData());
+					countCusto = reservaItemRepository.qtdeDeReservasNãoSubsidiadasPorData(dataDoBanco.getData());
+					if (countDisponivel < qtdeSubs || countExpirado > 0) {
+						if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(), dataDoBanco.getData()) == null) {
+							todasAsDatas.add(formatar.format(dataDoBanco.getData()));
+							count = 0;
+						}						
 					}
-
-					dataAtual.add(Calendar.DAY_OF_MONTH, 1);
+					
+					if (countCusto < qtdeCusto) {
+						if (count == -1) {
+							if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(), dataDoBanco.getData()) == null) {
+								int caiu = 0;
+								
+								for(String daLista : todasAsDatas) {
+									
+									if(daLista.equals(formatar.format(dataDoBanco.getData()))) {
+										caiu = 1;
+									}
+								}
+									
+								if(caiu == 0) {
+									todasAsDatas.add(formatar.format(dataDoBanco.getData()));
+								}										
+								
+								count = 1;										
+							}							
+						}
+						else {
+							if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(), dataDoBanco.getData()) == null) {
+								int caiu = 0;
+								
+								for(String daLista : todasAsDatas) {
+									
+									if(daLista.equals(formatar.format(dataDoBanco.getData()))) {
+										caiu = 1;
+									}
+								}
+									
+								if(caiu == 0) {
+									todasAsDatas.add(formatar.format(dataDoBanco.getData()));
+								}										
+								
+								count = 2;										
+							}			
+						}						
+					}
+					contadores.add(count);
 				}
+			}
+			diasDaSemanaAtual.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
+		if(todasAsDatas.isEmpty())
+			return false;
+		else
+			return true;
+	}
+	
+	@RequestMapping("/comprar")
+	public String carregarComprar(Model model) throws JSONException {
+		todasAsDatas = new ArrayList<String>();
+		JSONObject json = new JSONObject(verificar());
+		Boolean sucesso = json.getBoolean("sucesso");
+		
+		if(sucesso) {
+			model.addAttribute("contadores", contadores);
+			model.addAttribute("todasAsDatas", todasAsDatas);
+			model.addAttribute("todosOsValores", tipoValorRepository.findAll());
+			model.addAttribute("todasAsRefeicoes", tipoRefeicaoRepository.findAll());
+			return "comprar";
+		}
+		
+		return "boasvindas";
+    }
+	
+	@PostMapping("/verificarcompra")
+	public @ResponseBody String verificarCompra(@RequestParam(value = "datas[]", required = false) String[] datas, 
+			@RequestParam(value = "tiposRefeicoes[]", required = false) String[] tiposRefeicoes,
+			@RequestParam(value = "tiposValores[]", required = false) String[] tiposValores) throws JSONException {
+		JSONObject json = new JSONObject();
+		
+		int count = 0;
+		int countValor = 0;
+		int countRefeicao = 0;
+		
+		BigDecimal valorTotal = new BigDecimal(0.00);
+		BigDecimal saldo = extratoRepository.findFirstByClienteOrderByIdDesc(cliente).getSaldo();
+		
+		if(datas != null)
+			count = datas.length;
+		
+		if(tiposRefeicoes != null) {
+			for (String tR : tiposRefeicoes) {
+				if(tR.length() != 0) {
+					countRefeicao++;
+				}					
 			}
 		}
-
-		model.addAttribute("contadores", contadores);
-		model.addAttribute("saldo", saldo);
-		model.addAttribute("todasAsDatas", cardapio);
-		model.addAttribute("comprar", new Cardapio());
-		model.addAttribute("valorRefeicaoS", clienteCategoria.getCategoria().getValorComSubsidio());
-		model.addAttribute("valorRefeicaoC", clienteCategoria.getCategoria().getValorSemSubsidio());
-
-		ObjectMapper mapper = new ObjectMapper();// jackson lib for converting to json
-		String objectJSON = mapper.writeValueAsString(cardapio);// json string
-		model.addAttribute("objectJSON", objectJSON);
-
-		return "comprar";
-	}
-
-	@PostMapping("/comprar/salvar")
-	public String salvarComprar(@RequestParam("data") Integer[] idsCardapios,
-			@RequestParam("tipoRefeicao") Integer[] idsTipoRefeicao,
-			@RequestParam("tipoValor") Integer[] idsTipoValor) {
-
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		if (!(authentication instanceof AnonymousAuthenticationToken)) {
-
-			String identificacao = authentication.getName();
-			Cliente cliente = clienteRepository.buscarCliente(identificacao); // Pega o id da pessoa logada
-
-			BigDecimal saldo = new BigDecimal(0.00);
-			Timestamp timestamp = new Timestamp(System.currentTimeMillis()); // Data e hora atual
-
-			ClienteCategoria clienteCategoria = clienteCategoriaRepository.findByCliente(cliente);
-
-			List<Extrato> todosOsExtratos = extratoRepository.buscarTodasTransacoesDoCliente(cliente.getId());
-
-			List<Integer> tiposValoresCusto = new ArrayList<Integer>();
-			List<Integer> tiposRefeicoesCusto = new ArrayList<Integer>();
-			List<Integer> datasSelecionadasCusto = new ArrayList<Integer>();
-			List<Integer> tiposValoresSubsidiada = new ArrayList<Integer>();
-			List<Integer> tiposRefeicoesSubsidiada = new ArrayList<Integer>();
-			List<Integer> tiposRefeicoesSelecionados = new ArrayList<Integer>();
-			List<Integer> datasSelecionadasSubsidiada = new ArrayList<Integer>();
-
-			if (!todosOsExtratos.isEmpty()) {
-				saldo = todosOsExtratos.get(todosOsExtratos.size() - 1).getSaldo();
-			}
-
-			for (int z = 0; z < idsTipoRefeicao.length; z++) {
-
-				if (idsTipoRefeicao[z] != null) {
-					tiposRefeicoesSelecionados.add(idsTipoRefeicao[z]);
+		if(tiposValores != null) {
+			for (String tV : tiposValores) {
+				if(tV.length() != 0) {
+					countValor++;
 				}
+				if(tV.equals("Custo"))
+					valorTotal.add(clienteCategoriaRepository.findByCliente(cliente).getCategoria().getValorSemSubsidio());
+				else
+					valorTotal.add(clienteCategoriaRepository.findByCliente(cliente).getCategoria().getValorComSubsidio());
 			}
+		}	
 
-			for (int z = 0; z < idsTipoValor.length; z++) {
+		if(datas == null)
+			json.put("erro", "data");
+		else if(tiposRefeicoes == null || countRefeicao != count)
+			json.put("erro", "tipoRefeicao");
+		else if(tiposValores == null || countValor != count)
+			json.put("erro", "tipoValor");
+		else if(valorTotal.compareTo(saldo) > 0)
+			json.put("erro", "saldo");
+		else
+			json.put("sucesso", new Boolean(true));
+		
+		return json.toString();
+    }
+	
+	@SuppressWarnings("unlikely-arg-type")
+	@PostMapping("/efetuarcompra")
+	public @ResponseBody String efetuarCompra(@RequestParam(value = "datas[]") String[] datas, 
+			@RequestParam(value = "tiposRefeicoes[]") String[] tRs,
+			@RequestParam(value = "tiposValores[]") String[] tVs) throws ParseException, JSONException {		
+		JSONObject json = new JSONObject();
+		
+		boolean verificaCusto = false;
+		boolean verificaSubsidiada = false;
+		
+		todasAsDatas = new ArrayList<String>();		
+		List<Cardapio> datasSelecionadasCusto = new ArrayList<Cardapio>();
+		List<TipoRefeicao> tiposRefeicoes = new ArrayList<TipoRefeicao>();		
+		List<Cardapio> datasSelecionadasSubsidiada = new ArrayList<Cardapio>();
+		List<TipoRefeicao> tiposRefeicoesCusto = new ArrayList<TipoRefeicao>();
+		List<TipoRefeicao> tiposRefeicoesSubsidiada = new ArrayList<TipoRefeicao>();
 
-				if (idsTipoValor[z] != null) {
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis()); // Data e hora atual
 
-					if (idsTipoValor[z] % 2 == 0) {
-						tiposValoresSubsidiada.add(idsTipoValor[z]);
-						datasSelecionadasSubsidiada.add(idsCardapios[z]);
-						tiposRefeicoesSubsidiada.add(tiposRefeicoesSelecionados.get(z));
-					} else {
-						tiposValoresCusto.add(idsTipoValor[z]);
-						datasSelecionadasCusto.add(idsCardapios[z]);
-						tiposRefeicoesCusto.add(tiposRefeicoesSelecionados.get(z));
-					}
-				}
+
+
+
+		for (String s : tRs) {
+			if (s.trim().length() != 0) {
+				TipoRefeicao tR = new TipoRefeicao();
+				if (s.equals("Tradicional"))
+					tR = tipoRefeicaoRepository.findByDescricao("Tradicional");
+				else if (tR.equals("Vegetariano"))
+					tR = tipoRefeicaoRepository.findByDescricao("Vegetariano");
+				else
+					tR = tipoRefeicaoRepository.findByDescricao("Vegano");
+				tiposRefeicoes.add(tR);
 			}
+		}
+		
+		for (int x = 0; x < datas.length; x++) {
+			if (tVs[x].trim().length() != 0) {
+				if (tVs[x].equals("Custo")) {
+					tiposRefeicoesCusto.add(tiposRefeicoes.get(x));
+					datasSelecionadasCusto.add(cardapioRepository.findByData(formatar.parse(datas[x])));
 
-			if (!tiposValoresSubsidiada.isEmpty()) {
+				}					
+				else {
+					tiposRefeicoesSubsidiada.add(tiposRefeicoes.get(x));
+					datasSelecionadasSubsidiada.add(cardapioRepository.findByData(formatar.parse(datas[x])));
 
-				Extrato extrato = new Extrato();
+				}				
+			}
+		}
+		
+		Boolean teste = true;
+		if(verificarContagens()) {
+			for (String data : datas) {
+				if(!todasAsDatas.contains(data))
+					teste = false;
+			}
+		} else
+			teste = false;
+		
+	
+	    if (!teste)
+			json.put("erro", "erro");
+		else {
+			BigDecimal saldo = extratoRepository.findFirstByClienteOrderByIdDesc(cliente).getSaldo();
+			
+			if (!verificaSubsidiada) {		
 				Reserva reserva = new Reserva();
-
 				reserva.setCliente(cliente);
 				reserva.setDataReserva(timestamp);
-				reserva.setTipoValor(tipoValorRepository.findByDescricao("Subsidiada")); // Definir como subsidiada caso
-																							// seja umas das 360
-																							// primeiras refeições
-
+				reserva.setTipoValor(tipoValorRepository.findByDescricao("Subsidiada")); 
 				reservaRepository.save(reserva);
 
+				Extrato extrato = new Extrato();
 				extrato.setCliente(cliente);
 				extrato.setDataTransacao(timestamp);
 
 				BigDecimal transacao = BigDecimal.valueOf(datasSelecionadasSubsidiada.size())
-						.multiply(clienteCategoria.getCategoria().getValorComSubsidio());
+						.multiply(clienteCategoriaRepository.findByCliente(cliente).getCategoria().getValorComSubsidio());
 
 				extrato.setTransacao(transacao.negate());
 				extrato.setSaldo(saldo.subtract(transacao));
-
 				extratoRepository.save(extrato);
 
-				List<Reserva> todasAsReservasDoCliente = reservaRepository.todasAsReservasDoCliente(cliente);
+				Reserva ultimaReserva = reservaRepository.findFirstByClienteOrderByIdDesc(cliente);
 
-				Long id = todasAsReservasDoCliente.get(todasAsReservasDoCliente.size() - 1).getId();
-
-				for (int x = 0; x <= datasSelecionadasSubsidiada.size() - 1; x++) {
-
+				for (int x = 0; x < datasSelecionadasSubsidiada.size(); x++) {
 					ReservaItem reservaItem = new ReservaItem();
-					Reserva r = new Reserva();
-					Cardapio c = new Cardapio();
-					Status s = new Status();
-					TipoRefeicao t = null;
 
-					if (tiposRefeicoesSubsidiada.get(x) % 2 == 0) {
-						t = tipoRefeicaoRepository.findByDescricao("Vegetariano");
-					} else {
-						t = tipoRefeicaoRepository.findByDescricao("Tradicional");
-					}
-
-					s = statusRepository.findByDescricao("Pago");
-
-					r.setId(id);
-					c.setId(datasSelecionadasSubsidiada.get(x).longValue());
-
-					reservaItem.setReserva(r);
-					reservaItem.setCardapio(c);
-					reservaItem.setStatus(s);
-					reservaItem.setTipoRefeicao(t);
+					reservaItem.setReserva(ultimaReserva);
+					reservaItem.setCardapio(datasSelecionadasSubsidiada.get(x));
+					reservaItem.setStatus(statusRepository.findByDescricao("Pago"));
+					reservaItem.setTipoRefeicao(tiposRefeicoesSubsidiada.get(x));
 					reservaItem.setExtrato(extrato);
 
 					reservaItemRepository.save(reservaItem);
 				}
 			}
 
-			if (!tiposValoresCusto.isEmpty()) {
-
-				Extrato extrato = new Extrato();
+			if (!verificaCusto) {
 				Reserva reserva = new Reserva();
-
 				reserva.setCliente(cliente);
 				reserva.setDataReserva(timestamp);
 				reserva.setTipoValor(tipoValorRepository.findByDescricao("Custo"));
-
 				reservaRepository.save(reserva);
 
+				Extrato extrato = new Extrato();
 				extrato.setCliente(cliente);
 				extrato.setDataTransacao(timestamp);
 
 				BigDecimal transacao = BigDecimal.valueOf(datasSelecionadasCusto.size())
-						.multiply(clienteCategoria.getCategoria().getValorSemSubsidio());
+						.multiply(clienteCategoriaRepository.findByCliente(cliente).getCategoria().getValorSemSubsidio());
 
 				extrato.setTransacao(transacao.negate());
 				extrato.setSaldo(saldo.subtract(transacao));
-
 				extratoRepository.save(extrato);
 
-				List<Reserva> todasAsReservasDoCliente = reservaRepository.todasAsReservasDoCliente(cliente);
+				Reserva ultimaReserva = reservaRepository.findFirstByClienteOrderByIdDesc(cliente);
 
-				Long id = todasAsReservasDoCliente.get(todasAsReservasDoCliente.size() - 1).getId();
-
-				for (int x = 0; x <= datasSelecionadasCusto.size() - 1; x++) {
-
+				for (int x = 0; x < datasSelecionadasCusto.size(); x++) {
 					ReservaItem reservaItem = new ReservaItem();
-					Reserva r = new Reserva();
-					Cardapio c = new Cardapio();
-					Status s = new Status();
-					TipoRefeicao t = null;
 
-					if (tiposRefeicoesCusto.get(x) % 2 == 0) {
-						t = tipoRefeicaoRepository.findByDescricao("Vegetariano");
-					} else {
-						t = tipoRefeicaoRepository.findByDescricao("Tradicional");
-					}
-
-					s = statusRepository.findByDescricao("Pago");
-
-					r.setId(id);
-					c.setId(datasSelecionadasCusto.get(x).longValue());
-
-					reservaItem.setReserva(r);
-					reservaItem.setCardapio(c);
-					reservaItem.setStatus(s);
-					reservaItem.setTipoRefeicao(t);
+					reservaItem.setReserva(ultimaReserva);
+					reservaItem.setCardapio(datasSelecionadasCusto.get(x));
+					reservaItem.setStatus(statusRepository.findByDescricao("Pago"));
+					reservaItem.setTipoRefeicao(tiposRefeicoesCusto.get(x));
 					reservaItem.setExtrato(extrato);
 
 					reservaItemRepository.save(reservaItem);
 				}
 			}
-		}
-
-		return "redirect:/historico";
-	}
+			
+			json.put("sucesso", new Boolean(true));
+		}		
+		return json.toString();
+    }
 }

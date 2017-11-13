@@ -62,7 +62,7 @@ public class ProjetoLeafApplication {
 	public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
 		private final AuthenticationSuccessHandler authenticationSuccessHandler = new SimpleUrlAuthenticationSuccessHandler(
-				"/boasVindas");
+				"/boasvindas");
 
 		@Resource(name = "springSecurityFilterChain")
 		private FilterChainProxy chainProxy;
@@ -83,7 +83,9 @@ public class ProjetoLeafApplication {
 		public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 				Authentication authentication) throws IOException, ServletException {
 			Authentication auth = ((OAuth2Authentication) authentication).getUserAuthentication();
+			@SuppressWarnings("unchecked")
 			Map<String, Object> map = (Map<String, Object>) auth.getDetails();
+			@SuppressWarnings("unchecked")
 			Map<String, Object> mapDetails = (Map<String, Object>) map.get("details");
 			UsuarioDetails details = new UsuarioDetails();
 			details.setNome((String) mapDetails.get("nome"));
@@ -93,7 +95,5 @@ public class ProjetoLeafApplication {
 			((OAuth2Authentication) authentication).setDetails(details);
 			authenticationSuccessHandler.onAuthenticationSuccess(request, response, authentication);
 		}
-
 	}
-
 }

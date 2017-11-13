@@ -1,156 +1,171 @@
 <%@ page contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib uri="http://github.com/dandelion" prefix="dandelion"%>
 
-<c:set var="actionSalvar"> <c:url value="/remanescente/salvar"/> </c:set>
+<dandelion:bundle includes="font-awesome,sweetalert2" />
 
 <html>
 <head>
 <meta name="header" content="Remanescentes" />
 <title>Remanescentes</title>
+<meta name="_csrf" content="${_csrf.token}"/>
+<meta name="_csrf_header" content="${_csrf.headerName}"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/geral.css" type="text/css"/>
+<style>
+	input[type=checkbox] {
+		vertical-align: middle;
+		margin: 0px 4px 2.5px 0px !important;
+	}
+	.form-control {
+		margin-bottom: 5px !important;
+	}
+</style>
 </head>
 <body>
 	<script>	
 		$( document ).ready(function() {	
+			var count; 
 			
-			var datasDoCardapio = ${objectJSON};			
-			var todasAsDatas = $("input:checkbox[name='data']");							
-			var trad = "${todosOsTipos[0].descricao}";
-			var veg = "${todosOsTipos[1].descricao}";		
-			var saldo = ${saldo};	
-			var valorRefeicao = ${valorRefeicao};
-			var str = "";
-			var val = 1;			
-			
-			$("input:checkbox[name='data']").css("marginTop","7%");	
-			
-			if(datasDoCardapio.length != 0) {				
-				document.getElementById('reservaDisponivel').style.display = "block";
-			} else {
-				document.getElementById('reservaIndisponivel').style.display = "block";
-			}	
-			
-			var lista = [];
-			lista.push(trad);
-			lista.push(veg);				
-			
-			for (var x = 1; x <= todasAsDatas.length; x++) {	
-				
-				str += '<select id="tipoRefeicao' + x + '" name="tipoRefeicao" class="form-control">';	 
-				str += '<option value="0" label="- Selecione uma refeição -"> </option>';				
-				
-				for (var z = 0; z < lista.length; z++) {										
-					str += '<option value="' + (z+1) + '" label="' + lista[z] + '"> </option>';		
-				}
-				
-				str += '</select>';
-	    	}
-			
-			$("#reservaDisponivel .selectList").append(str);			
 			$("select").prop('disabled',true);		
-			
-			$("select").css("marginBottom","5%");
 			
 			$("input:checkbox[name='data']").change(function(){
 				
 				var $checkboxes = $("input:checkbox[name='data']");		
-				var count = 1;
+				count = 0;
 				
 				$checkboxes.each(function(){
 					
 					if ($(this).is(":checked")) {		
-						$("select#tipoRefeicao" + count).prop('disabled',false);
+						$("#tipo" + count).prop('disabled',false);
 					} else {
-						$("select#tipoRefeicao" + count).prop('disabled',true);	
-						$("select#tipoRefeicao" + count).prop('selectedIndex',0);
+						$("#tipo" + count).prop('disabled',true);	
+						$("#tipo" + count).prop('selectedIndex',0);
 				  	}
 					
 					count++;
 				});
 			});
 			
-			$("#reservar").click(function() {
-				var $checkboxes = $(this).closest('form').find(':checkbox');
-			    var txt = "";
-			    var txt2 = "";
-			    var minhaDataFormatada;
-			    var selects = $("select").length;
-			    var count = 0;
-			    var count2 = 0;
-			    
-			    if($checkboxes.is(":checked")) {
-			    	
-			    	for(var a = 1; a <= selects; a++) {
-			    		
-			    		if($('#data' + a).is(":checked")) {
-			    			
-			    			for(var b = 0; b < datasDoCardapio.length; b++) {	
-			    				
-			    				if(String(datasDoCardapio[b].id) === $('#data' + a).val()) {
-			    					
-			    					if ($("select#tipoRefeicao" + a).val() != 0) {
-			    						
-			    						txt2 = ($("select#tipoRefeicao" + a).val() % 2 ? "Tradicional" : "Vegetariano");	 		   
-						    			minhaDataFormatada = new Date(datasDoCardapio[b].data);
-						    			txt = txt + "<p>&#10004 " + minhaDataFormatada.toLocaleDateString('en-GB')  + " - " + txt2 + "</p>";	
-						    			
-						    			count++;
-			    					} else {
-			    						count2++;
-			    					}				    	    		
-				    	    	}					    			
-				    		}  			
-			    		} 	    		    		
-			    	}
-			    	
-			    	if(count != 0 && count2 == 0) {
-			    		
-			    		if(count * valorRefeicao <= saldo) {	
-			    			$("#modalConfirmarReserva .modal-body").append("<p>Confirme os dias da sua reserva e o seu tipo de refeição...</p>");			    		
-				    		$("#modalConfirmarReserva .modal-body").append(txt);	
-							$('#modalConfirmarReserva').modal('show');
-			    		} else {
-			    			$("#modalNaoSelecionado .modal-body").append("<p>Créditos insuficientes para a quantidade de refeições selecionadas!</p>");		
-			    			$("#modalNaoSelecionado .modal-body").append("<p>Diminua a quantidade e tente novamente!</p>");		
-	   				    	$('#modalNaoSelecionado').modal('show');
-			    		} 	
-			    		
-			    	} else {			    		
-			    		$("#modalNaoSelecionado .modal-body").append("<p>Selecione uma refeição!</p>");		
-   				    	$('#modalNaoSelecionado').modal('show');
-			    	}			 			   
-				} else {
-			    	$("#modalNaoSelecionado .modal-body").append("<p>Selecione pelo menos um dia!</p>");		
-			    	$('#modalNaoSelecionado').modal('show');
-			    }				
-			});
-			
-			$(".cancelar").click(function() {
-				$("#modalConfirmarReserva .modal-body").empty();
-				$("#modalNaoSelecionado .modal-body").empty();
+			$("#formRemanescente").submit(function(e) {
+				e.preventDefault();
+				var datas = [];
+				var tipos = [];
+				count = 0;
+				
+				$("input[name='data']").each (function(){
+					if($(this).is(":checked")){
+						datas.push($(this).val());
+						tipos.push($("#tipo" + count).val());
+					}
+					count++;
+				});
+				
+				$.ajax({
+					type: 'post',
+				    url: "${pageContext.request.contextPath}/verificaremanescente",
+				  	data: {datas: datas, tipos: tipos}
+				}).done(function(response){
+					response = JSON.parse(response);
+					if(response.sucesso){
+						var lista = "";
+						for(var i in datas)
+							lista += "<br>" + datas[i] + " | " + tipos[i];
+						swal({
+							  title: 'Confirme os Dados',
+							  html: "<b>Data | Tipo de Refeição</b>" + lista,
+							  type: 'question',
+							  timer: 5000,
+							  showCancelButton: true,
+							  cancelButtonText: 'Cancelar',
+							  cancelButtonColor: '#d33'
+						}).then(function(){
+							$.ajax({
+								type: 'post',
+							    url: "${pageContext.request.contextPath}/efetuarremanescente",
+							  	data: {tipos: tipos, datas: datas}
+							}).done(function(response){
+								response = JSON.parse(response);
+								if(response.sucesso){
+									swal(
+									    'Adquirido!',
+									    'Refeição remanescente adquirida com sucesso!',
+									    'success'
+									).then(function(){
+										window.location.replace("${pageContext.request.contextPath}/historico");
+									});
+								} else if (response.erro != null){
+									switch(response.erro){
+										case "erro":
+											swal(
+												'Oops...',
+												'Ocorreu um erro, tente novamente!',
+												'error'
+								        	)
+								        	break;
+										default:
+											break;
+									}
+								}
+							});
+						}, function(dismiss){})
+					} else if (response.erro != null){
+						switch(response.erro){
+							case "data":
+								swal(
+									'Oops...',
+									'Selecione pelo menos uma data!',
+									'warning'
+					        	)
+					        	break;
+							case "tipos":
+								swal(
+									'Oops...',
+									'Especifique o tipo de refeição!',
+									'warning'
+					        	)
+					        	break;
+							case "creditos":
+								swal(
+									'Oops...',
+									'Você não possui créditos suficientes para a quantidade de refeições selecionadas!',
+									'warning'
+					        	)
+					        	break;					
+							default:
+								break;
+						}
+					}
+				}).fail(function() {
+					swal(
+						'Oops...',
+						'Não há refeições remanescentes!',
+						'warning'
+		        	)
+				});		
 			});
 			
 			$("#selecionarTudo").change(function () {
 				$('input:checkbox').not(this).prop('checked', this.checked);
 			     
 			    var $checkboxes = $("input:checkbox[name='data']");		
-		     	var count = 1;
+		     	count = 0;
 			     
 			    $checkboxes.each(function(){
 						
 					if ($(this).is(":checked")) {	
 						$(this).prop('disabled', true);
-						$("select#tipoRefeicao" + count).prop('disabled',false);
+						$("#tipo" + count).prop('disabled',false);
 					} else {
 						$(this).prop('disabled', false);
-						$("select#tipoRefeicao" + count).prop('disabled',true);	
-						$("select#tipoRefeicao" + count).prop('selectedIndex',0);
+						$("#tipo" + count).prop('disabled',true);	
+						$("#tipo" + count).prop('selectedIndex',0);
 				  	}
 					
 					count++;
 				 });
 			});
+			
+			$("#cbdatas").css("line-height", $(".form-control").outerHeight(true)+"px"); 
 		});		
 	</script>
 	<div class="panel panel-primary col-xs-12 col-md-8 col-md-offset-2">
@@ -161,86 +176,46 @@
           </h3>
         </div>
         
-        <div id="reservaDisponivel" style="display: none;">
-        
-			<h4>Selecione o(s) dia(s) que deseja reservar:</h4>
-			
-			<br/> 
-			
-			<form:form method="POST" action="${actionSalvar}" modelAttribute="remanescentes">
-			
-				<div class="row">
-					<div class="col-xs-12 col-sm-4 text-center">
-						<input type="checkbox" id="selecionarTudo" /> <b>Selecionar todas as datas</b> 
-					</div>
-				</div>
-			
-				<div class="row">
-					<div class="col-xs-12 col-sm-4 text-center">
-						<form:checkboxes items="${todasAsDatas}" path="data" itemLabel="data" itemValue="id" delimiter="<br>"/>
-					</div>	
-					<div class="col-xs-12 col-sm-4 text-center selectList">	
-					</div>					
-				</div>
-				
-				<div class="text-center">
-					<br/>
-					<button type="button" id="reservar" class="btn btn-primary">
-					 	<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span> Reservar
-					</button>
-				</div>
-				
-				<!-- Modal confirmar refeição -->
-				<div id="modalConfirmarReserva" class="modal fade" role="dialog">
-					<div class="modal-dialog modal-md">
-				 		<div class="modal-content">
-				 			<div class="modal-header">
-				 				<button type="button" class="close cancelar" data-dismiss="modal">&times;</button>
-				 				<h3 class="modal-title">Reserva</h3>
-				 			</div>
-				 			<div class="modal-body">
-				 			</div>
-				 			<div class="modal-footer">
-				 				<div class="text-center">
-				 					<button type="button" class="btn btn-default cancelar" data-dismiss="modal">Cancelar</button>
-				 					<button type="submit" class="btn btn-primary">Confirmar reserva</button>
-				 				</div>
-				 			</div>
-				 		</div>
-				 	</div>
-				</div>
-				
-				<!-- Modal não selecionado -->
-				<div id="modalNaoSelecionado" class="modal fade" role="dialog">
-					<div class="modal-dialog modal-md">
-				 		<div class="modal-content">
-				 			<div class="modal-header">
-				 				<button type="button" class="close cancelar" data-dismiss="modal">&times;</button>
-				 				<h3 class="modal-title">Aviso</h3>
-				 			</div>
-				 			<div class="modal-body">
-				 			</div>
-				 			<div class="modal-footer">
-				 				<div class="text-center">
-				 					<button type="button" class="btn btn-default cancelar" data-dismiss="modal">Ok</button>
-				 				</div>
-				 			</div>
-				 		</div>
-				 	</div>
-				</div>
-			</form:form>
+		<h4>Selecione o(s) dia(s) que deseja reservar:</h4>
 		
-		</div>
+		<br/> 
 		
-		<div id="reservaIndisponivel" style="display: none;">
-			
-			<div class="alert alert-danger text-center" role="alert">
-				<p><strong>Atenção!</strong> Fora do período de reservas remanescentes!</p>
+		<form id="formRemanescente">
+		
+			<div class="row">
+				<div class="col-xs-12 col-sm-4 text-center">
+					<input type="checkbox" id="selecionarTudo" /> <b>Selecionar todas as datas</b> 
+				</div>
+			</div>
+		
+			<div class="row">		
+				<div class="col-xs-12 col-sm-4 text-center" id="cbdatas">
+					<c:forEach items="${datas}" var="data">
+						<input type="checkbox" name="data" value="${data}">
+						<b>${data}</b><br>
+					</c:forEach>
+				</div>					
+				<div class="col-xs-12 col-sm-4 text-center">
+					<c:forEach items="${datas}" varStatus="loop">					
+						<select id="tipo${loop.index}" name="tipo" class="form-control">	
+							<option value="" label="-- Tipo de Refeição --"> </option>	
+							<c:forEach items="${tipoRefeicoes}" var="refeicoes">
+								<option value="${refeicoes.descricao}" label="${refeicoes.descricao}"> </option>									
+							</c:forEach>
+						</select>
+					</c:forEach>
+				</div>	
 			</div>
 			
-		</div>
-		
+			<div class="text-center">
+				<br>
+				<button type="submit" class="btn btn-primary">
+				 	<i class="fa fa-cutlery" aria-hidden="true"></i> Reservar
+				</button>
+			</div>
+		</form>
 	  </div>
 	</div>
+	<jsp:include page="verifica.jsp"/>
 </body>
 </html>

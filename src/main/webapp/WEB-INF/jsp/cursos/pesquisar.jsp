@@ -11,16 +11,85 @@
 <head>
 <meta name="header" content="Cursos" />
 <title>Cursos</title>
+<meta name="_csrf" content="${_csrf.token}"/>
+<meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 <body>
 	<script type="text/javascript">
+		$(function () {
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			$(document).ajaxSend(function(e, xhr, options) {
+				xhr.setRequestHeader(header, token);
+			});
+		});
+	
 		$(document).ready(function() {
 			$('[data-toggle="tooltip"]').tooltip();
+			
+			$('.exclusao').on('click', function(e) {
+				e.preventDefault();	
+			   
+				var tr = $(this).closest('tr');
+			    var dadosTabela = tr.children("td").map(function() {
+			        return $(this).text();
+			    }).get();
+			   
+			   	var subcaminho = window.location.pathname.split("${pageContext.request.contextPath}/").pop();	   
+			   
+			   	var descricao = $.trim(dadosTabela[0]);	 	    
+			   
+			   	swal({
+					  title: 'Você tem certeza?',
+					  text: "Deseja realmente excluir " + descricao + "?",
+					  type: 'warning',
+					  showCancelButton: true,
+					  confirmButtonText: "Excluir",
+					  cancelButtonText: 'Não',
+					  cancelButtonColor: '#d33'
+				}).then( function () {					  
+					  $.ajax({
+							type: 'post',
+						    url: "${pageContext.request.contextPath}/" + subcaminho + "/excluir/",
+						  	data: {descricao: descricao}
+						}).done(function(response){
+							response = JSON.parse(response);
+							
+							if(response.sucesso){
+								swal(
+									'Excluído!',
+								    'Este registro foi excluído!',
+								    'success'
+								).then(function(){
+									location.reload();
+								});	
+							}
+							else if (response.erro != null){
+								switch(response.erro){
+									case "exclusao":
+										swal(
+											'Oops...',
+											'Ocorreu um erro no processamento da solicitação!',
+											'warning'
+							        	)
+							        	break;
+									default:
+										break;
+								}
+							}																			
+						}).fail(function(){
+							swal(
+								'Oops...',
+								'Não foi possível excluir este registro!',
+								'warning'
+				        	)	
+						});
+				 }, function (dismiss) {})
+			});
 		});
 	</script>
 
 	<%@include file="/layouts/modal-mensagens.jsp"%>
-	<%@include file="/layouts/modal-exclusao.jsp"%>
 
 	<a href="${linkController}/incluir" class="float-button"><i	class="fa fa-plus"></i></a>
 
@@ -30,13 +99,10 @@
 		<datatables:column title="Operações" filterable="false"	searchable="false" cssCellClass="text-center">
 			<a href="${linkController}/editar/${curso.id}"
 				class="btn btn-default btn-xs" data-toggle="tooltip" title="Alterar">
-				<span class='glyphicon glyphicon-pencil'></span>
+				<span class='fa fa-pencil'></span>
 			</a>
-			<a href="#" data-href="${linkController}/excluir/${curso.id}"
-				data-mensagem-exclusao="Deseja realmente excluir ${curso.descricao}?"
-				data-toggle="modal" data-target="#janela-exclusao-modal"
-				class="btn btn-danger btn-xs"> <span
-				class='glyphicon glyphicon-trash' data-toggle="tooltip"
+			<a class="btn btn-danger btn-xs exclusao"> <span
+				class='fa fa-trash' data-toggle="tooltip"
 				title="Excluir"></span>
 			</a>
 		</datatables:column>

@@ -1,7 +1,6 @@
 package com.github.projetoleaf.controllers;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,48 +15,74 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.github.projetoleaf.beans.Geral;
 import com.github.projetoleaf.beans.ReservaItem;
+import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
+import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
 
 @Controller
 public class HistoricoController {
 
 	@Autowired
-	private ReservaItemRepository reservaItemRepository;
+	private ClienteRepository clienteRepository;
 
+	@Autowired
+	private ReservaItemRepository reservaItemRepository;
+	
+	@Autowired
+	private ClienteCategoriaRepository clienteCategoriaRepository;
+
+	@SuppressWarnings("unlikely-arg-type")
 	@GetMapping("/historico")
 	public String historico(Model model,
-			@RequestParam(value = "txt_data", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date data) {
-
-		if (data == null) {
-			LocalDate fimMes = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
-			data = java.sql.Date.valueOf(fimMes);
-		}
-
+			@RequestParam(value = "dataInicial", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date dataInicial,
+			@RequestParam(value = "dataFinal", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date dataFinal) {
+		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 
-			String identificacao = authentication.getName();
-
-			List<ReservaItem> historico = new ArrayList<ReservaItem>();
-
-			List<ReservaItem> todoHistoricoDoBd = reservaItemRepository.findAll();
-
-			for (int x = 0; x < todoHistoricoDoBd.size(); x++) {
-
-				if (todoHistoricoDoBd.get(x).getReserva().getCliente().getIdentificacao().equals(identificacao)) {
-
-					if (todoHistoricoDoBd.get(x).getCardapio().getData().before(data)
-							|| todoHistoricoDoBd.get(x).getCardapio().getData().equals(data)) {
-
-						historico.add(todoHistoricoDoBd.get(x));
+			NumberFormat nf = NumberFormat.getCurrencyInstance();
+			
+			List<Geral> historico = new ArrayList<Geral>();
+			List<ReservaItem> historicoDoCliente = reservaItemRepository
+					.todasAsReservasDoCliente(clienteRepository.findByIdentificacao(authentication.getName()).getId());			
+			
+			if(dataInicial == null && dataFinal == null) {
+				for (ReservaItem rI : historicoDoCliente) {
+					Geral geral = new Geral();
+					geral.setCardapio(rI.getCardapio());
+					geral.setDescricaoTipo(rI.getTipoRefeicao().getDescricao());
+					geral.setDescricaoStatus(rI.getStatus().getDescricao());
+					
+					if(rI.getReserva().getTipoValor().getId().equals("Custo"))
+						geral.setValor(nf.format(clienteCategoriaRepository.findByCliente(clienteRepository.findByIdentificacao(authentication.getName())).getCategoria().getValorSemSubsidio()));
+					else
+						geral.setValor(nf.format(clienteCategoriaRepository.findByCliente(clienteRepository.findByIdentificacao(authentication.getName())).getCategoria().getValorComSubsidio()));
+					
+					historico.add(geral);
+				}
+			} else {
+				for (ReservaItem reserva : historicoDoCliente) {// Adiciona todo histórico do cliente com base na data de
+					// filtragem da página
+					if (reserva.getCardapio().getData().compareTo(dataInicial) >= 0 && reserva.getCardapio().getData().compareTo(dataFinal) <= 0) {
+						Geral geral = new Geral();
+						geral.setCardapio(reserva.getCardapio());
+						geral.setDescricaoTipo(reserva.getTipoRefeicao().getDescricao());
+						geral.setDescricaoStatus(reserva.getStatus().getDescricao());
+						
+						if(reserva.getReserva().getTipoValor().getId().equals("Custo"))
+							geral.setValor(nf.format(clienteCategoriaRepository.findByCliente(clienteRepository.findByIdentificacao(authentication.getName())).getCategoria().getValorSemSubsidio()));
+						else
+							geral.setValor(nf.format(clienteCategoriaRepository.findByCliente(clienteRepository.findByIdentificacao(authentication.getName())).getCategoria().getValorComSubsidio()));
+						
+						historico.add(geral);
 					}
 				}
-			}
+			}			
 
 			model.addAttribute("listagemHistorico", historico);
-			model.addAttribute("txt_data", new SimpleDateFormat("dd/MM/yyyy").format(data));
 		}
 
 		return "historico";

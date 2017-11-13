@@ -1,0 +1,8 @@
+input[type=checkbox] {
+	vertical-align: middle;
+	margin: 0px 4px 2.5px 0px !important;
+}
+
+.page-header {
+	margin-top: 10px !important;
+}

@@ -1,6 +1,7 @@
 package com.github.projetoleaf.beans;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,7 +34,7 @@ public class ReservasAdmin {
 
 	private BigDecimal valor;
 
-	private String data;
+	private Date data;
 
 	private boolean utilizarCreditos;
 }

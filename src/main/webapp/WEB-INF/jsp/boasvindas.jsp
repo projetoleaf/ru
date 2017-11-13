@@ -3,12 +3,15 @@
 
 <html>
 <head>
-<meta name="header" content="Boas Vindas"/>
-<title>Boas Vindas</title>
+	<meta name="header" content="Boas Vindas"/>
+	<title>Boas Vindas</title>
+	<meta name="_csrf" content="${_csrf.token}"/>
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 <body>
 	<div class="col-sm-4 col-sm-offset-4 text-center">
 		<p>Seja bem-vindo(a) ao novo Sistema RU!</p>
 	</div>
+	<jsp:include page="verifica.jsp"/>
 </body>
 </html>

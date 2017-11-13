@@ -215,3 +215,16 @@ CREATE TABLE cliente_curso
   CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
   CONSTRAINT fk_id_curso FOREIGN KEY(id_curso) REFERENCES curso(id)
 );
+
+/* Tabela para registrar passagem pela catraca */
+CREATE TABLE catraca
+(
+  id SERIAL NOT NULL,
+  id_cliente INTEGER NOT NULL,
+  id_reserva_item INTEGER NOT NULL,
+  data TIMESTAMP NOT NULL,
+
+  PRIMARY KEY(id),
+  CONSTRAINT fk_id_cliente FOREIGN KEY(id_cliente) REFERENCES cliente(id),
+  CONSTRAINT fk_id_reserva_item FOREIGN KEY(id_reserva_item) REFERENCES reserva_item(id)
+);

@@ -5,7 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <dandelion:bundle
-	includes="jquery.validation,jquery.inputmask,jquery.datetimepicker,sweetalert2" />
+	includes="jquery.validation,jquery.inputmask,jquery.datetimepicker,sweetalert2,font-awesome" />
 
 <html>
 <head>
@@ -21,8 +21,8 @@
 			 $("#count").val(count);
 			 
 			 function desabilitaCampos(status) {
-				 $("#data").prop('disabled',status);		
-		    	 $("#periodoRefeicao").prop('disabled',status);		
+				 $("#data").prop('readonly',status);				    	 
+				 $('select option:not(:selected)').attr('disabled',status);
 			 }
 			 
 			 if(count == 1) {		    	  
@@ -55,13 +55,13 @@
 		         rules : {
 		        	 data : { required : true },
 		             periodoRefeicao : { required : true },
-		             pratoBase : { required : true, maxlength : 50 },
-		             pratoTradicional : { required : true, maxlength : 100 },
-		             pratoVegetariano : { required : true, maxlength : 100 },
-		             guarnicao : { required : true, maxlength : 100 },
-		             salada : { required : true, maxlength : 50 },
-		             sobremesa : { required : true, maxlength : 50 },
-		             suco : { required : true, maxlength : 50 }
+		             pratoBase : { required : true, maxlength : 50, minlength : 3 },
+		             pratoTradicional : { required : true, maxlength : 100, minlength : 3 },
+		             pratoVegetariano : { required : true, maxlength : 100, minlength : 3 },
+		             guarnicao : { required : true, maxlength : 100, minlength : 3 },
+		             salada : { required : true, maxlength : 50, minlength : 3 },
+		             sobremesa : { required : true, maxlength : 50, minlength : 3 },
+		             suco : { required : true, maxlength : 50, minlength : 3 }
 		         }
 		     });
 		     $("#data").focus();
@@ -69,11 +69,7 @@
 		     $("#data").inputmask("99/99/9999");     
 		      
 		      $("#cardapio").submit(function(event) {
-		    	  event.preventDefault();
-		    	  
-		    	  if(count == 1){
-		    		  desabilitaCampos(false);	
-		    	  }		    	  
+		    	  event.preventDefault();	  
 		    	  
 					if ($("#cardapio").valid()){
 						$.ajax({
@@ -81,30 +77,9 @@
 						    url: '${pageContext.request.contextPath}/cardapios/verificar',
 						    data: $("#cardapio").serialize(),
 						    success: function(data) {
+						    	data = JSON.parse(data);
 						    	
-						    	if(count == 1){
-						    		  desabilitaCampos(true);	
-						    	}	
-						    	
-						    	if(data == 2) {
-						    		swal({
-										title: "Data inválida!",
-										text: "Esta data já foi cadastrada!",
-										type: "warning"
-									}).then(function () {
-										$("#data").val("");
-									  	$("#data").focus();
-									})
-						    	} else if(data == 1) {
-						    		swal({
-						    			title: "Data inválida!",
-										text: "Esta data é um feriado!",
-										type: "warning"
-									}).then(function () {
-										$("#data").val("");
-									  	$("#data").focus();
-									})
-						    	} else if(data == 0) {
+						    	if(data.sucesso){
 						    		swal({
 						    			title: "Sucesso",
 										text: "Os dados do cardápio foram gravados com sucesso!",
@@ -112,7 +87,32 @@
 									}).then(function () {
 										$(location).attr('href','${pageContext.request.contextPath}/cardapios');
 									})
-						    	}
+								} else if (data.erro != null) {
+									switch(data.erro){
+										case "data":
+											swal({
+												title: "Data inválida!",
+												text: "Esta data já foi cadastrada!",
+												type: "warning"
+											}).then(function () {
+												$("#data").val("");
+											  	$("#data").focus();
+											})
+								        	break;
+										case "feriado":
+											swal({
+								    			title: "Data inválida!",
+												text: "Esta data é um feriado!",
+												type: "warning"
+											}).then(function () {
+												$("#data").val("");
+											  	$("#data").focus();
+											})
+								        	break;
+										default:
+											break;
+									}
+								}
 						    },
 						    error: function(data){
 					    		swal({
@@ -246,7 +246,7 @@
 			<div class="form-group col-x-12 col-md-12"
 				style="text-align: center; margin-top: 25px;">
 				<button type="submit" class="btn btn-primary">
-					<span class="glyphicon glyphicon-floppy-disk"></span> Salvar
+					<i class="fa fa-floppy-o" aria-hidden="true"></i> Salvar
 				</button>
 			</div>
 		</div>

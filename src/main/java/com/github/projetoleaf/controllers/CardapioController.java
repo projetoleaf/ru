@@ -1,5 +1,9 @@
 package com.github.projetoleaf.controllers;
 
+import java.util.Date;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
@@ -74,33 +78,34 @@ public class CardapioController {
 	}
 	
 	@PostMapping("/verificar")
-	@ResponseBody
-	public int verificarData(@ModelAttribute("cardapio") Cardapio cardapio, @RequestParam("count") int count) {
+	public @ResponseBody String verificarData(@ModelAttribute("cardapio") Cardapio cardapio, @RequestParam("count") int count) throws JSONException {
+		JSONObject json = new JSONObject();
 		
-		int retorno = 0;
+		boolean verifica = true;
 		
-		if (cardapioRepository.verificarDataEPeriodoRefeicao(cardapio.getData(),
-				cardapio.getPeriodoRefeicao().getId()) == null) {
-			
-			if (feriadoRepository.findByData(cardapio.getData()) != null) {
-				retorno = 1;
-			}
-		} else {
-			retorno = 2;
-		}
+		if (cardapioRepository.verificarDataEPeriodoRefeicao(cardapio.getData(), cardapio.getPeriodoRefeicao().getId()) != null) {		
+			verifica = false;
+			json.put("erro", "data");	
+		} 
+		else if (feriadoRepository.findByData(cardapio.getData()) != null) {
+			verifica = false;
+			json.put("erro", "feriado");	
+		} 
 		
-		if(retorno == 0 || count == 1) {
-			retorno = 0;
+		if(verifica == true || count == 1) {
 			cardapioRepository.save(cardapio);
-		}
-				
-		return retorno;
+			json.put("sucesso", new Boolean(true));
+		}			
+		
+		return json.toString();
 	}
 
-	@GetMapping("/excluir/{id}")
-	public String excluirCardapio(RedirectAttributes ra, @PathVariable Long id) {
+	@PostMapping("/excluir")
+	public @ResponseBody void excluirCardapio(RedirectAttributes ra, @RequestParam("data") Date data, @RequestParam("periodo") String periodo) {
 		count = 0;
+		
 		try {
+			Long id = cardapioRepository.verificarDataEPeriodoRefeicao(data, periodoRefeicaoRepository.findByDescricao(periodo).getId());			
 			cardapioRepository.delete(id);
 			log.info("Cardápio #" + id + " excluído com sucesso");
 			ra.addFlashAttribute("mensagemInfo",
@@ -109,7 +114,5 @@ public class CardapioController {
 			log.error("Erro de processamento", ex);
 			ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
 		}
-
-		return "redirect:/cardapios";
 	}
 }

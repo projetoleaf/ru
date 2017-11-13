@@ -2,6 +2,8 @@ package com.github.projetoleaf.controllers;
 
 import javax.validation.Valid;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.projetoleaf.beans.Curso;
@@ -72,22 +76,23 @@ public class CursoController {
 			model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
 		}
 
-		return abrirCadastroCurso(model);
-
+		return "redirect:/cursos";
 	}
 
-	@GetMapping("/excluir/{id}")
-	public String excluirCurso(RedirectAttributes ra, @PathVariable Long id) {
+	@PostMapping("/excluir")
+	public @ResponseBody String excluirCurso(RedirectAttributes ra, @RequestParam("descricao") String descricao) throws JSONException {
+		JSONObject json = new JSONObject();
+		
 		try {
+			Long id = repository.findByDescricao(descricao).getId();	
 			repository.delete(id);
-			log.info("Curso #" + id + " excluído com sucesso");
-			ra.addFlashAttribute("mensagemInfo",
-					config.getMessage("excluidoSucesso", new Object[] { "o curso" }, null));
+			json.put("sucesso", new Boolean(true));
+			System.out.println("caiu");
 		} catch (Exception ex) {
-			log.error("Erro de processamento", ex);
-			ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+			System.out.println("caiu2");
+			json.put("erro", "exclusao");
 		}
-
-		return "redirect:/cursos";
+		
+		return json.toString();
 	}
 }

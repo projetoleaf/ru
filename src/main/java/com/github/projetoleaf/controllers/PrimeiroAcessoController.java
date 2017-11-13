@@ -51,18 +51,15 @@ public class PrimeiroAcessoController {
 
 	private String retorno;
 
-	@GetMapping("/boasVindas")
+	@GetMapping("/boasvindas")
 	public String boasVindas(Model model) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 
-			String identificacao = authentication.getName();
-			Cliente cliente = clienteRepository.buscarCliente(identificacao);
-
-			if (cliente != null) {
-				retorno = "boasVindas";
+			if (clienteRepository.findByIdentificacao(authentication.getName()) != null) {
+				retorno = "boasvindas";
 			} else {
 				model.addAttribute("primeiroAcesso", new PrimeiroAcesso());
 				model.addAttribute("categoria", categoriaRepository.findAll());
@@ -75,10 +72,10 @@ public class PrimeiroAcessoController {
 	}
 
 	public String abrirPrimeiroAcesso(Model model) {
-		return "primeiroAcesso";
+		return "primeiroacesso";
 	}
 
-	@PostMapping("/primeiroAcesso/salvar")
+	@PostMapping("/primeiroacesso/salvar")
 	public String salvarPrimeiroLogin(Model model, @ModelAttribute("primeiroAcesso") PrimeiroAcesso primeiroAcesso,
 			BindingResult result) {
 		try {
@@ -91,11 +88,10 @@ public class PrimeiroAcessoController {
 
 					String nome = usuarioAtual.getNome();
 					String cpf = usuarioAtual.getCpf();
-					String identificacao = authentication.getName();
 					Timestamp timestamp = new Timestamp(System.currentTimeMillis()); // Data e hora atual
 
 					Cliente clienteAtualizado = new Cliente();
-					clienteAtualizado.setIdentificacao(identificacao);
+					clienteAtualizado.setIdentificacao(authentication.getName());
 					clienteAtualizado.setCpf(clienteAtualizado.imprimeCPF(cpf));
 					clienteAtualizado.setNome(nome);
 					clienteAtualizado.setBiometria("N");
@@ -130,6 +126,6 @@ public class PrimeiroAcessoController {
 			model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
 		}
 
-		return "redirect:/boasVindas";
+		return "redirect:/boasvindas";
 	}
 }

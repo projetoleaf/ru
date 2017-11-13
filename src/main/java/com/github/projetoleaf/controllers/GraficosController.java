@@ -32,6 +32,9 @@ public class GraficosController {
 	public String graficos(Model model) {
 
 		List<String> setor = new ArrayList<String>();
+		List<String> linha = new ArrayList<String>();
+		List<String> coluna = new ArrayList<String>();
+		
 		setor.add("Categorias");
 		setor.add("Período");
 		setor.add("Faculdade");
@@ -39,13 +42,11 @@ public class GraficosController {
 		setor.add("Idade");
 		setor.add("Sexo");
 		setor.add("Venda por categoria");
-
-		List<String> coluna = new ArrayList<String>();
+		
 		coluna.add("Cursos");
 		coluna.add("Venda por mês");
 		coluna.add("Venda por categoria");
-
-		List<String> linha = new ArrayList<String>();
+		
 		linha.add("Cursos");
 		linha.add("Venda por mês");
 		linha.add("Venda por categoria");
@@ -58,7 +59,7 @@ public class GraficosController {
 		return "graficos";
 	}
 
-	@PostMapping("/graficoGerado")
+	@PostMapping("/graficogerado")
 	public String graficoGerado(Model model, @RequestParam(value = "setor", required = false) String[] setores,
 			@RequestParam(value = "coluna", required = false) String[] colunas,
 			@RequestParam(value = "linha", required = false) String[] linhas) {
@@ -89,10 +90,8 @@ public class GraficosController {
 		List<Cliente> todosOsClientes = clienteRepository.findAll();
 
 		for (Cliente cliente : todosOsClientes) {
-
-			List<Extrato> todosOsExtratosDoCliente = extratoRepository.buscarTodasTransacoesDoCliente(cliente.getId());
-			BigDecimal saldo = todosOsExtratosDoCliente.isEmpty() ? new BigDecimal(0.00)
-					: todosOsExtratosDoCliente.get(todosOsExtratosDoCliente.size() - 1).getSaldo();
+			Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
+			BigDecimal saldo = ultimoExtrato != null ? ultimoExtrato.getSaldo() : new BigDecimal(0.00);
 			dados.put(cliente.getNome(), saldo);
 		}
 
@@ -101,6 +100,6 @@ public class GraficosController {
 		model.addAttribute("valores", "Saldo");
 		model.addAttribute("dados", dados);
 
-		return "graficoGerado";
+		return "graficogerado";
 	}
 }

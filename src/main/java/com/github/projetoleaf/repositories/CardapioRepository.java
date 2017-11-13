@@ -12,12 +12,11 @@ import com.github.projetoleaf.beans.Cardapio;
 @Repository
 public interface CardapioRepository extends JpaRepository<Cardapio, Long> {
 
-	@Query("select c.id, c.data from Cardapio c where c.data = ?1")
-	List<Object[]> verificarSeDataExisteNoBD(Date data);
-
-	@Query("select c.data from Cardapio c where c.data between ?1 and ?2")
-	List<Date> todasAsDatasDaSemana(Date segunda, Date sexta);
+	Cardapio findByData(Date data);
 	
 	@Query("select c.id from Cardapio c where c.data = ?1 and c.periodoRefeicao.id = ?2")
 	Long verificarDataEPeriodoRefeicao(Date data, Long idPeriodoRefeicao);
+	
+	@Query("select c.data from Cardapio c where c.data between ?1 AND ?2 AND c.periodoRefeicao.descricao = 'Almoço'")
+	List<Date> todasAsDatasDaSemana(Date segunda, Date sexta);
 }

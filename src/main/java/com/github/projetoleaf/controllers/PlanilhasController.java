@@ -12,6 +12,10 @@ import java.util.TreeMap;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,11 +36,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @Controller
 @RequestMapping("/planilhas")
@@ -82,9 +81,8 @@ public class PlanilhasController {
 
 		for (Cliente cliente : todosOsClientes) {
 			numero++;
-			List<Extrato> todosOsExtratosDoCliente = extratoRepository.buscarTodasTransacoesDoCliente(cliente.getId());
-			BigDecimal saldo = todosOsExtratosDoCliente.isEmpty() ? new BigDecimal(0.00)
-					: todosOsExtratosDoCliente.get(todosOsExtratosDoCliente.size() - 1).getSaldo();
+			Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
+			BigDecimal saldo = ultimoExtrato != null ? ultimoExtrato.getSaldo() : new BigDecimal(0.00);
 			dados.put(String.valueOf(numero), new Object[] { cliente.getNome(), saldo.toString() });
 		}
 
@@ -133,10 +131,8 @@ public class PlanilhasController {
 		table.setWidths(columnWidths);
 
 		for (Cliente cliente : todosOsClientes) {
-
-			List<Extrato> todosOsExtratosDoCliente = extratoRepository.buscarTodasTransacoesDoCliente(cliente.getId());
-			BigDecimal saldo = todosOsExtratosDoCliente.isEmpty() ? new BigDecimal(0.00)
-					: todosOsExtratosDoCliente.get(todosOsExtratosDoCliente.size() - 1).getSaldo();
+			Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
+			BigDecimal saldo = ultimoExtrato != null ? ultimoExtrato.getSaldo() : new BigDecimal(0.00);
 
 			PdfPCell cell1 = new PdfPCell(new Paragraph(cliente.getNome()));
 			cell1.setBorderColor(BaseColor.BLUE);

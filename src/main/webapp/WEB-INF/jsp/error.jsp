@@ -97,7 +97,7 @@
 		<br>
 		<div>
 			<a class="btn btn-primary" href="${pageContext.request.contextPath}/">
-				<i class="fa fa-arrow-left"></i> Voltar para tela inicial
+				<i class="fa fa-home"></i> Tela Inicial
 			</a>
 		</div>
 	</div>

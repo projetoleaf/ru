@@ -18,7 +18,7 @@ public class SistemaController {
 
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 
-			retorno = "redirect:/boasVindas";
+			retorno = "redirect:/boasvindas";
 		} else {
 			retorno = "redirect:/login";
 		}
@@ -29,10 +29,5 @@ public class SistemaController {
 	@GetMapping("/sobre")
 	public String sobre() {
 		return "sobre";
-	}
-
-	@GetMapping("/transferencias")
-	public String transferencias() {
-		return "transferencias";
 	}
 }

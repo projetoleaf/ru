@@ -20,7 +20,6 @@
 	</script>
 
 	<%@include file="/layouts/modal-mensagens.jsp"%>
-	<%@include file="/layouts/modal-exclusao.jsp"%>
 
 	<a href="${linkController}/incluir" class="float-button"><i	class="fa fa-plus"></i></a>
 

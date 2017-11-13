@@ -20,6 +20,7 @@
 </sec:authorize>
 
 <sec:authorize access="hasRole('ROLE_FC.UNESP.RU_ADMIN') || hasRole('ROLE_FC.UNESP.RU_STN')">
+	<li><a href="<c:url value="/catraca"/>"><span class="fa fa-ticket"></span> Catraca</a></li>
     <li><a href="<c:url value="/clientes"/>"><span class="fa fa-users"></span> Clientes</a></li>
     <li class="dropdown"><a href="#" class="dropdown-togle" data-toggle="dropdown"><span class="fa fa-wrench"></span> Manutenção</a>
       <ul class="dropdown-menu">
@@ -45,13 +46,16 @@
 </sec:authorize>
 
 <sec:authorize access="hasRole('ROLE_FC.UNESP.RU_CLIENTE')">
-	<li><a href="<c:url value="/conta"/>"><span class="fa fa-id-card"></span> Conta</a></li>
-	<li><a href="<c:url value="/historico"/>"><span class="fa fa-calendar"></span> Histórico</a></li>
-	<li><a href="<c:url value="/reserva"/>"><span class="fa fa-cutlery"></span> Reservar</a></li>
-	<li><a href="<c:url value="/transferencias"/>"><span class="fa fa-exchange"></span> Transferências</a></li>
-	<li><a href="<c:url value="/comprar"/>"><span class="fa fa-money"></span> Comprar</a></li>
-	<li><a href="<c:url value="/remanescente"/>"><span class="fa fa-feed"></span> Remanescentes</a></li>
-	<li><a href="<c:url value="/extrato"/>"><span class="fa fa-bank"></span> Extrato</a></li>
+	<li class="dropdown"><a href="#" class="dropdown-togle" data-toggle="dropdown"><span class="fa fa-address-book"></span> Conta</a>
+      <ul class="dropdown-menu">
+      	<li><a href="<c:url value="/meusdados"/>"><span class="fa fa-id-card"></span> Meus Dados</a></li>
+      	<li><a href="<c:url value="/historico"/>"><span class="fa fa-calendar"></span> Histórico</a></li>
+      	<li><a href="<c:url value="/extrato"/>"><span class="fa fa-bank"></span> Extrato</a></li>
+      </ul>
+	<li><a id="reservar" href="#"><span class="fa fa-cutlery"></span> Reservar</a></li>
+	<li><a id="transferir" href="#"><span class="fa fa-exchange"></span> Tranferir</a></li>
+	<li><a id="comprar" href="#"><span class="fa fa-money"></span> Comprar</a></li>
+	<li><a id="remanescente" href="#"><span class="fa fa-feed"></span> Remanescentes</a></li>
 </sec:authorize>
 
 <sec:authorize access="isAuthenticated()">

@@ -8,4 +8,5 @@ import com.github.projetoleaf.beans.PeriodoRefeicao;
 @Repository
 public interface PeriodoRefeicaoRepository extends JpaRepository<PeriodoRefeicao, Long> {
 
+	PeriodoRefeicao findByDescricao(String descricao);
 }

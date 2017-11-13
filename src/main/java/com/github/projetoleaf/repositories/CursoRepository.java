@@ -8,4 +8,5 @@ import com.github.projetoleaf.beans.Curso;
 @Repository
 public interface CursoRepository extends JpaRepository<Curso, Long> {
 
+	Curso findByDescricao(String descricao);
 }

@@ -38,29 +38,20 @@ public class CreditosController {
 	@GetMapping
 	public String pesquisarCreditos(Model model) {
 
-		List<Cliente> todosOsClientesDoBD = clienteRepository.findAll();
-		List<Creditos> todosOsCreditos = new ArrayList<Creditos>();
-
 		NumberFormat nf = NumberFormat.getCurrencyInstance();
+		
+		List<Creditos> todosOsCreditos = new ArrayList<Creditos>();
+		List<Cliente> todosOsClientesDoBD = clienteRepository.findAll();
 
-		for (int z = 0; z < todosOsClientesDoBD.size(); z++) {
-
+		for (Cliente cliente : todosOsClientesDoBD) {
 			Creditos creditos = new Creditos();
-			creditos.setId(Long.valueOf(z));
-			creditos.setNome(todosOsClientesDoBD.get(z).getNome());
+			creditos.setId(cliente.getId());
+			creditos.setNome(cliente.getNome());
 
-			List<Extrato> ultimoRegistroDoCliente = extratoRepository
-					.buscarTodasTransacoesDoCliente(todosOsClientesDoBD.get(z).getId());
+			Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
+			creditos.setSaldo(ultimoExtrato != null ? ultimoExtrato.getSaldo() : new BigDecimal(0.00));
 
-			if (!ultimoRegistroDoCliente.isEmpty()) {
-				creditos.setSaldo(ultimoRegistroDoCliente.get(ultimoRegistroDoCliente.size() - 1).getSaldo());
-			} else {
-				creditos.setSaldo(new BigDecimal(0.00));
-			}
-
-			String creditosFormatado = nf.format(creditos.getSaldo());
-
-			creditos.setCreditos(creditosFormatado);
+			creditos.setCreditos(nf.format(creditos.getSaldo()));
 			todosOsCreditos.add(creditos);
 		}
 
@@ -72,21 +63,14 @@ public class CreditosController {
 	@GetMapping("/recarga/{nome}")
 	public String colocarCreditos(@PathVariable String nome, Model model) {
 
-		Cliente cliente = clienteRepository.findByNome(nome);
-		List<Extrato> ultimoRegistroDoCliente = extratoRepository.buscarTodasTransacoesDoCliente(cliente.getId());
-
 		NumberFormat nf = NumberFormat.getCurrencyInstance();
+		
+		Cliente cliente = clienteRepository.findByNome(nome);		
+		Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
+		
+		BigDecimal saldo = ultimoExtrato != null ? ultimoExtrato.getSaldo() : new BigDecimal(0.00);
 
-		BigDecimal saldo = null;
-
-		if (!ultimoRegistroDoCliente.isEmpty()) {
-			saldo = ultimoRegistroDoCliente.get(ultimoRegistroDoCliente.size() - 1).getSaldo();
-		} else {
-			saldo = new BigDecimal(0.00);
-		}
-		String saldoFormatado = nf.format(saldo);
-
-		model.addAttribute("saldo", saldoFormatado);
+		model.addAttribute("saldo", nf.format(saldo));
 		model.addAttribute("creditos", new Creditos());
 		model.addAttribute(nome);
 
@@ -100,14 +84,10 @@ public class CreditosController {
 		Cliente cliente = clienteRepository.findByNome(nome);
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis()); // Data e hora atual
 
-		safety = safety.replaceAll("[R$ .]", "");
-		BigDecimal saldo = null;
-
-		System.out.println(safety);
-
-		saldo = new BigDecimal(safety.replaceAll(",", "."));
-
 		recarga = recarga.replaceAll("\\.", "");
+		safety = safety.replaceAll("[R$ .]", "");
+		
+		BigDecimal saldo = new BigDecimal(safety.replaceAll(",", "."));
 
 		Extrato extrato = new Extrato();
 		extrato.setCliente(cliente);

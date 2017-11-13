@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.projetoleaf.beans.Categoria;
@@ -78,9 +80,10 @@ public class CategoriaController {
 		return "redirect:/categorias";
 	}
 
-	@GetMapping("/excluir/{id}")
-	public String excluirCategoria(RedirectAttributes ra, @PathVariable Long id) {
+	@PostMapping("/excluir")
+	public @ResponseBody void excluirCategoria(RedirectAttributes ra, @RequestParam("descricao") String descricao) {
 		try {
+			Long id = repository.findByDescricao(descricao).getId();		
 			repository.delete(id);
 			log.info("Categoria #" + id + " excluída com sucesso");
 			ra.addFlashAttribute("mensagemInfo",
@@ -89,7 +92,5 @@ public class CategoriaController {
 			log.error("Erro de processamento", ex);
 			ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
 		}
-
-		return "redirect:/categorias";
 	}
 }

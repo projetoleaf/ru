@@ -35,6 +35,7 @@ import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ExtratoRepository;
 import com.github.projetoleaf.repositories.FeriadoRepository;
+import com.github.projetoleaf.repositories.QuantidadeRefeicaoRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
 import com.github.projetoleaf.repositories.ReservaRepository;
 import com.github.projetoleaf.repositories.StatusRepository;
@@ -71,6 +72,9 @@ public class SemanaAtualController {
 
 	@Autowired
 	private TipoRefeicaoRepository tipoRefeicaoRepository;
+	
+	@Autowired
+	private QuantidadeRefeicaoRepository qtdeRefeicoesRepository;
 
 	@Autowired
 	private ClienteCategoriaRepository clienteCategoriaRepository;
@@ -78,23 +82,13 @@ public class SemanaAtualController {
 	@GetMapping
 	public String pesquisarSemanaAtual(Model model) throws ParseException {
 
-		int count = 0;
+		int countDisponivelSegunda = 0, countDisponivelTerca = 0, countDisponivelQuarta = 0, countDisponivelQuinta = 0, countDisponivelSexta = 0;
+		int countExpiradoSegunda = 0, countExpiradoTerca = 0, countExpiradoQuarta = 0, countExpiradoQuinta = 0, countExpiradoSexta = 0;
+		int countNãoSubsidiadaSegunda = 0, countNãoSubsidiadaTerca = 0, countNãoSubsidiadaQuarta = 0, countNãoSubsidiadaQuinta = 0, countNãoSubsidiadaSexta = 0;
+		
 
-		int countDisponivelSegunda = 0;
-		int countDisponivelTerca = 0;
-		int countDisponivelQuarta = 0;
-		int countDisponivelQuinta = 0;
-		int countDisponivelSexta = 0;
-		int countExpiradoSegunda = 0;
-		int countExpiradoTerca = 0;
-		int countExpiradoQuarta = 0;
-		int countExpiradoQuinta = 0;
-		int countExpiradoSexta = 0;
-		int countNãoSubsidiadaSegunda = 0;
-		int countNãoSubsidiadaTerca = 0;
-		int countNãoSubsidiadaQuarta = 0;
-		int countNãoSubsidiadaQuinta = 0;
-		int countNãoSubsidiadaSexta = 0;
+		int qtdeSubs = qtdeRefeicoesRepository.findAll().get(-1).getSubsidiada();
+		int qtdeCusto = qtdeRefeicoesRepository.findAll().get(-1).getCusto();
 
 		Date segunda = new Date();
 		Date terca = new Date();
@@ -103,7 +97,7 @@ public class SemanaAtualController {
 		Date sexta = new Date();
 
 		Calendar dataHoje = Calendar.getInstance();
-		Calendar dataAtual = Calendar.getInstance();
+		Calendar dataDaSemanaAtual = Calendar.getInstance();
 
 		NumberFormat nf = NumberFormat.getCurrencyInstance();
 		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
@@ -117,169 +111,157 @@ public class SemanaAtualController {
 				&& !(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
 				&& feriadoRepository.findByData(dataHoje.getTime()) == null) {
 
-			for (int z = 0; z < todosOsClientesDoBD.size(); z++) {
+			for (Cliente cliente : todosOsClientesDoBD) {
 
-				dataAtual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);// Define o dia segunda-feira desta semana
+				dataDaSemanaAtual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);// Define o dia segunda-feira desta semana
 				
-				BigDecimal saldo = new BigDecimal(0.00);
-
-				List<Extrato> todosOsExtratos = extratoRepository
-						.buscarTodasTransacoesDoCliente(todosOsClientesDoBD.get(z).getId());
-
-				if (!todosOsExtratos.isEmpty()) {
-					saldo = todosOsExtratos.get(todosOsExtratos.size() - 1).getSaldo();
-				}
+				Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
+				BigDecimal saldo = ultimoExtrato != null ? ultimoExtrato.getSaldo() : new BigDecimal(0.00);
 
 				ReservasAdmin reservasAdmin = new ReservasAdmin();
-				reservasAdmin.setId(Long.valueOf(z));
-				reservasAdmin.setNome(todosOsClientesDoBD.get(z).getNome());
+				reservasAdmin.setId(cliente.getId());
+				reservasAdmin.setNome(cliente.getNome());
 				reservasAdmin.setCreditos(nf.format(saldo));
 
 				for (int i = 0; i < 5; i++) {
 
-					List<Object[]> dataDoBanco = cardapioRepository.verificarSeDataExisteNoBD(dataAtual.getTime());
+					Cardapio dataDoBanco = cardapioRepository.findByData(dataDaSemanaAtual.getTime());
 
-					for (Object[] linhaDoBanco : dataDoBanco) {
+					if (dataDoBanco != null) {
 
 						Calendar cal = Calendar.getInstance();
-						cal.setTime((Date) linhaDoBanco[1]);
+						cal.setTime(dataDoBanco.getData());
 
 						if (dataHoje.get(Calendar.DAY_OF_WEEK) <= cal.get(Calendar.DAY_OF_WEEK)) {
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
 								countDisponivelSegunda = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasPorData(cal.getTime());
 								countExpiradoSegunda = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaSegunda = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
 								countDisponivelTerca = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasPorData(cal.getTime());
 								countExpiradoTerca = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaTerca = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
 								countDisponivelQuarta = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasPorData(cal.getTime());
 								countExpiradoQuarta = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaQuarta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
 								countDisponivelQuinta = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasPorData(cal.getTime());
 								countExpiradoQuinta = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaQuinta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
 								countDisponivelSexta = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasPorData(cal.getTime());
 								countExpiradoSexta = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaSexta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
 							}
 
-							// Verifica se o count disponível é menor que 360 refeições
-							if (countDisponivelSegunda < 360 || countDisponivelTerca < 360
-									|| countDisponivelQuarta < 360 || countDisponivelQuinta < 360
-									|| countDisponivelSexta < 360 || countExpiradoSegunda > 0 || countExpiradoTerca > 0
+							// Verifica se o count disponível é menor que a qtde de refeições subsidiadas
+							if (countDisponivelSegunda < qtdeSubs || countDisponivelTerca < qtdeSubs
+									|| countDisponivelQuarta < qtdeSubs || countDisponivelQuinta < qtdeSubs
+									|| countDisponivelSexta < qtdeSubs || countExpiradoSegunda > 0 || countExpiradoTerca > 0
 									|| countExpiradoQuarta > 0 || countExpiradoQuinta > 0 || countExpiradoSexta > 0) {
 
-								for (int x = 0; x < reservasItensDoBD.size(); x++) {
+								for (ReservaItem reserva : reservasItensDoBD) {//Mudar para query?
 
-									if (todosOsClientesDoBD.get(z).getNome() == reservasItensDoBD.get(x).getReserva()
-											.getCliente().getNome()) {
+									if (cliente.getNome() == reserva.getReserva().getCliente().getNome()) {
 
 										if (reservaItemRepository.verificarSeReservaExiste(
-												todosOsClientesDoBD.get(z).getId(), (Date) linhaDoBanco[1]) != null) {
+												cliente.getId(), cal.getTime()) != null) {
 
 											if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
 												reservasAdmin.setSegundaStatus(
-														reservasItensDoBD.get(x).getStatus().getDescricao());
+														reserva.getStatus().getDescricao());
 											}
 
 											if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
 												reservasAdmin.setTercaStatus(
-														reservasItensDoBD.get(x).getStatus().getDescricao());
+														reserva.getStatus().getDescricao());
 											}
 
 											if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
 												reservasAdmin.setQuartaStatus(
-														reservasItensDoBD.get(x).getStatus().getDescricao());
+														reserva.getStatus().getDescricao());
 											}
 
 											if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
 												reservasAdmin.setQuintaStatus(
-														reservasItensDoBD.get(x).getStatus().getDescricao());
+														reserva.getStatus().getDescricao());
 											}
 
 											if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
 												reservasAdmin.setSextaStatus(
-														reservasItensDoBD.get(x).getStatus().getDescricao());
+														reserva.getStatus().getDescricao());
 											}
 										}
 									}
 								}
 							}
 
-							if (countNãoSubsidiadaSegunda < 140 || countNãoSubsidiadaTerca < 140
-									|| countNãoSubsidiadaQuarta < 140 || countNãoSubsidiadaQuinta < 140
-									|| countNãoSubsidiadaSexta < 140) {
+							if (countNãoSubsidiadaSegunda < qtdeCusto || countNãoSubsidiadaTerca < qtdeCusto
+									|| countNãoSubsidiadaQuarta < qtdeCusto || countNãoSubsidiadaQuinta < qtdeCusto
+									|| countNãoSubsidiadaSexta < qtdeCusto) {
 
-								for (int x = 0; x < reservasItensDoBD.size(); x++) {
+								for (ReservaItem reserva :reservasItensDoBD) {
 
-									if (todosOsClientesDoBD.get(z).getNome() == reservasItensDoBD.get(x)
-											.getReserva().getCliente().getNome()) {
+									if (cliente.getNome() == reserva.getReserva().getCliente().getNome()) {
 
 										if (reservaItemRepository.verificarSeReservaExiste(
-												todosOsClientesDoBD.get(z).getId(),
-												(Date) linhaDoBanco[1]) != null) {
+												cliente.getId(), cal.getTime()) != null) {
 
 											if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
 												reservasAdmin.setSegundaStatus(
-														reservasItensDoBD.get(x).getStatus().getDescricao());
+														reserva.getStatus().getDescricao());
 											}
 
 											if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
 												reservasAdmin.setTercaStatus(
-														reservasItensDoBD.get(x).getStatus().getDescricao());
+														reserva.getStatus().getDescricao());
 											}
 
 											if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
 												reservasAdmin.setQuartaStatus(
-														reservasItensDoBD.get(x).getStatus().getDescricao());
+														reserva.getStatus().getDescricao());
 											}
 
 											if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
 												reservasAdmin.setQuintaStatus(
-														reservasItensDoBD.get(x).getStatus().getDescricao());
+														reserva.getStatus().getDescricao());
 											}
 
 											if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
 												reservasAdmin.setSextaStatus(
-														reservasItensDoBD.get(x).getStatus().getDescricao());
+														reserva.getStatus().getDescricao());
 											}
 										}
 									}
 								}
 							}
-						}					
-					}	
-					
-					if (!dataDoBanco.isEmpty()) {
-
+						}	
+						//Verifica se o status está nulo, caso sim, define status
 						if (reservasAdmin.getSegundaStatus() == null) {
 							reservasAdmin.setSegundaStatus("Não reservado");
 						}
@@ -300,9 +282,9 @@ public class SemanaAtualController {
 							reservasAdmin.setSextaStatus("Não reservado");
 						}
 					} else {
-
+						//Se a data não existir, define o status como indisponível
 						Calendar call = Calendar.getInstance();
-						call.setTime(dataAtual.getTime());
+						call.setTime(dataDaSemanaAtual.getTime());
 
 						if (call.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
 							reservasAdmin.setSegundaStatus("Dia indisponível");
@@ -327,36 +309,34 @@ public class SemanaAtualController {
 
 					switch (i) {
 					case 0:
-						segunda = dataAtual.getTime();
+						segunda = dataDaSemanaAtual.getTime();
 					case 1:
-						terca = dataAtual.getTime();
+						terca = dataDaSemanaAtual.getTime();
 					case 2:
-						quarta = dataAtual.getTime();
+						quarta = dataDaSemanaAtual.getTime();
 					case 3:
-						quinta = dataAtual.getTime();
+						quinta = dataDaSemanaAtual.getTime();
 					case 4:
-						sexta = dataAtual.getTime();
+						sexta = dataDaSemanaAtual.getTime();
+					}
+					
+					if (!(reservasAdmin.getSegundaStatus() == "Não reservado"
+							&& reservasAdmin.getSegundaStatus() == "Dia indisponível"
+							&& reservasAdmin.getTercaStatus() == "Não reservado"
+							&& reservasAdmin.getTercaStatus() == "Dia indisponível"
+							&& reservasAdmin.getQuartaStatus() == "Não reservado"
+							&& reservasAdmin.getQuartaStatus() == "Dia indisponível"
+							&& reservasAdmin.getQuintaStatus() == "Não reservado"
+							&& reservasAdmin.getQuintaStatus() == "Dia indisponível"
+							&& reservasAdmin.getSextaStatus() == "Não reservado"
+							&& reservasAdmin.getSextaStatus() == "Dia indisponível")) {
+						todasAsReservas.add(reservasAdmin);
 					}
 
-					dataAtual.add(Calendar.DAY_OF_MONTH, 1);
-				}
-				
-				if (!(reservasAdmin.getSegundaStatus() == "Não reservado"
-						&& reservasAdmin.getSegundaStatus() == "Dia indisponível"
-						&& reservasAdmin.getTercaStatus() == "Não reservado"
-						&& reservasAdmin.getTercaStatus() == "Dia indisponível"
-						&& reservasAdmin.getQuartaStatus() == "Não reservado"
-						&& reservasAdmin.getQuartaStatus() == "Dia indisponível"
-						&& reservasAdmin.getQuintaStatus() == "Não reservado"
-						&& reservasAdmin.getQuintaStatus() == "Dia indisponível"
-						&& reservasAdmin.getSextaStatus() == "Não reservado"
-						&& reservasAdmin.getSextaStatus() == "Dia indisponível")) {
-					todasAsReservas.add(reservasAdmin);
-				}
+					dataDaSemanaAtual.add(Calendar.DAY_OF_MONTH, 1);
+				}				
 			}
-		} else {
-			count = 1;
-		}
+		} 
 
 		model.addAttribute("listagemSemanaAtual", todasAsReservas);
 		model.addAttribute("segunda", formatoDesejado.format(segunda));
@@ -364,7 +344,6 @@ public class SemanaAtualController {
 		model.addAttribute("quarta", formatoDesejado.format(quarta));
 		model.addAttribute("quinta", formatoDesejado.format(quinta));
 		model.addAttribute("sexta", formatoDesejado.format(sexta));
-		model.addAttribute("holiday", count);
 
 		return "/semanaAtual/pesquisar";
 	}
@@ -375,26 +354,17 @@ public class SemanaAtualController {
 
 		int count = 0;
 
-		int countDisponivelSegunda = 0;
-		int countDisponivelTerca = 0;
-		int countDisponivelQuarta = 0;
-		int countDisponivelQuinta = 0;
-		int countDisponivelSexta = 0;
-		int countExpiradoSegunda = 0;
-		int countExpiradoTerca = 0;
-		int countExpiradoQuarta = 0;
-		int countExpiradoQuinta = 0;
-		int countExpiradoSexta = 0;
-		int countNãoSubsidiadaSegunda = 0;
-		int countNãoSubsidiadaTerca = 0;
-		int countNãoSubsidiadaQuarta = 0;
-		int countNãoSubsidiadaQuinta = 0;
-		int countNãoSubsidiadaSexta = 0;
+		int countDisponivelSegunda = 0, countDisponivelTerca = 0, countDisponivelQuarta = 0, countDisponivelQuinta = 0, countDisponivelSexta = 0;
+		int countExpiradoSegunda = 0,  countExpiradoTerca = 0, countExpiradoQuarta = 0, countExpiradoQuinta = 0, countExpiradoSexta = 0;
+		int countNãoSubsidiadaSegunda = 0, countNãoSubsidiadaTerca = 0, countNãoSubsidiadaQuarta = 0, countNãoSubsidiadaQuinta = 0, countNãoSubsidiadaSexta = 0;
+		
+		int qtdeSubs = qtdeRefeicoesRepository.findAll().get(-1).getSubsidiada();
+		int qtdeCusto = qtdeRefeicoesRepository.findAll().get(-1).getCusto();
 		
 		BigDecimal saldo = new BigDecimal(0.00);
 
 		Calendar dataHoje = Calendar.getInstance();
-		Calendar dataAtual = Calendar.getInstance();
+		Calendar dataDaSemanaAtual = Calendar.getInstance();
 
 		NumberFormat nf = NumberFormat.getCurrencyInstance();
 		SimpleDateFormat formatoDesejado = new SimpleDateFormat("dd/MM/yyyy");
@@ -403,121 +373,107 @@ public class SemanaAtualController {
 		ClienteCategoria clienteCategoria = clienteCategoriaRepository.findByCliente(cliente);
 		
 		List<Integer> contadores = new ArrayList<Integer>();
-		List<Cardapio> cardapio = new ArrayList<Cardapio>();
+		List<String> todasAsDatas = new ArrayList<String>();
 		
 		if (!(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
 				&& !(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
 				&& feriadoRepository.findByData(dataHoje.getTime()) == null) {
 			
-				dataAtual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);// Define o dia segunda-feira desta semana
+				dataDaSemanaAtual.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);// Define o dia segunda-feira desta semana
 
-				List<Extrato> todosOsExtratos = extratoRepository
-						.buscarTodasTransacoesDoCliente(cliente.getId());
-
-				if (!todosOsExtratos.isEmpty()) {
-					saldo = todosOsExtratos.get(todosOsExtratos.size() - 1).getSaldo();
-				}
+				Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
+				saldo = ultimoExtrato != null ? ultimoExtrato.getSaldo() : new BigDecimal(0.00);
 
 				for (int i = 0; i < 5; i++) {
 
-					Cardapio c = new Cardapio();
-					List<Object[]> dataDoBanco = cardapioRepository.verificarSeDataExisteNoBD(dataAtual.getTime());
+					Cardapio dataDoBanco = cardapioRepository.findByData(dataDaSemanaAtual.getTime());
 
-					for (Object[] linhaDoBanco : dataDoBanco) {
-						
-						String dataFormatada = formatoDesejado.format((Date) linhaDoBanco[1]);
-						Date dataVar = formatoDesejado.parse(dataFormatada);
-
+					if (dataDoBanco != null) {
+		
 						Calendar cal = Calendar.getInstance();
-						cal.setTime((Date) linhaDoBanco[1]);
+						cal.setTime(dataDoBanco.getData());
 
 						if (dataHoje.get(Calendar.DAY_OF_WEEK) <= cal.get(Calendar.DAY_OF_WEEK)) {
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
 								countDisponivelSegunda = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasPorData(cal.getTime());
 								countExpiradoSegunda = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaSegunda = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
 								countDisponivelTerca = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasPorData(cal.getTime());
 								countExpiradoTerca = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaTerca = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
 								countDisponivelQuarta = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasPorData(cal.getTime());
 								countExpiradoQuarta = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaQuarta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
 								countDisponivelQuinta = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasPorData(cal.getTime());
 								countExpiradoQuinta = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaQuinta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
 								countDisponivelSexta = reservaItemRepository
-										.qtdeDeReservasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasPorData(cal.getTime());
 								countExpiradoSexta = reservaItemRepository
-										.qtdeDeReservasExpiradasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaSexta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData((Date) linhaDoBanco[1]);
+										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
 							}
 
-							// Verifica se o count disponível é menor que 360 refeições
-							if (countDisponivelSegunda < 360 || countDisponivelTerca < 360
-									|| countDisponivelQuarta < 360 || countDisponivelQuinta < 360
-									|| countDisponivelSexta < 360 || countExpiradoSegunda > 0 || countExpiradoTerca > 0
+							// Verifica se o count disponível é menor que a qtde de refeições subsidiadas
+							if (countDisponivelSegunda < qtdeSubs || countDisponivelTerca < qtdeSubs
+									|| countDisponivelQuarta < qtdeSubs || countDisponivelQuinta < qtdeSubs
+									|| countDisponivelSexta < qtdeSubs || countExpiradoSegunda > 0 || countExpiradoTerca > 0
 									|| countExpiradoQuarta > 0 || countExpiradoQuinta > 0 || countExpiradoSexta > 0) {
 
-								c.setId((Long) linhaDoBanco[0]);
-								c.setData(dataVar);
-
 								if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
-										(Date) linhaDoBanco[1]) == null) {
-									cardapio.add(c);
+										cal.getTime()) == null) {
 									
+									todasAsDatas.add(formatoDesejado.format(cal.getTime()));									
 									count = 1;
 								}					
 							}
 
-							if (countNãoSubsidiadaSegunda < 140 || countNãoSubsidiadaTerca < 140
-									|| countNãoSubsidiadaQuarta < 140 || countNãoSubsidiadaQuinta < 140
-									|| countNãoSubsidiadaSexta < 140) {
+							if (countNãoSubsidiadaSegunda < qtdeCusto || countNãoSubsidiadaTerca < qtdeCusto
+									|| countNãoSubsidiadaQuarta < qtdeCusto || countNãoSubsidiadaQuinta < qtdeCusto
+									|| countNãoSubsidiadaSexta < qtdeCusto) {
 
 								if (count == 0) {
 
-									c.setId((Long) linhaDoBanco[0]);
-									c.setData(dataVar);
-
 									if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
-											(Date) linhaDoBanco[1]) == null) {
+											cal.getTime()) == null) {
 										
 										int caiu = 0;
 										
-										for(Cardapio daLista : cardapio) {
+										for(String daLista : todasAsDatas) {
 											
-											if(daLista.getData().equals(dataVar)) {
+											if(daLista.equals(formatoDesejado.format(cal.getTime()))) {
 												caiu = 1;
 											}
 										}
 											
 										if(caiu == 0) {
-											cardapio.add(c);
+											todasAsDatas.add(formatoDesejado.format(cal.getTime()));
 										}										
 										
 										count = 2;						
@@ -525,23 +481,20 @@ public class SemanaAtualController {
 
 								} else {
 
-									c.setId((Long) linhaDoBanco[0]);
-									c.setData(dataVar);
-
 									if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(),
-											(Date) linhaDoBanco[1]) == null) {
+											cal.getTime()) == null) {
 										
 										int caiu = 0;
 										
-										for(Cardapio daLista : cardapio) {
+										for(String daLista : todasAsDatas) {
 											
-											if(daLista.getData().equals(dataVar)) {
+											if(daLista.equals(formatoDesejado.format(cal.getTime()))) {
 												caiu = 1;
 											}
 										}
 											
 										if(caiu == 0) {
-											cardapio.add(c);
+											todasAsDatas.add(formatoDesejado.format(cal.getTime()));
 										}	
 										
 										count = 3;
@@ -553,64 +506,62 @@ public class SemanaAtualController {
 						}					
 					}	
 
-					dataAtual.add(Calendar.DAY_OF_MONTH, 1);
+					dataDaSemanaAtual.add(Calendar.DAY_OF_MONTH, 1);
 				}
 			}
 		
 		model.addAttribute("nome", nome);
 		model.addAttribute("contadores", contadores);
 		model.addAttribute("saldo", nf.format(saldo));
-		model.addAttribute("todasAsDatas", cardapio);
+		model.addAttribute("todasAsDatas", todasAsDatas);
 		model.addAttribute("semanaAtual", new ReservasAdmin());
 		model.addAttribute("valorRefeicaoS", clienteCategoria.getCategoria().getValorComSubsidio());
 		model.addAttribute("valorRefeicaoC", clienteCategoria.getCategoria().getValorSemSubsidio());
 
 		
 		ObjectMapper mapper = new ObjectMapper();// jackson lib for converting to json
-		String objectJSON = mapper.writeValueAsString(cardapio);// json string
+		String objectJSON = mapper.writeValueAsString(todasAsDatas);// json string
 		model.addAttribute("objectJSON", objectJSON);
 
 		return "/semanaAtual/pagamento";
 	}
 
 	@PostMapping("/salvar")
-	public String salvarSemanaAtual(@RequestParam("nome") String nome, @RequestParam("data") Integer[] idsCardapios,
+	public String salvarSemanaAtual(@RequestParam("nome") String nome, @RequestParam("data") String[] Datas,
 			@RequestParam("tipoRefeicao") Integer[] idsTipoRefeicao,
 			@RequestParam("tipoValor") Integer[] idsTipoValor,
 			@RequestParam(value = "valor", required = false) String valor,
 			@RequestParam(value = "recargas", required = false) String recargas,
-			@RequestParam(value = "utilizarCreditos", required = false) Boolean creditos) {
+			@RequestParam(value = "utilizarCreditos", required = false) Boolean creditos) throws ParseException {
 
 		Cliente cliente = clienteRepository.findByNome(nome);
 		
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis()); // Data e hora atual
+		SimpleDateFormat formatoDesejado = new SimpleDateFormat("yyyy-MM-dd");
 		
 		List<Integer> tiposValoresCusto = new ArrayList<Integer>();
 		List<Integer> tiposRefeicoesCusto = new ArrayList<Integer>();
-		List<Integer> datasSelecionadasCusto = new ArrayList<Integer>();
+		List<String> datasSelecionadasCusto = new ArrayList<String>();
 		List<Integer> tiposValoresSubsidiada = new ArrayList<Integer>();
 		List<Integer> tiposRefeicoesSubsidiada = new ArrayList<Integer>();
 		List<Integer> tiposRefeicoesSelecionados = new ArrayList<Integer>();		
-		List<Integer> datasSelecionadasSubsidiada = new ArrayList<Integer>();	
+		List<String> datasSelecionadasSubsidiada = new ArrayList<String>();	
 		
 		for (int z = 0; z < idsTipoRefeicao.length; z++) {
-
 			if (idsTipoRefeicao[z] != null) {
 				tiposRefeicoesSelecionados.add(idsTipoRefeicao[z]);
 			}
 		}
 
 		for (int z = 0; z < idsTipoValor.length; z++) {
-
 			if (idsTipoValor[z] != null) {
-
 				if (idsTipoValor[z] % 2 == 0) {
 					tiposValoresSubsidiada.add(idsTipoValor[z]);
-					datasSelecionadasSubsidiada.add(idsCardapios[z]);
+					datasSelecionadasSubsidiada.add(Datas[z]);
 					tiposRefeicoesSubsidiada.add(tiposRefeicoesSelecionados.get(z));
 				} else {
 					tiposValoresCusto.add(idsTipoValor[z]);
-					datasSelecionadasCusto.add(idsCardapios[z]);
+					datasSelecionadasCusto.add(Datas[z]);
 					tiposRefeicoesCusto.add(tiposRefeicoesSelecionados.get(z));
 				}
 			}
@@ -629,18 +580,15 @@ public class SemanaAtualController {
 
 					reservaRepository.save(reserva);
 
-					List<Reserva> todasAsReservasDoCliente = reservaRepository.todasAsReservasDoCliente(cliente);
-					Long id = todasAsReservasDoCliente.get(todasAsReservasDoCliente.size() - 1).getId();
+					Long ultimaReserva = reservaRepository.findFirstByClienteOrderByIdDesc(cliente).getId();
 
-					for (int x = 0; x <= datasSelecionadasSubsidiada.size() - 1; x++) {
-
-						Extrato extrato = null;							
+					for (int x = 0; x <= datasSelecionadasSubsidiada.size() - 1; x++) {						
 						Reserva r = new Reserva();
 						Cardapio c = new Cardapio();
 						ReservaItem reservaItem = new ReservaItem();	
 
-						r.setId(id);
-						c.setId(datasSelecionadasSubsidiada.get(x).longValue());
+						r.setId(ultimaReserva);
+						c.setId(cardapioRepository.findByData(formatoDesejado.parse(datasSelecionadasSubsidiada.get(x))).getId());
 
 						reservaItem.setReserva(r);
 						reservaItem.setCardapio(c);
@@ -648,7 +596,7 @@ public class SemanaAtualController {
 						reservaItem.setTipoRefeicao(tiposRefeicoesSelecionados.get(x) % 2 == 0
 								? tipoRefeicaoRepository.findByDescricao("Vegetariano")
 										: tipoRefeicaoRepository.findByDescricao("Tradicional"));
-						reservaItem.setExtrato(extrato);
+						reservaItem.setExtrato(null);
 
 						reservaItemRepository.save(reservaItem);
 					}
@@ -663,18 +611,15 @@ public class SemanaAtualController {
 
 					reservaRepository.save(reserva);
 
-					List<Reserva> todasAsReservasDoCliente = reservaRepository.todasAsReservasDoCliente(cliente);
-					Long id = todasAsReservasDoCliente.get(todasAsReservasDoCliente.size() - 1).getId();
+					Long ultimaReserva = reservaRepository.findFirstByClienteOrderByIdDesc(cliente).getId();
 
-					for (int x = 0; x <= datasSelecionadasCusto.size() - 1; x++) {
-
-						Extrato extrato = null;			
+					for (int x = 0; x <= datasSelecionadasCusto.size() - 1; x++) {		
 						Reserva r = new Reserva();
 						Cardapio c = new Cardapio();
 						ReservaItem reservaItem = new ReservaItem();
 
-						r.setId(id);
-						c.setId(datasSelecionadasCusto.get(x).longValue());
+						r.setId(ultimaReserva);
+						c.setId(cardapioRepository.findByData(formatoDesejado.parse(datasSelecionadasCusto.get(x))).getId());
 
 						reservaItem.setReserva(r);
 						reservaItem.setCardapio(c);
@@ -682,7 +627,7 @@ public class SemanaAtualController {
 						reservaItem.setTipoRefeicao(tiposRefeicoesSelecionados.get(x) % 2 == 0
 								? tipoRefeicaoRepository.findByDescricao("Vegetariano")
 										: tipoRefeicaoRepository.findByDescricao("Tradicional"));
-						reservaItem.setExtrato(extrato);
+						reservaItem.setExtrato(null);
 
 						reservaItemRepository.save(reservaItem);
 					}
@@ -690,13 +635,8 @@ public class SemanaAtualController {
 				
 			} else {
 				
-				List<Extrato> todosOsExtratos = extratoRepository.buscarTodasTransacoesDoCliente(cliente.getId());
-
-				BigDecimal saldo = new BigDecimal(0.00);
-
-				if (!todosOsExtratos.isEmpty()) {
-					saldo = todosOsExtratos.get(todosOsExtratos.size() - 1).getSaldo();
-				}
+				Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
+				BigDecimal saldo = ultimoExtrato != null ? ultimoExtrato.getSaldo() : new BigDecimal(0.00);
 
 				Extrato extrato = new Extrato();
 				extrato.setCliente(cliente);
@@ -715,18 +655,15 @@ public class SemanaAtualController {
 
 					reservaRepository.save(reserva);
 
-					List<Reserva> todasAsReservasDoCliente = reservaRepository.todasAsReservasDoCliente(cliente);
-					Long id = todasAsReservasDoCliente.get(todasAsReservasDoCliente.size() - 1).getId();
+					Long ultimaReserva = reservaRepository.findFirstByClienteOrderByIdDesc(cliente).getId();
 
-					for (int x = 0; x <= datasSelecionadasSubsidiada.size() - 1; x++) {
-
-						Extrato e = null;							
+					for (int x = 0; x <= datasSelecionadasSubsidiada.size() - 1; x++) {			
 						Reserva r = new Reserva();
 						Cardapio c = new Cardapio();
 						ReservaItem reservaItem = new ReservaItem();	
 
-						r.setId(id);
-						c.setId(datasSelecionadasSubsidiada.get(x).longValue());
+						r.setId(ultimaReserva);
+						c.setId(cardapioRepository.findByData(formatoDesejado.parse(datasSelecionadasSubsidiada.get(x))).getId());
 
 						reservaItem.setReserva(r);
 						reservaItem.setCardapio(c);
@@ -734,14 +671,13 @@ public class SemanaAtualController {
 						reservaItem.setTipoRefeicao(tiposRefeicoesSelecionados.get(x) % 2 == 0
 								? tipoRefeicaoRepository.findByDescricao("Vegetariano")
 										: tipoRefeicaoRepository.findByDescricao("Tradicional"));
-						reservaItem.setExtrato(e);
+						reservaItem.setExtrato(null);
 
 						reservaItemRepository.save(reservaItem);
 					}
 				}
 				
-				if (!tiposValoresCusto.isEmpty()) {
-					
+				if (!tiposValoresCusto.isEmpty()) {					
 					Reserva reserva = new Reserva();
 					reserva.setCliente(cliente);
 					reserva.setDataReserva(timestamp);
@@ -749,18 +685,15 @@ public class SemanaAtualController {
 
 					reservaRepository.save(reserva);
 
-					List<Reserva> todasAsReservasDoCliente = reservaRepository.todasAsReservasDoCliente(cliente);
-					Long id = todasAsReservasDoCliente.get(todasAsReservasDoCliente.size() - 1).getId();
+					Long ultimaReserva = reservaRepository.findFirstByClienteOrderByIdDesc(cliente).getId();
 
 					for (int x = 0; x <= datasSelecionadasCusto.size() - 1; x++) {
-
-						Extrato e = null;			
 						Reserva r = new Reserva();
 						Cardapio c = new Cardapio();
 						ReservaItem reservaItem = new ReservaItem();
 
-						r.setId(id);
-						c.setId(datasSelecionadasCusto.get(x).longValue());
+						r.setId(ultimaReserva);
+						c.setId(cardapioRepository.findByData(formatoDesejado.parse(datasSelecionadasCusto.get(x))).getId());
 
 						reservaItem.setReserva(r);
 						reservaItem.setCardapio(c);
@@ -768,7 +701,7 @@ public class SemanaAtualController {
 						reservaItem.setTipoRefeicao(tiposRefeicoesSelecionados.get(x) % 2 == 0
 								? tipoRefeicaoRepository.findByDescricao("Vegetariano")
 										: tipoRefeicaoRepository.findByDescricao("Tradicional"));
-						reservaItem.setExtrato(e);
+						reservaItem.setExtrato(null);
 
 						reservaItemRepository.save(reservaItem);
 					}
@@ -776,13 +709,8 @@ public class SemanaAtualController {
 			}
 		} else {
 			
-			List<Extrato> todosOsExtratos = extratoRepository.buscarTodasTransacoesDoCliente(cliente.getId());
-
-			BigDecimal saldo = new BigDecimal(0.00);
-
-			if (!todosOsExtratos.isEmpty()) {
-				saldo = todosOsExtratos.get(todosOsExtratos.size() - 1).getSaldo();
-			}
+			Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
+			BigDecimal saldo = ultimoExtrato != null ? ultimoExtrato.getSaldo() : new BigDecimal(0.00);
 
 			Extrato extrato = new Extrato();
 			extrato.setCliente(cliente);
@@ -791,16 +719,8 @@ public class SemanaAtualController {
 			extrato.setSaldo(saldo.add(new BigDecimal(recargas.replaceAll(",", "."))));
 
 			extratoRepository.save(extrato);
-
-			ClienteCategoria clienteCategoria = clienteCategoriaRepository.findByCliente(cliente);
 			
-			List<Extrato> ultimoSaldoAtualizado = extratoRepository.buscarTodasTransacoesDoCliente(cliente.getId());
-
-			BigDecimal saldoAtualizado = new BigDecimal(0.00);
-
-			if (!ultimoSaldoAtualizado.isEmpty()) {
-				saldoAtualizado = ultimoSaldoAtualizado.get(ultimoSaldoAtualizado.size() - 1).getSaldo();
-			}
+			BigDecimal saldoAtualizado = extratoRepository.findFirstByClienteOrderByIdDesc(cliente).getSaldo();
 			
 			if (!tiposValoresSubsidiada.isEmpty()) {
 				
@@ -808,8 +728,8 @@ public class SemanaAtualController {
 				eSubsidiada.setCliente(cliente);
 				eSubsidiada.setDataTransacao(timestamp);
 
-				BigDecimal transacao = BigDecimal.valueOf(idsCardapios.length)
-						.multiply(clienteCategoria.getCategoria().getValorComSubsidio());
+				BigDecimal transacao = BigDecimal.valueOf(Datas.length)
+						.multiply(clienteCategoriaRepository.findByCliente(cliente).getCategoria().getValorComSubsidio());
 
 				eSubsidiada.setSaldo(saldoAtualizado.subtract(transacao));
 				eSubsidiada.setTransacao(transacao.negate());
@@ -823,17 +743,15 @@ public class SemanaAtualController {
 
 				reservaRepository.save(reserva);
 
-				List<Reserva> todasAsReservasDoCliente = reservaRepository.todasAsReservasDoCliente(cliente);
-				Long id = todasAsReservasDoCliente.get(todasAsReservasDoCliente.size() - 1).getId();
+				Long ultimaReserva = reservaRepository.findFirstByClienteOrderByIdDesc(cliente).getId();
 
-				for (int x = 0; x <= datasSelecionadasSubsidiada.size() - 1; x++) {
-					
+				for (int x = 0; x <= datasSelecionadasSubsidiada.size() - 1; x++) {					
 					Reserva r = new Reserva();
 					Cardapio c = new Cardapio();
 					ReservaItem reservaItem = new ReservaItem();	
 
-					r.setId(id);
-					c.setId(datasSelecionadasSubsidiada.get(x).longValue());
+					r.setId(ultimaReserva);
+					c.setId(cardapioRepository.findByData(formatoDesejado.parse(datasSelecionadasSubsidiada.get(x))).getId());
 
 					reservaItem.setReserva(r);
 					reservaItem.setCardapio(c);
@@ -853,8 +771,8 @@ public class SemanaAtualController {
 				eCusto.setCliente(cliente);
 				eCusto.setDataTransacao(timestamp);
 
-				BigDecimal transacao = BigDecimal.valueOf(idsCardapios.length)
-						.multiply(clienteCategoria.getCategoria().getValorSemSubsidio());
+				BigDecimal transacao = BigDecimal.valueOf(Datas.length)
+						.multiply(clienteCategoriaRepository.findByCliente(cliente).getCategoria().getValorSemSubsidio());
 
 				eCusto.setSaldo(saldoAtualizado.subtract(transacao));
 				eCusto.setTransacao(transacao.negate());
@@ -868,17 +786,15 @@ public class SemanaAtualController {
 
 				reservaRepository.save(reserva);
 
-				List<Reserva> todasAsReservasDoCliente = reservaRepository.todasAsReservasDoCliente(cliente);
-				Long id = todasAsReservasDoCliente.get(todasAsReservasDoCliente.size() - 1).getId();
+				Long ultimaReserva = reservaRepository.findFirstByClienteOrderByIdDesc(cliente).getId();
 
-				for (int x = 0; x <= datasSelecionadasCusto.size() - 1; x++) {
-	
+				for (int x = 0; x <= datasSelecionadasCusto.size() - 1; x++) {	
 					Reserva r = new Reserva();
 					Cardapio c = new Cardapio();
 					ReservaItem reservaItem = new ReservaItem();
 
-					r.setId(id);
-					c.setId(datasSelecionadasCusto.get(x).longValue());
+					r.setId(ultimaReserva);
+					c.setId(cardapioRepository.findByData(formatoDesejado.parse(datasSelecionadasCusto.get(x))).getId());
 
 					reservaItem.setReserva(r);
 					reservaItem.setCardapio(c);
