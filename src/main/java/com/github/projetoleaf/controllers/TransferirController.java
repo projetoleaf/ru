@@ -63,8 +63,21 @@ public class TransferirController {
 	
 	@PostMapping("/verificartransferir")
 	public @ResponseBody boolean verificarTransferir() {
+		primeiroAcesso();
+
 		return verificarReservaPaga();
     }
+	
+	public String primeiroAcesso() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		String retorno = null;
+		
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			retorno =  "redirect:/boasvindas";
+		
+		return retorno;
+	}
 	
 	@RequestMapping("/transferir")
 	public String carregarTransferir(Model model) {

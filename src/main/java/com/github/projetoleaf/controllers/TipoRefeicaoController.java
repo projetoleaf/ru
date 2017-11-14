@@ -2,11 +2,15 @@ package com.github.projetoleaf.controllers;
 
 import javax.validation.Valid;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,9 +19,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.projetoleaf.beans.TipoRefeicao;
+import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.TipoRefeicaoRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +41,16 @@ public class TipoRefeicaoController {
 
 	@Autowired
 	private TipoRefeicaoRepository repository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
 
 	@GetMapping
 	public String pesquisarTipoRefeicao(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
+		
 		model.addAttribute("listagemTiposRefeicoes", repository.findAll(new Sort(Sort.Direction.ASC, "descricao")));
 		return "/tiposRefeicoes/pesquisar";
 	}
@@ -77,17 +91,18 @@ public class TipoRefeicaoController {
 
 	}
 
-	@GetMapping("/excluir/{id}")
-	public String excluirTipoRefeicao(RedirectAttributes ra, @PathVariable Long id) {
+	@PostMapping("/excluir")
+	public @ResponseBody String excluirTipoRefeicao(RedirectAttributes ra, @RequestParam("descricao") String descricao) throws JSONException {
+		JSONObject json = new JSONObject();
+		
 		try {
+			Long id = repository.findByDescricao(descricao).getId();	
 			repository.delete(id);
-			log.info("Tipo de Refeição #" + id + " excluído com sucesso");
-			ra.addFlashAttribute("mensagemInfo", config.getMessage("excluidoSucesso", new Object[] { "o tipo" }, null));
+			json.put("sucesso", new Boolean(true));
 		} catch (Exception ex) {
-			log.error("Erro de processamento", ex);
-			ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+			json.put("erro", "exclusao");
 		}
 
-		return "redirect:/tiposRefeicoes";
+		return json.toString();
 	}
 }

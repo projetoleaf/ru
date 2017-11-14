@@ -17,6 +17,8 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.github.projetoleaf.beans.Cliente;
 import com.github.projetoleaf.beans.Extrato;
+import com.github.projetoleaf.beans.RefeicoesPorDia;
 import com.github.projetoleaf.beans.Relatorios;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ExtratoRepository;
@@ -49,15 +52,19 @@ public class PlanilhasController {
 
 	@GetMapping
 	public String planilhas(Model model) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
 
 		List<String> planilhas = new ArrayList<String>();
-		planilhas.add("Cursos");
-		planilhas.add("Período");
+		planilhas.add("Refeições por Dia");
+	/*	planilhas.add("Período");
 		planilhas.add("Faculdade");
 		planilhas.add("Refeição");
 		planilhas.add("Idade");
 		planilhas.add("Sexo");
-		planilhas.add("Venda por categoria");
+		planilhas.add("Venda por categoria");*/
 
 		model.addAttribute("planilhas", planilhas);
 		model.addAttribute("tiposPlanilhas", new Relatorios());
@@ -70,14 +77,14 @@ public class PlanilhasController {
 			HttpServletResponse response) throws IOException {
 
 		XSSFWorkbook workbook = new XSSFWorkbook();
-		XSSFSheet sheet = workbook.createSheet("Teste");
+		XSSFSheet sheet = workbook.createSheet("Refeições por Dia");
 		XSSFRow row;
 
-		Map<String, Object[]> dados = new TreeMap<String, Object[]>();
+		List<RefeicoesPorDia> dados = new ArrayList<RefeicoesPorDia>();
 		List<Cliente> todosOsClientes = clienteRepository.findAll();
 
 		int numero = 1;
-		dados.put(String.valueOf(numero), new Object[] { "Nome", "Saldo" });
+		/*dados.put(String.valueOf(numero), new Object[] { "Nome", "Saldo" });
 
 		for (Cliente cliente : todosOsClientes) {
 			numero++;
@@ -98,10 +105,10 @@ public class PlanilhasController {
 				Cell cell = row.createCell(cellid++);
 				cell.setCellValue((String) obj);
 			}
-		}
+		}*/
 
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-		response.setHeader("Content-Disposition", "attachment; filename=Teste.xlsx");
+		response.setHeader("Content-Disposition", "attachment; filename=RefeicoesPorDia.xlsx");
 
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		workbook.write(byteArrayOutputStream);

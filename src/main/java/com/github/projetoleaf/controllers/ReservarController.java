@@ -88,6 +88,10 @@ public class ReservarController {
 	
 	@PostMapping("/verificarreservar")
 	public @ResponseBody String verificarReservar() throws JSONException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
+		
 		return verificar();
     }
 	
@@ -115,7 +119,7 @@ public class ReservarController {
 			json.put("erro", "data");
 			verifica = false;
 		}
-		else if(pagamento == 2) {
+		else if(pagamento == 1) {
 			Extrato ultimoExtrato = extratoRepository.findFirstByClienteOrderByIdDesc(cliente);
 			BigDecimal saldo = ultimoExtrato != null ? ultimoExtrato.getSaldo() : new BigDecimal(0.00);
 			if(categoria.getCategoria().getValorComSubsidio().multiply(new BigDecimal(datas.length)).compareTo(saldo) > 0) {
@@ -188,11 +192,11 @@ public class ReservarController {
 			} else
 				extrato = null;
 
-			for (int x = 0; x <= datas.length - 1; x++) {				
+			for (int x = 0; x < datas.length; x++) {				
 				ReservaItem reservaItem = new ReservaItem();
 				Status s = new Status();
 				
-				s = pagamento == 1 ? statusRepository.findByDescricao("Pago") : statusRepository.findByDescricao("Solicitado");
+				s = pagamento == 1 ? statusRepository.findByDescricao("Paga") : statusRepository.findByDescricao("Solicitada");
 				
 				reservaItem.setReserva(ultimaReserva);
 				reservaItem.setCardapio(cardapioRepository.findByData(formatar.parse(datas[x])));

@@ -9,6 +9,8 @@
 	<meta name="header" content="Meus Dados"/>
 	<title>Meus Dados</title>
 	<link rel="stylesheet" href="<c:url value="resources/css/geral.css"/>" type="text/css"/>
+	<meta name="_csrf" content="${_csrf.token}"/>
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 <body>
 	<div class="panel panel-primary col-xs-12 col-md-8 col-md-offset-2">
@@ -71,5 +73,6 @@
 		</div>
 	  </div>
 	</div>
+	<jsp:include page="verifica.jsp"/>
 </body>
 </html>

@@ -85,6 +85,10 @@ public class RemanescentesClienteController {
 
 	@PostMapping("/verificarremanescente")
 	public @ResponseBody String verificarRemanescente() throws JSONException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
+		
 		return verificar();
 	}
 
@@ -284,7 +288,7 @@ public class RemanescentesClienteController {
 				ReservaItem reservaItem = new ReservaItem();
 				reservaItem.setReserva(ultimaReserva);
 				reservaItem.setCardapio(cardapioRepository.findByData(formatar.parse(datas[x])));
-				reservaItem.setStatus(statusRepository.findByDescricao("Pago"));
+				reservaItem.setStatus(statusRepository.findByDescricao("Paga"));
 				reservaItem.setTipoRefeicao(tipoRefeicaoRepository.findByDescricao(tipos[x]));
 				reservaItem.setExtrato(extrato);
 				reservaItemRepository.save(reservaItem);

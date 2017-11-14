@@ -1,12 +1,18 @@
 package com.github.projetoleaf.controllers;
 
+import java.util.Date;
+
 import javax.validation.Valid;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,9 +21,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.projetoleaf.beans.Feriado;
+import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.FeriadoRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +43,16 @@ public class FeriadoController {
 
 	@Autowired
 	private FeriadoRepository repository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
 
 	@GetMapping
 	public String pesquisarFeriado(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
+		
 		model.addAttribute("listagemFeriados", repository.findAll(new Sort(Sort.Direction.ASC, "descricao")));
 		return "/feriados/pesquisar";
 	}
@@ -76,18 +92,18 @@ public class FeriadoController {
 
 	}
 
-	@PostMapping("/excluir/{id}")
-	public String excluirFeriado(RedirectAttributes ra, @PathVariable Long id) {
+	@PostMapping("/excluir")
+	public @ResponseBody String excluirFeriado(RedirectAttributes ra, @RequestParam("data") Date data) throws JSONException {
+		JSONObject json = new JSONObject();
+		
 		try {
+			Long id = repository.findByData(data).getId();
 			repository.delete(id);
-			log.info("Feriado #" + id + " excluído com sucesso");
-			ra.addFlashAttribute("mensagemInfo",
-					config.getMessage("excluidoSucesso", new Object[] { "o feriado" }, null));
+			json.put("sucesso", new Boolean(true));
 		} catch (Exception ex) {
-			log.error("Erro de processamento", ex);
-			ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+			json.put("erro", "exclusao");
 		}
 
-		return "redirect:/feriados";
+		return json.toString();
 	}
 }

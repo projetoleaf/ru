@@ -24,14 +24,23 @@ public interface ReservaItemRepository extends JpaRepository<ReservaItem, Long> 
 	@Query("SELECT r.id FROM ReservaItem r WHERE r.reserva.cliente.id = ?1 AND r.cardapio.data = ?2")
 	Long verificarSeReservaExiste(Long idCliente, Date data);	
 	
-	@Query("SELECT r FROM ReservaItem r WHERE r.reserva.cliente.id = ?1 AND r.status.descricao != 'Expirado'")
+	@Query("SELECT r FROM ReservaItem r WHERE r.reserva.cliente.id = ?1 AND r.status.descricao != 'Expirada'")
 	List<ReservaItem> reservasDoClienteTransferido(Long idCliente);
 	
-	@Query("SELECT COUNT(cardapio.data) FROM ReservaItem r WHERE r.cardapio.data = ?1 AND r.status.descricao = 'Expirado'")
+	@Query("SELECT COUNT(cardapio.data) FROM ReservaItem r WHERE r.cardapio.data = ?1 AND r.status.descricao = 'Expirada'")
 	Integer qtdeDeReservasExpiradasPorData(Date data);
 	
-	@Query("SELECT r FROM ReservaItem r WHERE r.reserva.cliente.id = ?1 AND r.cardapio.data = ?2 AND r.status.descricao = 'Pago'")
+	@Query("SELECT r FROM ReservaItem r WHERE r.reserva.cliente.id = ?1 AND r.cardapio.data = ?2 AND r.status.descricao = 'Paga'")
 	ReservaItem buscarReserva(Long idCliente, Date data);
+	
+	@Query("SELECT COUNT(r) FROM ReservaItem r WHERE r.cardapio.data = ?1 AND r.tipoRefeicao.descricao = 'Tradicional' AND r.status.descricao = 'Paga'")
+	Integer qtdeDeReservasTradicional(Date data);
+	
+	@Query("SELECT COUNT(r) FROM ReservaItem r WHERE r.cardapio.data = ?1 AND r.tipoRefeicao.descricao = 'Vegetariano' AND r.status.descricao = 'Paga'")
+	Integer qtdeDeReservasVegetariano(Date data);
+	
+	@Query("SELECT COUNT(r) FROM ReservaItem r WHERE r.cardapio.data = ?1 AND r.tipoRefeicao.descricao = 'Vegano' AND r.status.descricao = 'Paga'")
+	Integer qtdeDeReservasVegano(Date data);
 	
 	@Query("SELECT COUNT(cardapio.data) FROM ReservaItem r WHERE r.cardapio.data = ?1 AND r.reserva.tipoValor.descricao = 'Subsidiada'")
 	Integer qtdeDeReservasPorData(Date data);
@@ -39,6 +48,6 @@ public interface ReservaItemRepository extends JpaRepository<ReservaItem, Long> 
 	@Query("SELECT COUNT(cardapio.data) FROM ReservaItem r WHERE r.cardapio.data = ?1 AND r.reserva.tipoValor.descricao != 'Subsidiada'")
 	Integer qtdeDeReservasNãoSubsidiadasPorData(Date data);	
 	
-	@Query("SELECT r FROM ReservaItem r WHERE r.reserva.cliente.id = ?1 AND r.status.descricao = 'Pago' AND r.reserva.tipoValor.descricao = 'Subsidiada'")
+	@Query("SELECT r FROM ReservaItem r WHERE r.reserva.cliente.id = ?1 AND r.status.descricao = 'Paga' AND r.reserva.tipoValor.descricao = 'Subsidiada'")
 	List<ReservaItem> buscarReservasPagaSubsidiada(Long idCliente);
 }

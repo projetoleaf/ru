@@ -17,6 +17,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,6 +87,10 @@ public class RemanescentesAdminController {
 
 	@GetMapping
 	public String pesquisarRemanescentes(Model model) throws ParseException {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
 
 		int countSegunda = 0, countTerca = 0, countQuarta = 0, countQuinta = 0, countSexta = 0,
 				countDisponivelSegunda = 0, countDisponivelTerca = 0, countDisponivelQuarta = 0,

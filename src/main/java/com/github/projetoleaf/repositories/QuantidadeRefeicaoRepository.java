@@ -8,4 +8,5 @@ import com.github.projetoleaf.beans.QuantidadeRefeicao;
 @Repository
 public interface QuantidadeRefeicaoRepository extends JpaRepository<QuantidadeRefeicao, Long> {
 
+	QuantidadeRefeicao findBySubsidiada(Integer subsidiada);
 }

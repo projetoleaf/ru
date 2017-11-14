@@ -15,6 +15,8 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,6 +83,10 @@ public class SemanaAtualController {
 
 	@GetMapping
 	public String pesquisarSemanaAtual(Model model) throws ParseException {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
 
 		int countDisponivelSegunda = 0, countDisponivelTerca = 0, countDisponivelQuarta = 0, countDisponivelQuinta = 0, countDisponivelSexta = 0;
 		int countExpiradoSegunda = 0, countExpiradoTerca = 0, countExpiradoQuarta = 0, countExpiradoQuinta = 0, countExpiradoSexta = 0;

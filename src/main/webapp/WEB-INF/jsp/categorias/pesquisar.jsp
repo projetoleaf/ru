@@ -52,14 +52,31 @@
 							type: 'post',
 						    url: "${pageContext.request.contextPath}/" + subcaminho + "/excluir/",
 						  	data: {descricao: descricao}
-						}).done(function(){
-							swal(
-								'Excluído!',
-							    'Este registro foi excluído!',
-							    'success'
-							).then(function(){
-								location.reload();
-							});															
+						}).done(function(response){
+							response = JSON.parse(response);
+							
+							if(response.sucesso){
+								swal(
+									'Excluído!',
+								    'Este registro foi excluído!',
+								    'success'
+								).then(function(){
+									location.reload();
+								});	
+							}
+							else if (response.erro != null){
+								switch(response.erro){
+									case "exclusao":
+										swal(
+											'Oops...',
+											'Ocorreu um erro no processamento da solicitação!',
+											'warning'
+							        	)
+							        	break;
+									default:
+										break;
+								}
+							}																			
 						}).fail(function(){
 							swal(
 								'Oops...',

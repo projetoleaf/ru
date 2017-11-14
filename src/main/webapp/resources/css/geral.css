@@ -6,3 +6,7 @@ input[type=checkbox] {
 .page-header {
 	margin-top: 10px !important;
 }
+
+.form-control {
+	margin-bottom: 3px;
+}

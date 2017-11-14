@@ -86,6 +86,10 @@ public class ComprarController {
 	
 	@PostMapping("/verificarcomprar")
 	public @ResponseBody String verificarComprar() throws JSONException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
+		
 		todasAsDatas = new ArrayList<String>();
 		return verificar();
     }
@@ -356,7 +360,7 @@ public class ComprarController {
 
 					reservaItem.setReserva(ultimaReserva);
 					reservaItem.setCardapio(datasSelecionadasSubsidiada.get(x));
-					reservaItem.setStatus(statusRepository.findByDescricao("Pago"));
+					reservaItem.setStatus(statusRepository.findByDescricao("Paga"));
 					reservaItem.setTipoRefeicao(tiposRefeicoesSubsidiada.get(x));
 					reservaItem.setExtrato(extrato);
 
@@ -389,7 +393,7 @@ public class ComprarController {
 
 					reservaItem.setReserva(ultimaReserva);
 					reservaItem.setCardapio(datasSelecionadasCusto.get(x));
-					reservaItem.setStatus(statusRepository.findByDescricao("Pago"));
+					reservaItem.setStatus(statusRepository.findByDescricao("Paga"));
 					reservaItem.setTipoRefeicao(tiposRefeicoesCusto.get(x));
 					reservaItem.setExtrato(extrato);
 

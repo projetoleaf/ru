@@ -11,6 +11,8 @@
 <head>
 <meta name="header" content="Planilhas" />
 <title>Planilhas</title>
+<meta name="_csrf" content="${_csrf.token}"/>
+<meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 <body>
 	<script type="text/javascript">
@@ -83,7 +85,7 @@
 				</h4>
 			</div>
 			<div class="row">
-				<form:checkboxes items="${planilhas}" path="planilha"
+				<form:radiobuttons items="${planilhas}" path="planilha"
 					delimiter="<br>" />
 			</div>
 
@@ -92,9 +94,9 @@
 
 			<div class="text-center">
 				<a href="${pageContext.request.contextPath}/planilhas/gerarXSLX"
-					class="btn btn-primary">Gerar planilha</a> <a
-					href="${pageContext.request.contextPath}/planilhas/gerarPDF"
-					target="_blank" class="btn btn-primary">Gerar PDF</a>
+					class="btn btn-primary">Gerar planilha</a> 
+				<%-- <a href="${pageContext.request.contextPath}/planilhas/gerarPDF"
+					target="_blank" class="btn btn-primary">Gerar PDF</a> --%>
 			</div>
 
 			<br />
@@ -103,5 +105,6 @@
 		</form:form>
 
 	</div>
+	<jsp:include page="verifica.jsp"/>
 </body>
 </html>

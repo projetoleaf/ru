@@ -2,11 +2,15 @@ package com.github.projetoleaf.controllers;
 
 import javax.validation.Valid;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.projetoleaf.beans.Categoria;
 import com.github.projetoleaf.repositories.CategoriaRepository;
+import com.github.projetoleaf.repositories.ClienteRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,9 +41,16 @@ public class CategoriaController {
 
 	@Autowired
 	private CategoriaRepository repository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
 
 	@GetMapping
 	public String pesquisarCategoria(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
+		
 		model.addAttribute("listagemCategorias", repository.findAll(new Sort(Sort.Direction.ASC, "descricao")));
 		return "/categorias/pesquisar";
 	}
@@ -81,16 +93,17 @@ public class CategoriaController {
 	}
 
 	@PostMapping("/excluir")
-	public @ResponseBody void excluirCategoria(RedirectAttributes ra, @RequestParam("descricao") String descricao) {
+	public @ResponseBody String excluirCategoria(RedirectAttributes ra, @RequestParam("descricao") String descricao) throws JSONException {		
+		JSONObject json = new JSONObject();
+		
 		try {
 			Long id = repository.findByDescricao(descricao).getId();		
 			repository.delete(id);
-			log.info("Categoria #" + id + " excluída com sucesso");
-			ra.addFlashAttribute("mensagemInfo",
-					config.getMessage("excluidoSucesso", new Object[] { "a categoria" }, null));
+			json.put("sucesso", new Boolean(true));
 		} catch (Exception ex) {
-			log.error("Erro de processamento", ex);
-			ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+			json.put("erro", "exclusao");
 		}
+		
+		return json.toString();
 	}
 }

@@ -5,10 +5,11 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,20 +23,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.projetoleaf.beans.Cardapio;
 import com.github.projetoleaf.repositories.CardapioRepository;
+import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.FeriadoRepository;
 import com.github.projetoleaf.repositories.PeriodoRefeicaoRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @PreAuthorize("hasRole('ROLE_FC.UNESP.RU_ADMIN') or hasRole('ROLE_FC.UNESP.RU_STN')")
-@Slf4j
 @Controller
 @RequestMapping("/cardapios")
-public class CardapioController {
+public class CardapioController {	
 
 	@Autowired
-	private MessageSource config;
+	private ClienteRepository clienteRepository;
 
 	@Autowired
 	private FeriadoRepository feriadoRepository;
@@ -50,6 +49,11 @@ public class CardapioController {
 
 	@GetMapping
 	public String pesquisarCategoria(Model model) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
+		
 		count = 0;
 		model.addAttribute("listagemCardapios", cardapioRepository.findAll(new Sort(Sort.Direction.ASC, "data")));
 		return "/cardapios/pesquisar";
@@ -101,18 +105,18 @@ public class CardapioController {
 	}
 
 	@PostMapping("/excluir")
-	public @ResponseBody void excluirCardapio(RedirectAttributes ra, @RequestParam("data") Date data, @RequestParam("periodo") String periodo) {
+	public @ResponseBody String excluirCardapio(RedirectAttributes ra, @RequestParam("data") Date data, @RequestParam("periodo") String periodo) throws JSONException {
 		count = 0;
+		JSONObject json = new JSONObject();
 		
 		try {
 			Long id = cardapioRepository.verificarDataEPeriodoRefeicao(data, periodoRefeicaoRepository.findByDescricao(periodo).getId());			
 			cardapioRepository.delete(id);
-			log.info("Cardápio #" + id + " excluído com sucesso");
-			ra.addFlashAttribute("mensagemInfo",
-					config.getMessage("excluidoSucesso", new Object[] { "o cardápio" }, null));
+			json.put("sucesso", new Boolean(true));
 		} catch (Exception ex) {
-			log.error("Erro de processamento", ex);
-			ra.addFlashAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
+			json.put("erro", "exclusao");
 		}
+		
+		return json.toString();
 	}
 }

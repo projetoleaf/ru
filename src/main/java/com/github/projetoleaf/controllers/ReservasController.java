@@ -13,6 +13,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,6 +65,10 @@ public class ReservasController {
 
 	@GetMapping
 	public String pesquisarReserva(Model model) throws ParseException {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
 
 		Date segunda = new Date();
 		Date terca = new Date();
@@ -80,11 +86,9 @@ public class ReservasController {
 		List<Cliente> todosOsClientesDoBD = clienteRepository.findAll();
 		List<ReservaItem> reservasItensDoBD = reservaItemRepository.findAll();
 
-		if (
-//				!(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
-//				&& !(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-//				&& 
-				feriadoRepository.findByData(dataHoje.getTime()) == null) {
+		if (!(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+				&& !(dataHoje.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+				&& feriadoRepository.findByData(dataHoje.getTime()) == null) {
 
 			for (Cliente cliente : todosOsClientesDoBD) {
 
@@ -137,23 +141,23 @@ public class ReservasController {
 						}
 						// Verifica se o status estÃ¡ nulo, caso sim, define status
 						if (reservasAdmin.getSegundaStatus() == null) {
-							reservasAdmin.setSegundaStatus("NÃ£o reservado");
+							reservasAdmin.setSegundaStatus("Não reservado");
 						}
 
 						if (reservasAdmin.getTercaStatus() == null) {
-							reservasAdmin.setTercaStatus("NÃ£o reservado");
+							reservasAdmin.setTercaStatus("Não reservado");
 						}
 
 						if (reservasAdmin.getQuartaStatus() == null) {
-							reservasAdmin.setQuartaStatus("NÃ£o reservado");
+							reservasAdmin.setQuartaStatus("Não reservado");
 						}
 
 						if (reservasAdmin.getQuintaStatus() == null) {
-							reservasAdmin.setQuintaStatus("NÃ£o reservado");
+							reservasAdmin.setQuintaStatus("Não reservado");
 						}
 
 						if (reservasAdmin.getSextaStatus() == null) {
-							reservasAdmin.setSextaStatus("NÃ£o reservado");
+							reservasAdmin.setSextaStatus("Não reservado");
 						}
 					} else {
 						// Se a data nÃ£o existir, define o status como indisponÃ­vel
@@ -161,23 +165,23 @@ public class ReservasController {
 						cal.setTime(datasDaProxSemana.getTime());
 
 						if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
-							reservasAdmin.setSegundaStatus("Dia indisponÃ­vel");
+							reservasAdmin.setSegundaStatus("Dia indisponível");
 						}
 
 						if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
-							reservasAdmin.setTercaStatus("Dia indisponÃ­vel");
+							reservasAdmin.setTercaStatus("Dia indisponível");
 						}
 
 						if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
-							reservasAdmin.setQuartaStatus("Dia indisponÃ­vel");
+							reservasAdmin.setQuartaStatus("Dia indisponível");
 						}
 
 						if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
-							reservasAdmin.setQuintaStatus("Dia indisponÃ­vel");
+							reservasAdmin.setQuintaStatus("Dia indisponível");
 						}
 
 						if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
-							reservasAdmin.setSextaStatus("Dia indisponÃ­vel");
+							reservasAdmin.setSextaStatus("Dia indisponível");
 						}
 					}
 
@@ -198,16 +202,16 @@ public class ReservasController {
 				}
 				// SÃ³ serÃ¡ adicionado o objeto reservasAdmin, quando o status for diferente dos
 				// ifs
-				if (!(reservasAdmin.getSegundaStatus() == "NÃ£o reservado"
-						&& reservasAdmin.getSegundaStatus() == "Dia indisponÃ­vel"
-						&& reservasAdmin.getTercaStatus() == "NÃ£o reservado"
-						&& reservasAdmin.getTercaStatus() == "Dia indisponÃ­vel"
-						&& reservasAdmin.getQuartaStatus() == "NÃ£o reservado"
-						&& reservasAdmin.getQuartaStatus() == "Dia indisponÃ­vel"
-						&& reservasAdmin.getQuintaStatus() == "NÃ£o reservado"
-						&& reservasAdmin.getQuintaStatus() == "Dia indisponÃ­vel"
-						&& reservasAdmin.getSextaStatus() == "NÃ£o reservado"
-						&& reservasAdmin.getSextaStatus() == "Dia indisponÃ­vel")) {
+				if (!(reservasAdmin.getSegundaStatus() == "Não reservado"
+						&& reservasAdmin.getSegundaStatus() == "Dia indisponível"
+						&& reservasAdmin.getTercaStatus() == "Não reservado"
+						&& reservasAdmin.getTercaStatus() == "Dia indisponível"
+						&& reservasAdmin.getQuartaStatus() == "Não reservado"
+						&& reservasAdmin.getQuartaStatus() == "Dia indisponível"
+						&& reservasAdmin.getQuintaStatus() == "Não reservado"
+						&& reservasAdmin.getQuintaStatus() == "Dia indisponível"
+						&& reservasAdmin.getSextaStatus() == "Não reservado"
+						&& reservasAdmin.getSextaStatus() == "Dia indisponível")) {
 					todasAsReservas.add(reservasAdmin);
 				}
 			}
@@ -262,7 +266,7 @@ public class ReservasController {
 					if (cliente.getNome() == reserva.getReserva().getCliente().getNome()) {
 						if (formatoDesejado.format(cal.getTime())
 								.equals(formatoDesejado.format(reserva.getCardapio().getData()))) {
-							if (reserva.getStatus().getDescricao().equals("Solicitado")) {
+							if (reserva.getStatus().getDescricao().equals("Solicitada")) {
 
 								if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
 									reservasAdmin.setSegundaStatus(reserva.getStatus().getDescricao());
@@ -290,16 +294,16 @@ public class ReservasController {
 			}
 
 			switch (i) {
-			case 0:
-				segunda = datasDaProxSemana.getTime();
-			case 1:
-				terca = datasDaProxSemana.getTime();
-			case 2:
-				quarta = datasDaProxSemana.getTime();
-			case 3:
-				quinta = datasDaProxSemana.getTime();
-			case 4:
-				sexta = datasDaProxSemana.getTime();
+				case 0:
+					segunda = datasDaProxSemana.getTime();
+				case 1:
+					terca = datasDaProxSemana.getTime();
+				case 2:
+					quarta = datasDaProxSemana.getTime();
+				case 3:
+					quinta = datasDaProxSemana.getTime();
+				case 4:
+					sexta = datasDaProxSemana.getTime();
 			}
 
 			datasDaProxSemana.add(Calendar.DAY_OF_MONTH, 1);
@@ -357,7 +361,7 @@ public class ReservasController {
 
 						if (formatoDesejado.format(reserva.getCardapio().getData()).equals(datasSelecionadas[z])) {
 
-							reserva.setStatus(statusRepository.findByDescricao("Pago"));
+							reserva.setStatus(statusRepository.findByDescricao("Paga"));
 							reservaItemRepository.save(reserva);
 						}
 					}
@@ -381,7 +385,7 @@ public class ReservasController {
 
 						if (formatoDesejado.format(reserva.getCardapio().getData()).equals(datasSelecionadas[z])) {
 
-							reserva.setStatus(statusRepository.findByDescricao("Pago"));
+							reserva.setStatus(statusRepository.findByDescricao("Paga"));
 							reservaItemRepository.save(reserva);
 						}
 					}
@@ -420,7 +424,7 @@ public class ReservasController {
 
 					if (formatoDesejado.format(reserva.getCardapio().getData()).equals(datasSelecionadas[z])) {
 
-						reserva.setStatus(statusRepository.findByDescricao("Pago"));
+						reserva.setStatus(statusRepository.findByDescricao("Paga"));
 						reservaItemRepository.save(reserva);
 					}
 				}

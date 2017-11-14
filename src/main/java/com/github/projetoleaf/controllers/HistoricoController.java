@@ -40,6 +40,8 @@ public class HistoricoController {
 			@RequestParam(value = "dataFinal", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date dataFinal) {
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
 
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 

@@ -1,7 +1,7 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@taglib uri="http://github.com/dandelion" prefix="dandelion"%>
 <%@taglib prefix="datatables" uri="http://github.com/dandelion/datatables"%>
+<%@taglib prefix="dandelion" uri="http://github.com/dandelion" %>
 
 <dandelion:bundle includes="datatables.extended,font-awesome,sweetalert2" />
 
@@ -21,7 +21,8 @@
 			
 			$('[data-toggle="tooltip"]').tooltip();
 			
-			$("#girarCatraca").click(function() {
+			$('.girarRoleta').on('click', function(e) {
+				e.preventDefault();
 				
 				var tr = $(this).closest('tr');
 			    var dadosTabela = tr.children("td").map(function() {
@@ -63,8 +64,7 @@
 				<datatables:column title="Nome" property="nome" />
 				<datatables:column title="${dataAtual}" property="mensagem" />
 				<datatables:column title="Operações" filterable="false"	searchable="false" cssCellClass="text-center">
-					<a id="girarCatraca" 
-						class="btn btn-default btn-xs" data-toggle="tooltip" title="Girar a Roleta">
+					<a class="btn btn-default btn-xs girarRoleta" data-toggle="tooltip" title="Girar a Roleta">
 						<i class='fa fa-spinner'></i>
 					</a>
 					<a href="${linkController}/historico/${catraca.nome}"
@@ -74,6 +74,10 @@
 				</datatables:column >		
 				<datatables:extraJs bundles="datatables.extended.config" placeholder="before_start_document_ready" />
 			</datatables:table>
+			
+			<div class="text-right">
+				<a href="${pageContext.request.contextPath}/catraca/concluirdia" class="btn btn-primary">Concluir o dia</a>
+			</div>
 			
 			<br /> <br />
 			

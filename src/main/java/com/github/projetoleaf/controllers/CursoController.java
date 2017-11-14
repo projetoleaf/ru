@@ -9,6 +9,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.projetoleaf.beans.Curso;
+import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.CursoRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +41,16 @@ public class CursoController {
 
 	@Autowired
 	private CursoRepository repository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
 
 	@GetMapping
 	public String pesquisarCurso(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
+		
 		model.addAttribute("listagemCursos", repository.findAll(new Sort(Sort.Direction.ASC, "descricao")));
 		return "/cursos/pesquisar";
 	}
@@ -87,9 +97,7 @@ public class CursoController {
 			Long id = repository.findByDescricao(descricao).getId();	
 			repository.delete(id);
 			json.put("sucesso", new Boolean(true));
-			System.out.println("caiu");
 		} catch (Exception ex) {
-			System.out.println("caiu2");
 			json.put("erro", "exclusao");
 		}
 		

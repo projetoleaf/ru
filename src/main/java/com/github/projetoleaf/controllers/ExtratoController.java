@@ -28,6 +28,9 @@ public class ExtratoController {
 	public String extrato(Model model) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
 
 		Cliente cliente = clienteRepository.findByIdentificacao(authentication.getName());
 

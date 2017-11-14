@@ -8,6 +8,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +49,10 @@ public class CatracaController {
 	@GetMapping
 	public String pesquisarCatraca(Model model) {
 		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
+		
 		Calendar dataAtual = Calendar.getInstance();
 		SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");	
 		
@@ -55,7 +61,7 @@ public class CatracaController {
 
 		for (Cliente c : clientes) {
 			
-			if(reservaItemRepository.verificarSeReservaExiste(c.getId(), dataAtual.getTime()) != null) {
+			if(reservaItemRepository.buscarReserva(c.getId(), dataAtual.getTime()) != null) {
 				
 				if (catracaRepository.verificarStatusCatraca(c.getNome(), dataAtual.getTime()) == null) {
 					Geral base = new Geral();	
@@ -96,5 +102,27 @@ public class CatracaController {
 		catraca.setReservaItem(reserva);
 		catraca.setData(Calendar.getInstance().getTime());
 		catracaRepository.save(catraca);
+	}
+	
+	@GetMapping("/concluirdia")
+	public String concluirDia() {
+		
+		Calendar dataAtual = Calendar.getInstance();
+		
+		List<Cliente> clientes = clienteRepository.findAll();
+
+		for (Cliente c : clientes) {
+			
+			if(reservaItemRepository.buscarReserva(c.getId(), dataAtual.getTime()) != null) {
+				
+				if (catracaRepository.verificarStatusCatraca(c.getNome(), dataAtual.getTime()) == null) {
+					ReservaItem reserva = reservaItemRepository.buscarReserva(c.getId(), dataAtual.getTime());
+					reserva.setStatus(statusRepository.findByDescricao("Expirado"));
+					reservaItemRepository.save(reserva);
+				}
+			}			
+		}
+		
+		return "redirect:/catraca";
 	}
 }

@@ -47,6 +47,8 @@ public class MeusDadosController {
 	public String meusDados(Model model) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
+			return "redirect:/boasvindas";
 
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 
