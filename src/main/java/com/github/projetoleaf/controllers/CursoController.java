@@ -1,19 +1,14 @@
 package com.github.projetoleaf.controllers;
 
-import javax.validation.Valid;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,17 +22,10 @@ import com.github.projetoleaf.beans.Curso;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.CursoRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @PreAuthorize("hasRole('ROLE_FC.UNESP.RU_ADMIN') or hasRole('ROLE_FC.UNESP.RU_STN')")
-@Slf4j
-@Controller
 @RequestMapping("/cursos")
 public class CursoController {
-
-	@Autowired
-	private MessageSource config;
 
 	@Autowired
 	private CursoRepository repository;
@@ -72,21 +60,18 @@ public class CursoController {
 		return "/cursos/cadastro";
 	}
 
-	@PostMapping("/salvar")
-	public String salvarCurso(Model model, @ModelAttribute("curso") @Valid Curso curso, BindingResult result) {
-		try {
-			if (!result.hasErrors()) {
-				Curso cursoAtualizado = repository.save(curso);
-				log.info(cursoAtualizado.toString() + " gravada com sucesso");
-				model.addAttribute("mensagemInfo",
-						config.getMessage("gravadoSucesso", new Object[] { "o curso" }, null));
-			}
-		} catch (Exception ex) {
-			log.error("Erro de processamento", ex);
-			model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
-		}
-
-		return "redirect:/cursos";
+	@PostMapping("/verificar")
+	public @ResponseBody String verificarDescricaoCurso(@ModelAttribute("curso") Curso curso) throws JSONException {
+		JSONObject json = new JSONObject();
+		
+		if (repository.findByDescricao(curso.getDescricao()) != null) {		
+			json.put("erro", "descricao");	
+		} else {
+			repository.save(curso);
+			json.put("sucesso", new Boolean(true));
+		}			
+		
+		return json.toString();
 	}
 
 	@PostMapping("/excluir")

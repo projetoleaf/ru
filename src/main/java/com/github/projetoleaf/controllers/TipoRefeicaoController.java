@@ -1,11 +1,8 @@
 package com.github.projetoleaf.controllers;
 
-import javax.validation.Valid;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,17 +23,11 @@ import com.github.projetoleaf.beans.TipoRefeicao;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.TipoRefeicaoRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @PreAuthorize("hasRole('ROLE_FC.UNESP.RU_ADMIN') or hasRole('ROLE_FC.UNESP.RU_STN')")
-@Slf4j
 @Controller
 @RequestMapping("/tiposRefeicoes")
 public class TipoRefeicaoController {
-
-	@Autowired
-	private MessageSource config;
 
 	@Autowired
 	private TipoRefeicaoRepository repository;
@@ -72,23 +62,18 @@ public class TipoRefeicaoController {
 		return "/tiposRefeicoes/cadastro";
 	}
 
-	@PostMapping("/salvar")
-	public String salvarTipoRefeicao(Model model, @ModelAttribute("tipoRefeicao") @Valid TipoRefeicao tipoRefeicao,
-			BindingResult result) {
-		try {
-			if (!result.hasErrors()) {
-				TipoRefeicao tipoAtualizado = repository.save(tipoRefeicao);
-				log.info(tipoAtualizado.toString() + " gravado com sucesso");
-				model.addAttribute("mensagemInfo",
-						config.getMessage("gravadoSucesso", new Object[] { "o tipo de refeição" }, null));
-			}
-		} catch (Exception ex) {
-			log.error("Erro de processamento", ex);
-			model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
-		}
-
-		return "redirect:/tiposRefeicoes";
-
+	@PostMapping("/verificar")
+	public @ResponseBody String verificarDescricaoTipoRefeicao(@ModelAttribute("tipoRefeicao") TipoRefeicao tipoRefeicao) throws JSONException {
+		JSONObject json = new JSONObject();
+		
+		if (repository.findByDescricao(tipoRefeicao.getDescricao()) != null) {		
+			json.put("erro", "descricao");	
+		} else {
+			repository.save(tipoRefeicao);
+			json.put("sucesso", new Boolean(true));
+		}			
+		
+		return json.toString();
 	}
 
 	@PostMapping("/excluir")

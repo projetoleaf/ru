@@ -27,11 +27,8 @@ import com.github.projetoleaf.beans.QuantidadeRefeicao;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.QuantidadeRefeicaoRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @PreAuthorize("hasRole('ROLE_FC.UNESP.RU_ADMIN') or hasRole('ROLE_FC.UNESP.RU_STN')")
-@Slf4j
 @Controller
 @RequestMapping("/quantidadesRefeicoes")
 public class QuantidadeRefeicaoController {
@@ -78,12 +75,10 @@ public class QuantidadeRefeicaoController {
 		try {
 			if (!result.hasErrors()) {
 				quantidadeRefeicao = repository.save(quantidadeRefeicao);
-				log.info(quantidadeRefeicao.toString() + " gravada com sucesso");
 				model.addAttribute("mensagemInfo",
 						config.getMessage("gravadoSucesso", new Object[] { "a quantidade de refeição" }, null));
 			}
 		} catch (Exception ex) {
-			log.error("Erro de processamento", ex);
 			model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
 		}
 

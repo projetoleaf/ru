@@ -1,11 +1,8 @@
 package com.github.projetoleaf.controllers;
 
-import javax.validation.Valid;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,17 +23,11 @@ import com.github.projetoleaf.beans.TipoValor;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.TipoValorRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @PreAuthorize("hasRole('ROLE_FC.UNESP.RU_ADMIN') or hasRole('ROLE_FC.UNESP.RU_STN')")
-@Slf4j
 @Controller
 @RequestMapping("/tiposValores")
 public class TipoValorController {
-
-	@Autowired
-	private MessageSource config;
 
 	@Autowired
 	private TipoValorRepository repository;
@@ -72,23 +62,18 @@ public class TipoValorController {
 		return "/tiposValores/cadastro";
 	}
 
-	@PostMapping("/salvar")
-	public String salvarTipoValor(Model model, @ModelAttribute("tipoValor") @Valid TipoValor tipoValor,
-			BindingResult result) {
-		try {
-			if (!result.hasErrors()) {
-				TipoValor tipoAtualizado = repository.save(tipoValor);
-				log.info(tipoAtualizado.toString() + " gravado com sucesso");
-				model.addAttribute("mensagemInfo",
-						config.getMessage("gravadoSucesso", new Object[] { "o tipo valor" }, null));
-			}
-		} catch (Exception ex) {
-			log.error("Erro de processamento", ex);
-			model.addAttribute("mensagemErro", config.getMessage("erroProcessamento", null, null));
-		}
-
-		return "redirect:/tiposValores";
-
+	@PostMapping("/verificar")
+	public @ResponseBody String verificarDescricaoTipoValor(@ModelAttribute("tipoValor") TipoValor tipoValor) throws JSONException {
+		JSONObject json = new JSONObject();
+		
+		if (repository.findByDescricao(tipoValor.getDescricao()) != null) {		
+			json.put("erro", "descricao");	
+		} else {
+			repository.save(tipoValor);
+			json.put("sucesso", new Boolean(true));
+		}			
+		
+		return json.toString();
 	}
 
 	@PostMapping("/excluir")

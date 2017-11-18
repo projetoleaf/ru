@@ -74,7 +74,7 @@
 									case "exclusao":
 										swal(
 											'Oops...',
-											'Ocorreu um erro no processamento da solicitação!',
+											'Esse registro possui relações com outra(s) tabela(s)!',
 											'warning'
 							        	)
 							        	break;
@@ -82,19 +82,19 @@
 										break;
 								}
 							}																			
-						}).fail(function(){
-							swal(
-								'Oops...',
-								'Não foi possível excluir este registro!',
-								'warning'
-				        	)	
+						}).fail(function(jqXHR, textStatus, errorThrown){
+							swal({
+								title: 'Oops...',
+								html: 'Não foi possível excluir este registro! <br>' +
+								'Erro: ' + textStatus + '<br>' +
+								'Descrição: ' + errorThrown,
+								type: 'warning'
+							})	
 						});
 				 }, function (dismiss) {})
 			});
 		});
 	</script>
-
-	<%@include file="/layouts/modal-mensagens.jsp"%>
 
 	<a href="${linkController}/incluir" class="float-button"><i	class="fa fa-plus"></i></a>
 
