@@ -41,27 +41,14 @@
 			  objFinal.setMonth(dtFinal.split("/")[1] - 1);
 			  objFinal.setDate(dtFinal.split("/")[0]);
 			  
-			  if (objInicial.getTime() >= objFinal.getTime()) {
+			  if (objInicial.getTime() > objFinal.getTime()) {
 			  	swal({
 					title: "Data inválida!",
-					text: "Data inicial não pode ser posterior ou igual a data final",
+					text: "Data inicial não pode ser posterior a data final",
 					type: "warning"
 				}).then(function () {
 					$("#dataInicial").val("");
 				  	$("#dataInicial").focus();
-				})
-				
-				return false;
-			  }
-
-			  else if (objFinal.getTime() > new Date().getTime()) {
-			  	swal({
-					title: "Data inválida!",
-					text: "Data final não pode ser posterior a data atual",
-					type: "warning"
-				}).then(function () {
-					$("#dataFinal").val("");
-				  	$("#dataFinal").focus();
 				})
 				
 				return false;

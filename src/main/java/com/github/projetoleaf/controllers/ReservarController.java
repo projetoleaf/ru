@@ -98,15 +98,18 @@ public class ReservarController {
 	@RequestMapping("/reservar")
 	public String carregarReservar(Model model) throws JSONException {
 		JSONObject json = new JSONObject(verificar());
-		Boolean sucesso = json.getBoolean("sucesso");
 		
-		if(sucesso) {
-			model.addAttribute("datas", datasBanco);
-			model.addAttribute("tipoRefeicoes", tipoRefeicaoRepository.findAll());
-			return "reservar";
+		if(json.has("sucesso")) {
+			Boolean sucesso = json.getBoolean("sucesso");
+			
+			if(sucesso) {
+				model.addAttribute("datas", datasBanco);
+				model.addAttribute("tipoRefeicoes", tipoRefeicaoRepository.findAll());
+				return "reservar";
+			}	
 		}
 		
-		return "boasVindas";
+		return "boasvindas";
     }
 	
 	@PostMapping("/verificarreserva")
@@ -334,7 +337,7 @@ public class ReservarController {
 		if (data.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
 			data.add(Calendar.DATE, 7);
 		}
-		// Se for terça
+		// Se for terÃ§a
 		else if (data.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
 			data.add(Calendar.DATE, 6);
 		}

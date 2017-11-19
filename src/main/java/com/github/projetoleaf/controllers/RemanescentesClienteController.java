@@ -100,10 +100,10 @@ public class RemanescentesClienteController {
 
 		if (!verificarDiscente())
 			json.put("erro", "discente");
-		else if (!verificarSaldo())
-			json.put("erro", "saldo");
 		else if (!verificarDataAtual())
 			json.put("erro", "data");
+		else if (!verificarSaldo())
+			json.put("erro", "saldo");
 		else if (!verificarContagens())
 			json.put("erro", "contagem");
 		else
@@ -175,14 +175,14 @@ public class RemanescentesClienteController {
 			if (dataDoBanco != null) {
 				countExpirado = reservaItemRepository.qtdeDeReservasExpiradasPorData(dataDoBanco.getData());
 
-				// Qtde de reservas jÃ¡ feitas no Ãºltimo dia Ãºtil, por data da semana que vem
+				// Qtde de reservas jÃƒÂ¡ feitas no ÃƒÂºltimo dia ÃƒÂºtil, por data da semana que vem
 				for (ReservaItem reserva : reservasDoBD) {
 					if (reserva.getCardapio().getData().equals(dataDoBanco.getData())) {
 						countRemanescentes++;
 					}
 				}
 
-				if (countRemanescentes <= countExpirado) { // Verifica se a qtde de remanescentes Ã© menor ou igual a
+				if (countRemanescentes <= countExpirado) { // Verifica se a qtde de remanescentes ÃƒÂ© menor ou igual a
 															// qtde de expirados
 					if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(), dataDoBanco.getData()) == null)
 						datasBanco.add(formatar.format(dataDoBanco.getData()));
@@ -202,14 +202,17 @@ public class RemanescentesClienteController {
 	@RequestMapping("/remanescente")
 	public String carregarRemanescente(Model model) throws JSONException {
 		JSONObject json = new JSONObject(verificar());
-		Boolean sucesso = json.getBoolean("sucesso");
-
-		if (sucesso) {
-			model.addAttribute("datas", datasBanco);
-			model.addAttribute("tipoRefeicoes", tipoRefeicaoRepository.findAll());
-			return "remanescente";
+		
+		if(json.has("sucesso")) {
+			Boolean sucesso = json.getBoolean("sucesso");
+			
+			if (sucesso) {
+				model.addAttribute("datas", datasBanco);
+				model.addAttribute("tipoRefeicoes", tipoRefeicaoRepository.findAll());
+				return "remanescente";
+			}
 		}
-
+		
 		return "boasvindas";
 	}
 
@@ -306,7 +309,7 @@ public class RemanescentesClienteController {
 		if (data.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
 			data.add(Calendar.DATE, 7);
 		}
-		// se for terÃ§a
+		// se for terÃƒÂ§a
 		else if (data.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
 			data.add(Calendar.DATE, 6);
 		}

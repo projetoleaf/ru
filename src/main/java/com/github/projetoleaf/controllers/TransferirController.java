@@ -62,22 +62,16 @@ public class TransferirController {
 	private SimpleDateFormat formatar = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@PostMapping("/verificartransferir")
-	public @ResponseBody boolean verificarTransferir() {
-		primeiroAcesso();
-
-		return verificarReservaPaga();
-    }
-	
-	public String primeiroAcesso() {
+	public @ResponseBody String verificarTransferir() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		
-		String retorno = null;
-		
 		if (clienteRepository.findByIdentificacao(authentication.getName()) == null)
-			retorno =  "redirect:/boasvindas";
+			return "redirect:/boasvindas";
 		
-		return retorno;
-	}
+		if(verificarReservaPaga())
+			return "ok";
+		
+		return "erro";
+    }
 	
 	@RequestMapping("/transferir")
 	public String carregarTransferir(Model model) {

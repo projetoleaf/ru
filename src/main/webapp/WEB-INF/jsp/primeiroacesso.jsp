@@ -26,7 +26,7 @@
 			$("#primeiroAcesso").submit(function(e){
 				e.preventDefault();
 				var categoria = $("#categoria").val();
-				var curso = $("#cursos").val();
+				var curso = $("#curso").val();
 				var raMatricula = $("#raMatricula").val();
 				
 				$.ajax({
@@ -97,7 +97,7 @@
 		        <div class="row">
 					<div class="form-group col-xs-12 col-offset-xs-0 col-sm-6 col-sm-offset-3">
 		            	<label class="control-label">RA / Matricula</label>
-		            	<input id="raMatricula" class="form-control" placeholder="Digite seu número de RA / Matricula"/>
+		            	<input id="raMatricula" class="form-control" placeholder="Digite seu RA / Matricula"/>
 				 	</div>
 		        </div>
 		        <div class="form-group col-x-12 col-md-12" style="text-align: center; margin-top: 25px;">

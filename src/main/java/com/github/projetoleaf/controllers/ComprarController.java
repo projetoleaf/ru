@@ -32,7 +32,6 @@ import com.github.projetoleaf.repositories.CardapioRepository;
 import com.github.projetoleaf.repositories.ClienteCategoriaRepository;
 import com.github.projetoleaf.repositories.ClienteRepository;
 import com.github.projetoleaf.repositories.ExtratoRepository;
-import com.github.projetoleaf.repositories.FeriadoRepository;
 import com.github.projetoleaf.repositories.QuantidadeRefeicaoRepository;
 import com.github.projetoleaf.repositories.ReservaItemRepository;
 import com.github.projetoleaf.repositories.ReservaRepository;
@@ -56,9 +55,6 @@ public class ComprarController {
 
 	@Autowired
 	private ExtratoRepository extratoRepository;
-	
-	@Autowired
-	private FeriadoRepository feriadoRepository;
 
 	@Autowired
 	private CardapioRepository cardapioRepository;
@@ -96,11 +92,10 @@ public class ComprarController {
 	
 	public String verificar() throws JSONException {
 		JSONObject json = new JSONObject();
+		dataAtual = Calendar.getInstance();
 		
 		if(!verificarSaldo())
 			json.put("erro", "saldo");
-		else if(!verificarDataAtual())
-			json.put("erro", "data");
 		else if(!verificarContagens())
 			json.put("erro", "contagem");
 		else
@@ -120,15 +115,6 @@ public class ComprarController {
 			return true;
 	}
 	
-	public Boolean verificarDataAtual() {
-		dataAtual = Calendar.getInstance();
-		
-		if(feriadoRepository.findByData(dataAtual.getTime()) == null)
-			return true;
-		
-		return false;
-	}
-	
 	public Boolean verificarContagens() {
 		int count = -1;
 		int countCusto;
@@ -146,7 +132,7 @@ public class ComprarController {
 				if (dataAtual.getTime().compareTo(dataDoBanco.getData()) < 0) {
 					countDisponivel = reservaItemRepository.qtdeDeReservasPorData(dataDoBanco.getData());
 					countExpirado= reservaItemRepository.qtdeDeReservasExpiradasPorData(dataDoBanco.getData());
-					countCusto = reservaItemRepository.qtdeDeReservasNãoSubsidiadasPorData(dataDoBanco.getData());
+					countCusto = reservaItemRepository.qtdeDeReservasNaoSubsidiadasPorData(dataDoBanco.getData());
 					if (countDisponivel < qtdeSubs || countExpirado > 0) {
 						if (reservaItemRepository.verificarSeReservaExiste(cliente.getId(), dataDoBanco.getData()) == null) {
 							todasAsDatas.add(formatar.format(dataDoBanco.getData()));
@@ -208,14 +194,17 @@ public class ComprarController {
 	public String carregarComprar(Model model) throws JSONException {
 		todasAsDatas = new ArrayList<String>();
 		JSONObject json = new JSONObject(verificar());
-		Boolean sucesso = json.getBoolean("sucesso");
 		
-		if(sucesso) {
-			model.addAttribute("contadores", contadores);
-			model.addAttribute("todasAsDatas", todasAsDatas);
-			model.addAttribute("todosOsValores", tipoValorRepository.findAll());
-			model.addAttribute("todasAsRefeicoes", tipoRefeicaoRepository.findAll());
-			return "comprar";
+		if(json.has("sucesso")) {
+			Boolean sucesso = json.getBoolean("sucesso");
+			
+			if(sucesso) {
+				model.addAttribute("contadores", contadores);
+				model.addAttribute("todasAsDatas", todasAsDatas);
+				model.addAttribute("todosOsValores", tipoValorRepository.findAll());
+				model.addAttribute("todasAsRefeicoes", tipoRefeicaoRepository.findAll());
+				return "comprar";
+			}
 		}
 		
 		return "boasvindas";

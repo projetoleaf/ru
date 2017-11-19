@@ -46,7 +46,7 @@ public interface ReservaItemRepository extends JpaRepository<ReservaItem, Long> 
 	Integer qtdeDeReservasPorData(Date data);
 	
 	@Query("SELECT COUNT(cardapio.data) FROM ReservaItem r WHERE r.cardapio.data = ?1 AND r.reserva.tipoValor.descricao != 'Subsidiada'")
-	Integer qtdeDeReservasNãoSubsidiadasPorData(Date data);	
+	Integer qtdeDeReservasNaoSubsidiadasPorData(Date data);	
 	
 	@Query("SELECT r FROM ReservaItem r WHERE r.reserva.cliente.id = ?1 AND r.status.descricao = 'Paga' AND r.reserva.tipoValor.descricao = 'Subsidiada'")
 	List<ReservaItem> buscarReservasPagaSubsidiada(Long idCliente);

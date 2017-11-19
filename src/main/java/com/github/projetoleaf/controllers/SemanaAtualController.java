@@ -146,7 +146,7 @@ public class SemanaAtualController {
 								countExpiradoSegunda = reservaItemRepository
 										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaSegunda = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
+										.qtdeDeReservasNaoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
@@ -155,7 +155,7 @@ public class SemanaAtualController {
 								countExpiradoTerca = reservaItemRepository
 										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaTerca = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
+										.qtdeDeReservasNaoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
@@ -164,7 +164,7 @@ public class SemanaAtualController {
 								countExpiradoQuarta = reservaItemRepository
 										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaQuarta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
+										.qtdeDeReservasNaoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
@@ -173,7 +173,7 @@ public class SemanaAtualController {
 								countExpiradoQuinta = reservaItemRepository
 										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaQuinta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
+										.qtdeDeReservasNaoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
@@ -182,7 +182,7 @@ public class SemanaAtualController {
 								countExpiradoSexta = reservaItemRepository
 										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaSexta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
+										.qtdeDeReservasNaoSubsidiadasPorData(cal.getTime());
 							}
 
 							// Verifica se o count disponível é menor que a qtde de refeições subsidiadas
@@ -407,7 +407,7 @@ public class SemanaAtualController {
 								countExpiradoSegunda = reservaItemRepository
 										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaSegunda = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
+										.qtdeDeReservasNaoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY) {
@@ -416,7 +416,7 @@ public class SemanaAtualController {
 								countExpiradoTerca = reservaItemRepository
 										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaTerca = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
+										.qtdeDeReservasNaoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY) {
@@ -425,7 +425,7 @@ public class SemanaAtualController {
 								countExpiradoQuarta = reservaItemRepository
 										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaQuarta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
+										.qtdeDeReservasNaoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
@@ -434,7 +434,7 @@ public class SemanaAtualController {
 								countExpiradoQuinta = reservaItemRepository
 										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaQuinta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
+										.qtdeDeReservasNaoSubsidiadasPorData(cal.getTime());
 							}
 
 							if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
@@ -443,7 +443,7 @@ public class SemanaAtualController {
 								countExpiradoSexta = reservaItemRepository
 										.qtdeDeReservasExpiradasPorData(cal.getTime());
 								countNãoSubsidiadaSexta = reservaItemRepository
-										.qtdeDeReservasNãoSubsidiadasPorData(cal.getTime());
+										.qtdeDeReservasNaoSubsidiadasPorData(cal.getTime());
 							}
 
 							// Verifica se o count disponível é menor que a qtde de refeições subsidiadas

@@ -33,10 +33,10 @@
 			
 			for (let count of linhasDaTabela) {
 			    
-			    if(count.seg != "Solicitado" && count.ter != "Solicitado" && count.qua != "Solicitado" && count.qui != "Solicitado" && count.sex != "Solicitado"){
-			    	$("a[href='/ru/reservas/pagamento/" + count.nome + "']").addClass('disabled');
+			    if(count.seg != "Solicitada" && count.ter != "Solicitada" && count.qua != "Solicitada" && count.qui != "Solicitada" && count.sex != "Solicitada"){
+			    	$("a[href='${pageContext.request.contextPath}/reservas/pagamento/" + count.nome + "']").addClass('disabled');
 			    } else {
-			    	$("a[href='/ru/reservas/pagamento/" + count.nome + "']").removeClass('disabled')
+			    	$("a[href='${pageContext.request.contextPath}/reservas/pagamento/" + count.nome + "']").removeClass('disabled')
 			    }
 			}			
 		});

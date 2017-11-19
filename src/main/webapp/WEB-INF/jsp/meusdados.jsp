@@ -13,6 +13,11 @@
 	<meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 <body>
+	<script type="text/javascript">
+			$(document).ready(function() {
+				$("#curso").text("${curso.curso.descricao}".replace(/-(.*)/g,''));
+			});
+	</script>
 	<div class="panel panel-primary col-xs-12 col-md-8 col-md-offset-2">
       <div class="panel-body">
         <div class="page-header">
@@ -42,13 +47,13 @@
 					<p>${categoria.raMatricula}</p>
 				</div>
 				<div class="col-sm-6">
-					<p><b>Categoria(s)</b></p>
+					<p><b>Categoria</b></p>
 					<p>${categoria.categoria.descricao}</p>
 				</div>
 				<c:if test="${curso.curso.descricao != null}">
 					<div class="col-sm-6">
 						<p><b>Curso</b></p>
-						<p>${curso.curso.descricao}</p>
+						<p id="curso"></p>
 					</div>
 					<div class="col-sm-6">
 						<p><b>Período</b></p>
